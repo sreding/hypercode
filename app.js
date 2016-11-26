@@ -9,6 +9,8 @@ const app = express();
 //setup mongo db
 const mongoose   = require('mongoose');
 mongoose.connect(config.mongoUrl + config.mongoDbName);
+mongoose.Promise = require('bluebird');
+
 
 // Register models
 require('./models');
