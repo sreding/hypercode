@@ -1,21 +1,34 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
-
+<link rel="import" href="hc-file-displayer.html"/>
 <dom-module id="hc-file-container">
 
 <style>
-	#main{
+	#container{
 		background-color: blue;
+	}
+	.hc-file-displayer{
+		position: absolute;
+	}
+	#test{
+		background-color: grey;
+		width: 200px;
+		height: 300px;
 	}
 </style>
 
 	<template>
-	<div id="main">
-
+	<div id="container">
+	<!-- <hc-file-displayer height width></hc-file-displayer>
+	<hc-file-displayer height width></hc-file-displayer> -->
 	</div>
+	<div id="mainFile">
+	<hc-file-displayer height="300" width="200" ></hc-file-displayer>
+	</div>
+
 		
 	</template>
 
-
+	<script src="../js/Sprite3D.js" type="text/javascript"></script>
 	<script>
 	(function () {
     'use strict';
@@ -35,13 +48,36 @@
         id:{
           type:String,
           notify:true
+        },
+        data:{
+        	type:Object,
+        	value:{
+        		name:"placeholder",
+        		relations:[
+        		{name:"pl1", code:"more code"},
+        		{name:"pl2", code:"even more code"} 
+        		],
+        		source:"some code"
+        	}
         }
 
       },
       ready:function(){
-      	console.log(window)
-        this.$.main.style.width= window.innerWidth-20+"px" //this.width+"px"
-        this.$.main.style.height= window.innerHeight-20+"px"//this.height+"px"
+      	this.width=window.innerWidth-20
+      	this.height=window.innerHeight-30
+        this.$.container.style.width= this.width+"px" //this.width+"px"
+        this.$.container.style.height= this.height+"px"//this.height+"px"
+        let stage = Sprite3D.stage(this.$.container);
+        // let mainFile = document.createElement("hc-file-displayer");
+        // mainFile.setAttribute("width",100);
+        // mainFile.setAttribute("height",300);
+        // mainFile.height=300;
+        let x =Sprite3D.create(this.$.mainFile)
+        let mainSprite =stage.appendChild(x)
+        mainSprite.position(300,400).update()
+        console.log(x)
+
+
       }
 
     });
