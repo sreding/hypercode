@@ -11,6 +11,7 @@
     #main{
       background-color: #f2f2f2;
       font-family: "Helvetica Neue",Helvetica, Arial, sans-serif;
+      position: absolute;
     }
     h1{
       text-align: center;
@@ -27,8 +28,8 @@
     <div modelid="{{id}}" id="main">
       <h1>Example.java</h1>
       
-      <div id="body">this is the body
-      <pre id="output"></pre></div>
+      <div id="body">this is the body but does it wrap around?
+      <pre id="output" contenteditable="true"></pre></div>
       <prism-highlighter></prism-highlighter>
       
       
@@ -61,19 +62,17 @@
         code:{
           type:String,
           observer: '_render',
-          value: "class Project{ String title; }"
+          value: "function() {this._render}"
         }
 
       },
-      ready:function(){
+      attached: function() {
+        this._render();
         this.$.main.style.width=this.width+"px"
         this.$.main.style.height=this.height+"px"
       },
-      attached: function() {
-        this._render();
-      },
       _render: function() {
-        this.$.output.innerHTML = this.highlight(this.code, 'java');
+        this.$.output.innerHTML = this.highlight(this.code, 'js');
       },
       highlight: function(code, lang) {
         return this.fire('syntax-highlight', {code: code, lang: lang}).detail.code;
