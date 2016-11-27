@@ -85,12 +85,13 @@
        files.push(this.createFileDisplayer(20,70, 85,50))
        this.files=files
        this.$.presentation.onclick=function(){
-       	window.setInterval(function(){
-       		// console.log(1)
-       		files.forEach(function(item){
-       			item.rotate(0,2,0).update()
-       		})
-       	}, 50)
+       	files[0].rotate(0,40,0).update()
+       	// window.setInterval(function(){
+       	// 	// console.log(1)
+       	// 	files.forEach(function(item){
+       	// 		item.rotate(0,2,0).update()
+       	// 	})
+       	// }, 50)
        }
       },
       // everythin in percentages according of this.height and this.width
@@ -106,7 +107,7 @@
       	innerElement.setAttribute("width",percX*width);
         innerElement.setAttribute("height",percY*height);
         if(active){
-        	innerElement.setAttribute("active",true);
+        	innerElement.setAttribute("is-editable",true);
         }
         element.appendChild(innerElement)
         
