@@ -36,11 +36,11 @@
     
   </style>
   <template>
-    <div modelid="{{id}}" id="main" on-click="toggleactive">
-      <h1>Example.java</h1>
+    <div modelid="{{id}}" id="main" >
+      <h1 on-click="toggleactive">Example.java</h1>
       <div id="body" class="passive">
       this is body
-      <pre id="output" contenteditable="[[active]]"></pre></div>
+      <pre id="output" contenteditable$="[[isEditable]]"></pre></div>
       <prism-highlighter></prism-highlighter>
       
       
@@ -75,7 +75,7 @@
           observer: '_render',
           value: "class Project{\n\n String title;\n Repository repo;\n\n}"
         },
-        active:{
+        isEditable:{
           type: Boolean,
           value: false
         }
@@ -85,6 +85,11 @@
         this._render();
         this.$.main.style.width=this.width+"px"
         this.$.main.style.height=this.height+"px"
+        if(this.isEditable){
+          this.$.body.className = "active style-scope hc-file-displayer";
+        }else{
+          this.$.body.className = "passive style-scope hc-file-displayer";
+        }
       },
       _render: function() {
         this.$.output.innerHTML = this.highlight(this.code, 'js');
@@ -93,16 +98,14 @@
         return this.fire('syntax-highlight', {code: code, lang: lang}).detail.code;
       },
       toggleactive: function(){
-        this.active = !this.active;
-        if(this.active){
+        this.isEditable = !this.isEditable;
+        if(this.isEditable){
           this.$.body.className = "active style-scope hc-file-displayer";
         }else{
           this.$.body.className = "passive style-scope hc-file-displayer";
         }
-        console.log(this.active);
-        console.log(this.$.output.contenteditable);
-        
-        
+        console.log(this.isEditable);
+        console.log(this.$.output.contenteditable);  
       }
 
 
