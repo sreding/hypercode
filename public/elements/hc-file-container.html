@@ -1,5 +1,17 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
 <dom-module id="hc-file-container">
+
+<style>
+	#main{
+		background-color: blue;
+	}
+</style>
+
 	<template>
+	<div id="main">
+
+	</div>
 		
 	</template>
 
@@ -12,10 +24,12 @@
       properties: {
         height:{
           type: Number,
+          value:500,
           notify:true
         },
         width:{
           type: Number,
+          value:500,
           notify:true
         },
         id:{
@@ -23,6 +37,11 @@
           notify:true
         }
 
+      },
+      ready:function(){
+      	console.log(window)
+        this.$.main.style.width= window.innerWidth-20+"px" //this.width+"px"
+        this.$.main.style.height= window.innerHeight-20+"px"//this.height+"px"
       }
 
     });
