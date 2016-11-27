@@ -12,6 +12,8 @@
       background-color: #f2f2f2;
       font-family: "Helvetica Neue",Helvetica, Arial, sans-serif;
       position: absolute;
+      white-space: nowrap;
+      overflow: hidden;
     }
     h1{
       text-align: center;
@@ -20,6 +22,8 @@
     }
     #body{
       margin:1vmin;
+       overflow: scroll;
+       height: 100%
     }
 
     
@@ -27,8 +31,7 @@
   <template>
     <div modelid="{{id}}" id="main">
       <h1>Example.java</h1>
-      
-      <div id="body">this is the body but does it wrap around?
+      <div id="body">
       <pre id="output" contenteditable="true"></pre></div>
       <prism-highlighter></prism-highlighter>
       
@@ -62,7 +65,7 @@
         code:{
           type:String,
           observer: '_render',
-          value: "function() {this._render}"
+          value: "class Project{\n\n String title;\n Repository repo;\n\n}"
         }
 
       },
