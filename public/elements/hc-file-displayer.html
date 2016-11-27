@@ -1,20 +1,37 @@
 
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
-<link rel="import" href="../../bower_components/prism-element/prism-element.html">
+<link rel="import" href="../../bower_components/prism-element/prism-highlighter.html">
+<link rel="import" href="../../bower_components/prism-element/prism-theme-default.html">
 
 <dom-module id="hc-file-displayer">
 
-  <style>
+  <style include="prism-theme-default">
+    
     #main{
-      background-color: red;
+      background-color: #f2f2f2;
+      font-family: "Helvetica Neue",Helvetica, Arial, sans-serif;
     }
+    h1{
+      text-align: center;
+      margin: 1vmin;
+      font-weight: normal;
+    }
+    #body{
+      margin:1vmin;
+    }
+
     
   </style>
   <template>
     <div modelid="{{id}}" id="main">
-      <h1>sadf</h1>
-      <div class="body"></div>
+      <h1>Example.java</h1>
+      
+      <div id="body">this is the body
+      <pre id="output"></pre></div>
+      <prism-highlighter></prism-highlighter>
+      
+      
     </div>
  
   
@@ -25,6 +42,7 @@
   <script>
   (function () {
     'use strict';
+
     Polymer({
       is: 'hc-file-displayer',
       properties: {
@@ -39,12 +57,26 @@
         id:{
           type:String,
           notify:true
+        },
+        code:{
+          type:String,
+          observer: '_render',
+          value: "class Project{ String title; }"
         }
 
       },
       ready:function(){
         this.$.main.style.width=this.width+"px"
         this.$.main.style.height=this.height+"px"
+      },
+      attached: function() {
+        this._render();
+      },
+      _render: function() {
+        this.$.output.innerHTML = this.highlight(this.code, 'java');
+      },
+      highlight: function(code, lang) {
+        return this.fire('syntax-highlight', {code: code, lang: lang}).detail.code;
       }
 
     });
