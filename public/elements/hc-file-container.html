@@ -7,8 +7,10 @@
 		background-color: #b7c9c7;
 	}
 	.wrapper{
-		postion:absolute;
+		position:absolute;
+		transition: all 2s;
 	}
+	
 </style>
 
 	<template>
@@ -85,13 +87,13 @@
        files.push(this.createFileDisplayer(20,70, 85,50))
        this.files=files
        this.$.presentation.onclick=function(){
-       	files[0].rotate(0,40,0).update()
-       	// window.setInterval(function(){
-       	// 	// console.log(1)
-       	// 	files.forEach(function(item){
-       	// 		item.rotate(0,2,0).update()
-       	// 	})
-       	// }, 50)
+       	// files[0].rotate(0,40,0).update()
+       	window.setInterval(function(){
+       		files.forEach(function(item){
+       			item.rotate(0,2,0).update()
+       		})
+       		files[1].move(0,4,0)
+       	}, 50)
        }
       },
       // everythin in percentages according of this.height and this.width
@@ -100,8 +102,11 @@
       	let percY=this.height/100
       	// let element = document.createElement("hc-file-displayer");
       	let element = document.createElement("div")
-      	element.style.width=percX*width;
-      	element.style.height=percX*height;
+      	element.style.width=percX*width+"px";
+      	element.style.height=percX*height+"px";
+      	element.style.position="absolute"
+      	element.className="wrapper"
+      	element.style.transition="all 2s"
 
       	let innerElement = document.createElement("hc-file-displayer");
       	innerElement.setAttribute("width",percX*width);
@@ -110,9 +115,10 @@
         	innerElement.setAttribute("is-editable",true);
         }
         element.appendChild(innerElement)
-        
         let sprite = this.stage.appendChild(Sprite3D.create(element));
         sprite.position(percX*x-innerElement.width/2, percY*y-innerElement.height/2).update();
+
+       
         return sprite;
       }
 
