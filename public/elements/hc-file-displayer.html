@@ -3,6 +3,7 @@
 <link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
 <link rel="import" href="../../bower_components/prism-element/prism-highlighter.html">
 <link rel="import" href="../../bower_components/prism-element/prism-theme-default.html">
+<link rel="import" href="../../bower_components/prism-element/demo/prism-demo.html">
 
 <dom-module id="hc-file-displayer">
 
@@ -10,7 +11,7 @@
     
     #main{
       background-color: #f2f2f2;
-      font-family: "Helvetica Neue",Helvetica, Arial, sans-serif;
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
       position: absolute;
       white-space: nowrap;
       overflow: hidden;
@@ -24,10 +25,11 @@
       margin:1vmin;
        overflow: scroll;
        height: 100%;
-       
+       font-family: 'Courier New',monospace;
     }
     .passive{
       background-color: #b3b3b3;
+      font-weight: 100;
     }
     .active{
 
@@ -38,14 +40,19 @@
   <template>
     <div modelid="{{id}}" id="main" >
       <h1 on-click="toggleactive">Example.java</h1>
-      <div id="body" class="passive">
-      this is body
-      <pre id="output" contenteditable$="[[isEditable]]"></pre></div>
+      <div id="body" class="passive" contenteditable$="[[isEditable]]">
+        class Project{<br><br>
+           
+           String title;<br>
+           Repository repo;<br><br>
+           
+          }
+        <!-- <pre id="output" ></pre>-->
+      </div>
       <prism-highlighter></prism-highlighter>
       
       
     </div>
- 
   
 
   </template>
@@ -82,7 +89,7 @@
 
       },
       attached: function() {
-        this._render();
+        // this._render();
         this.$.main.style.width=this.width+"px"
         this.$.main.style.height=this.height+"px"
         if(this.isEditable){
@@ -91,12 +98,12 @@
           this.$.body.className = "passive style-scope hc-file-displayer";
         }
       },
-      _render: function() {
-        this.$.output.innerHTML = this.highlight(this.code, 'js');
-      },
-      highlight: function(code, lang) {
-        return this.fire('syntax-highlight', {code: code, lang: lang}).detail.code;
-      },
+      // _render: function() {
+      //   this.$.output.innerHTML = this.highlight(this.code, 'js');
+      // },
+      // highlight: function(code, lang) {
+      //   return this.fire('syntax-highlight', {code: code, lang: lang}).detail.code;
+      // },
       toggleactive: function(){
         this.isEditable = !this.isEditable;
         if(this.isEditable){
@@ -104,8 +111,6 @@
         }else{
           this.$.body.className = "passive style-scope hc-file-displayer";
         }
-        console.log(this.isEditable);
-        console.log(this.$.output.contenteditable);  
       }
 
 
