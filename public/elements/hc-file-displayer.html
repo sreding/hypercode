@@ -4,6 +4,7 @@
 <link rel="import" href="../../bower_components/prism-element/prism-highlighter.html">
 <link rel="import" href="../../bower_components/prism-element/prism-theme-default.html">
 <link rel="import" href="../../bower_components/prism-element/demo/prism-demo.html">
+<link rel="import" href="../../bower_components/prism-element/prism-import.html">
 
 <dom-module id="hc-file-displayer">
 
@@ -28,8 +29,9 @@
        font-family: 'Courier New',monospace;
     }
     .passive{
-      background-color: #b3b3b3;
+      background-color: black;
       font-weight: 100;
+      color: white;
     }
     .active{
 
@@ -41,15 +43,15 @@
     <div modelid="{{id}}" id="main" >
       <h1 on-click="toggleactive">Example.java</h1>
       <div id="body" class="passive" contenteditable$="[[isEditable]]">
-        class Project{<br><br>
-           
-           String title;<br>
-           Repository repo;<br><br>
-           
-          }
-        <!-- <pre id="output" ></pre>-->
+          
+
+         <prism-highlighter></prism-highlighter>
+         <code>
+          <pre id="output"></pre>
+          </code>
+        
       </div>
-      <prism-highlighter></prism-highlighter>
+      
       
       
     </div>
@@ -89,7 +91,7 @@
 
       },
       attached: function() {
-        // this._render();
+        this._render();
         this.$.main.style.width=this.width+"px"
         this.$.main.style.height=this.height+"px"
         if(this.isEditable){
@@ -98,12 +100,14 @@
           this.$.body.className = "passive style-scope hc-file-displayer";
         }
       },
-      // _render: function() {
-      //   this.$.output.innerHTML = this.highlight(this.code, 'js');
-      // },
-      // highlight: function(code, lang) {
-      //   return this.fire('syntax-highlight', {code: code, lang: lang}).detail.code;
-      // },
+      _render: function() {
+        console.log(Prism.languages)
+        this.$.output.innerHTML = this.highlight(this.code, Prism.languages.java);
+      },
+      highlight: function(code, lang) {
+        return Prism.highlight(code, lang);
+        // return this.fire('syntax-highlight', {code: code, lang: 'java'}).detail.code;
+      },
       toggleactive: function(){
         this.isEditable = !this.isEditable;
         if(this.isEditable){
@@ -113,11 +117,9 @@
         }
       }
 
-
-
-
     });
 })();
   </script>
+  
 
 </dom-module>
