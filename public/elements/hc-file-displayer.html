@@ -1,0 +1,46 @@
+<dom-module id="hc-file-displayer">
+
+  <style>
+    .hc-file-displayer{
+      height: [[height]]px;
+      width: [[width]]px;
+    }
+    
+  </style>
+  <template>
+    <div modelid="{{id}}" class="hc-file-displayer">
+      <h1></h1>
+      <div class="body"></div>
+    </div>
+ 
+  
+
+  </template>
+
+
+  <script>
+  (function () {
+    'use strict';
+    Polymer({
+      is: 'hc-file-displayer',
+      properties: {
+        height:{
+          type: Numer,
+          notify:true
+        },
+        width:{
+          type: Numer,
+          notify:true
+        },
+        id:{
+          type:string,
+          notify:true
+        }
+
+      }
+
+    });
+})();
+  </script>
+
+</dom-module>
