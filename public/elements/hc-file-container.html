@@ -58,7 +58,7 @@
       
 
       ready:function(){
-      	this.width=window.innerWidth-20
+      	this.width=window.innerWidth-30
       	this.height=window.innerHeight-30
         this.$.container.style.width= this.width+"px" //this.width+"px"
         this.$.container.style.height= this.height+"px"//this.height+"px"
@@ -78,10 +78,14 @@
       	// let x =Sprite3D.create(this.$.mainFile)
        //  let mainSprite =this.stage.appendChild(x)
        //  mainSprite.position(600,400).update()
-       this.createFileDisplayer(40,70, 50,10)
+       let files=[]
+       files.push(this.createFileDisplayer(40,90, 50,50, true)) //main
+       files.push(this.createFileDisplayer(20,70, 15,50))
+       files.push(this.createFileDisplayer(20,70, 85,50))
+       // files.push(this.createFileDisplayer(30,70, 0,10))
       },
       // everythin in percentages according of this.height and this.width
-      createFileDisplayer(width, height, x, y){
+      createFileDisplayer(width, height, x, y, active){
       	let percX=this.width/100
       	let percY=this.height/100
       	// let element = document.createElement("hc-file-displayer");
@@ -92,11 +96,14 @@
       	let innerElement = document.createElement("hc-file-displayer");
       	innerElement.setAttribute("width",percX*width);
         innerElement.setAttribute("height",percY*height);
+        if(active){
+        	innerElement.setAttribute("active",true);
+        }
         element.appendChild(innerElement)
         
         let sprite = this.stage.appendChild(Sprite3D.create(element));
-        sprite.position(percX*x, percY*y).update();
-        console.log(sprite)
+        sprite.position(percX*x-innerElement.width/2, percY*y-innerElement.height/2).update();
+        return sprite;
       }
 
     });
