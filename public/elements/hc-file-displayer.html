@@ -1,15 +1,15 @@
+<link rel="import" href="../bower_components/polymer/polymer.html"/>
 <dom-module id="hc-file-displayer">
 
   <style>
-    .hc-file-displayer{
-      height: [[height]]px;
-      width: [[width]]px;
+    #main{
+      background-color: red;
     }
     
   </style>
   <template>
-    <div modelid="{{id}}" class="hc-file-displayer">
-      <h1></h1>
+    <div modelid="{{id}}" id="main">
+      <h1>sadf</h1>
       <div class="body"></div>
     </div>
  
@@ -25,18 +25,22 @@
       is: 'hc-file-displayer',
       properties: {
         height:{
-          type: Numer,
+          type: Number,
           notify:true
         },
         width:{
-          type: Numer,
+          type: Number,
           notify:true
         },
         id:{
-          type:string,
+          type:String,
           notify:true
         }
 
+      },
+      ready:function(){
+        this.$.main.style.width=this.width+"px"
+        this.$.main.style.height=this.height+"px"
       }
 
     });

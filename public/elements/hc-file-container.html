@@ -1,9 +1,32 @@
 <dom-module id="hc-file-container">
-	
+	<template>
+		
+	</template>
 
 
 	<script>
-		
+	(function () {
+    'use strict';
+    Polymer({
+      is: 'hc-file-container',
+      properties: {
+        height:{
+          type: Number,
+          notify:true
+        },
+        width:{
+          type: Number,
+          notify:true
+        },
+        id:{
+          type:String,
+          notify:true
+        }
+
+      }
+
+    });
+})();
 
 	</script>
 
