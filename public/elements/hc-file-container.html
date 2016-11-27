@@ -59,25 +59,32 @@
         		],
         		source:"some code"
         	}
-        }
+        },
+        stage:{},
 
       },
+      
+
       ready:function(){
       	this.width=window.innerWidth-20
       	this.height=window.innerHeight-30
         this.$.container.style.width= this.width+"px" //this.width+"px"
         this.$.container.style.height= this.height+"px"//this.height+"px"
-        let stage = Sprite3D.stage(this.$.container);
-        // let mainFile = document.createElement("hc-file-displayer");
-        // mainFile.setAttribute("width",100);
-        // mainFile.setAttribute("height",300);
-        // mainFile.height=300;
-        let x =Sprite3D.create(this.$.mainFile)
-        let mainSprite =stage.appendChild(x)
+        this.stage = Sprite3D.stage(this.$.container);
+        let mainFile = document.createElement("hc-file-displayer");
+        mainFile.setAttribute("width",400);
+        mainFile.setAttribute("height",300);
+        this.stage.appendChild(mainFile)
+        
+        this.setUp();
+
+
+      },
+      setUp:function(){
+      	//main file
+      	let x =Sprite3D.create(this.$.mainFile)
+        let mainSprite =this.stage.appendChild(x)
         mainSprite.position(300,400).update()
-        console.log(x)
-
-
       }
 
     });
