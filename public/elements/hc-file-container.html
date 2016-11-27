@@ -4,15 +4,10 @@
 
 <style>
 	#container{
-		background-color: blue;
+		background-color: #b7c9c7;
 	}
-	.hc-file-displayer{
-		position: absolute;
-	}
-	#test{
-		background-color: grey;
-		width: 200px;
-		height: 300px;
+	.wrapper{
+		postion:absolute;
 	}
 </style>
 
@@ -20,9 +15,6 @@
 	<div id="container">
 	<!-- <hc-file-displayer height width></hc-file-displayer>
 	<hc-file-displayer height width></hc-file-displayer> -->
-	</div>
-	<div id="mainFile">
-	<hc-file-displayer height="300" width="200" ></hc-file-displayer>
 	</div>
 
 		
@@ -71,10 +63,11 @@
         this.$.container.style.width= this.width+"px" //this.width+"px"
         this.$.container.style.height= this.height+"px"//this.height+"px"
         this.stage = Sprite3D.stage(this.$.container);
-        let mainFile = document.createElement("hc-file-displayer");
-        mainFile.setAttribute("width",400);
-        mainFile.setAttribute("height",300);
-        this.stage.appendChild(mainFile)
+        // let mainFile = document.createElement("hc-file-displayer");
+        // mainFile.setAttribute("width",400);
+        // mainFile.setAttribute("height",300);
+        // let x=this.stage.appendChild(Sprite3D.create(mainFile))
+        // x.position(500,500).update()
         
         this.setUp();
 
@@ -82,9 +75,28 @@
       },
       setUp:function(){
       	//main file
-      	let x =Sprite3D.create(this.$.mainFile)
-        let mainSprite =this.stage.appendChild(x)
-        mainSprite.position(300,400).update()
+      	// let x =Sprite3D.create(this.$.mainFile)
+       //  let mainSprite =this.stage.appendChild(x)
+       //  mainSprite.position(600,400).update()
+       this.createFileDisplayer(40,70, 50,10)
+      },
+      // everythin in percentages according of this.height and this.width
+      createFileDisplayer(width, height, x, y){
+      	let percX=this.width/100
+      	let percY=this.height/100
+      	// let element = document.createElement("hc-file-displayer");
+      	let element = document.createElement("div")
+      	element.style.width=percX*width;
+      	element.style.height=percX*height;
+
+      	let innerElement = document.createElement("hc-file-displayer");
+      	innerElement.setAttribute("width",percX*width);
+        innerElement.setAttribute("height",percY*height);
+        element.appendChild(innerElement)
+        
+        let sprite = this.stage.appendChild(Sprite3D.create(element));
+        sprite.position(percX*x, percY*y).update();
+        console.log(sprite)
       }
 
     });
