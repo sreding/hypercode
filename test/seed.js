@@ -8,7 +8,7 @@ mongoose.connect(config.mongoUrl + config.mongoDbName);
 
 require('../models');
 let File = mongoose.model('File')
-
+//drop
 
 fs.readFile("./weka.json", function(err, data){
 	let o = JSON.parse(data)
