@@ -16,6 +16,7 @@
 	<!-- <hc-file-displayer height width></hc-file-displayer>
 	<hc-file-displayer height width></hc-file-displayer> -->
 	</div>
+	<input type="button" value="move-stuff" id="presentation"/>
 
 		
 	</template>
@@ -52,6 +53,9 @@
         		source:"some code"
         	}
         },
+        files:{
+        	type: Array,
+        },
         stage:{},
 
       },
@@ -74,15 +78,20 @@
 
       },
       setUp:function(){
-      	//main file
-      	// let x =Sprite3D.create(this.$.mainFile)
-       //  let mainSprite =this.stage.appendChild(x)
-       //  mainSprite.position(600,400).update()
+
        let files=[]
        files.push(this.createFileDisplayer(40,90, 50,50, true)) //main
        files.push(this.createFileDisplayer(20,70, 15,50))
        files.push(this.createFileDisplayer(20,70, 85,50))
-       // files.push(this.createFileDisplayer(30,70, 0,10))
+       this.files=files
+       this.$.presentation.onclick=function(){
+       	window.setInterval(function(){
+       		// console.log(1)
+       		files.forEach(function(item){
+       			item.rotate(0,2,0).update()
+       		})
+       	}, 50)
+       }
       },
       // everythin in percentages according of this.height and this.width
       createFileDisplayer(width, height, x, y, active){
