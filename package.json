@@ -24,6 +24,9 @@
   "dependencies": {
     "express": "^4.14.0",
     "mongoose": "^4.7.0",
+    "body-parser": "^1.15.2",
+    "bower": "^1.8.0",
+    "morgan": "^1.7.0",
     "socket.io": "^1.6.0"
   }
 }
