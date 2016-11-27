@@ -25,6 +25,8 @@
     "tests"
   ],
   "dependencies": {
-    "polymer": "^1.7.0"
+    "polymer": "^1.7.0",
+    "iron-ajax": "^1.4.3",
+    "prism-element": "^1.1.1"
   }
 }
