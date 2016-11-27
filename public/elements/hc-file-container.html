@@ -18,7 +18,7 @@
 	<!-- <hc-file-displayer height width></hc-file-displayer>
 	<hc-file-displayer height width></hc-file-displayer> -->
 	</div>
-	<input type="button" value="move-stuff" id="presentation"/>
+	<input type="button" value="rotate-stuff" id="presentation"/>
 
 		
 	</template>
@@ -56,7 +56,7 @@
         	}
         },
         files:{
-        	type: Array,
+        	type: Object,
         },
         stage:{},
 
@@ -82,28 +82,69 @@
       setUp:function(){
 
        let files=[]
-       files.push(this.createFileDisplayer(40,90, 50,50, true)) //main
-       files.push(this.createFileDisplayer(20,70, 15,50))
-       files.push(this.createFileDisplayer(20,70, 85,50))
-       this.files=files
+       files.push(this.createFileDisplayer(40,90, 50,50,null, true)) //main
+       files.push(this.createFileDisplayer(20,60, 15,50))
+       files.push(this.createFileDisplayer(20,60, 85,50))
+       this.files={list:files, mainIndex:0} // index of main
+       let x = this;
+       // let elements= Polymer.dom(this.root).querySelectorAll(".wrapper"))
+       let app = this;
+       for(let i =0; i< files.length; i++){
+        files[i].index=i;
+
+        files[i].sprite.onclick=function(e){
+          app.swapWithMain(files[i].index)
+        }
+       }
        this.$.presentation.onclick=function(){
-       	// files[0].rotate(0,40,0).update()
-       	window.setInterval(function(){
+       	// window.setInterval(function(){
        		files.forEach(function(item){
-       			item.rotate(0,2,0).update()
+       			item.sprite.rotate(0,180,0).update()
        		})
-       		files[1].move(0,4,0)
-       	}, 50)
+       	// 	files[1].move(0,4,0)
+       	// }, 50)
        }
       },
+      //horrible code but only temporary
+      swapWithMain:function(index){
+      	if(index == this.files.mainIndex){
+      		return;
+      	}
+      	let spriteOne = this.files.list[index]
+      	let mainSprite= this.files.list[this.files.mainIndex]
+        let posOne = spriteOne.pos
+        let posMain = mainSprite.pos
+      	spriteOne.sprite.firstChild.setAttribute("width",posMain.width)
+        spriteOne.sprite.firstChild.setAttribute("height",posMain.height)
+
+        mainSprite.sprite.firstChild.setAttribute("width",posOne.width)
+        mainSprite.sprite.firstChild.setAttribute("height",posOne.height)
+
+      	spriteOne.sprite.position(posMain.x, posMain.y).update()
+      	mainSprite.sprite.position(posOne.x, posOne.y).update()
+        for(let key in posOne){
+          console.log(key)
+          let temp = posOne[key]
+          posOne[key] =posMain[key]
+          posMain[key] = temp
+        }
+        this.files.mainIndex = index
+        
+      	// spriteOne.x
+      	// spriteOne.y
+      },
+      // setWidthHeight:function(width,height){
+
+      // },
       // everythin in percentages according of this.height and this.width
-      createFileDisplayer(width, height, x, y, active){
+      createFileDisplayer(width, height, x, y,id, active){
       	let percX=this.width/100
       	let percY=this.height/100
       	// let element = document.createElement("hc-file-displayer");
       	let element = document.createElement("div")
       	element.style.width=percX*width+"px";
-      	element.style.height=percX*height+"px";
+      	element.style.height=percY*height+"px";
+      	console.log(percX*width)
       	element.style.position="absolute"
       	element.className="wrapper"
       	element.style.transition="all 2s"
@@ -119,7 +160,13 @@
         sprite.position(percX*x-innerElement.width/2, percY*y-innerElement.height/2).update();
 
        
-        return sprite;
+        return{sprite:sprite,
+          pos:{
+            x:percX*x-innerElement.width/2,
+            y:percY*y-innerElement.height/2,
+            width:percX*width,
+            height:percY*height
+          }};
       }
 
     });
