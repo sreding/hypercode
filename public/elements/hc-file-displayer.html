@@ -3,12 +3,13 @@
 <link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
 <link rel="import" href="../../bower_components/prism-element/prism-highlighter.html">
 <link rel="import" href="../../bower_components/prism-element/prism-theme-default.html">
+<link rel="import" href="../../css/prism-theme-dark.html">
 <link rel="import" href="../../bower_components/prism-element/demo/prism-demo.html">
 <link rel="import" href="../../bower_components/prism-element/prism-import.html">
 
 <dom-module id="hc-file-displayer">
 
-  <style include="prism-theme-default">
+  <style>
     
     #main{
       background-color: #f2f2f2;
@@ -27,7 +28,7 @@
       margin:1vmin;
        overflow: scroll;
        height: 100%;
-       font-family: 'Courier New',monospace;
+       font-family: 'Courier New' ,monospace;
     }
     .passive{
       background-color: black;
@@ -42,8 +43,8 @@
   </style>
   <template>
     <div modelid="{{id}}" id="main" >
-      <h1 on-click="toggleactive">Example.java</h1>
-      <div id="body" class="passive" contenteditable$="[[isEditable]]">
+      <h1 on-click="toggleactive">{{title}}</h1>
+      <div id="body" class="passive" contenteditable$="[[isEditable]]" spellcheck="false">
           
 
          <prism-highlighter></prism-highlighter>
@@ -85,11 +86,15 @@
         code:{
           type:String,
           observer: '_render',
-          value: "class Project{\n\n String title;\n Repository repo;\n\n}"
+          value: 'class Project{\n\n String title = "Example";\n Repository repo = new Repository();\n\n}'
         },
         isEditable:{
           type: Boolean,
           value: false
+        },
+        title:{
+          type:String,
+          value: 'Example.java'
         }
 
       },
@@ -122,10 +127,14 @@
         this.isEditable = !this.isEditable;
         if(this.isEditable){
           this.$.body.className = "active style-scope hc-file-displayer";
+          // this.$.styleimport.setAttribute('include') = "prism-theme-default";
         }else{
           this.$.body.className = "passive style-scope hc-file-displayer";
+          // this.$.styleimport.setAttribute('include') = "prism-theme-dark";
         }
       }
+
+
 
     });
 })();
