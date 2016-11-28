@@ -16,6 +16,7 @@
       position: absolute;
       white-space: nowrap;
       overflow: hidden;
+      transition: width 2s, height 2s;
     }
     h1{
       text-align: center;
@@ -69,11 +70,13 @@
       properties: {
         height:{
           type: Number,
-          notify:true
+          notify:true,
+          observer:"resize"
         },
         width:{
           type: Number,
-          notify:true
+          notify:true,
+          observer:"resize"
         },
         id:{
           type:String,
@@ -100,14 +103,21 @@
           this.$.body.className = "passive style-scope hc-file-displayer";
         }
       },
+
       _render: function() {
         console.log(Prism.languages)
-        this.$.output.innerHTML = this.highlight(this.code, Prism.languages.java);
+        this.$.output.innerHTML = this.highlight(this.code, Prism.languages.js);
       },
       highlight: function(code, lang) {
         return Prism.highlight(code, lang);
         // return this.fire('syntax-highlight', {code: code, lang: 'java'}).detail.code;
       },
+
+      resize:function(){
+        this.$.main.style.width=this.width+"px"
+        this.$.main.style.height=this.height+"px"
+      },
+      
       toggleactive: function(){
         this.isEditable = !this.isEditable;
         if(this.isEditable){
