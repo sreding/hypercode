@@ -116,10 +116,11 @@
         let posMain = mainSprite.pos
       	spriteOne.sprite.firstChild.setAttribute("width",posMain.width)
         spriteOne.sprite.firstChild.setAttribute("height",posMain.height)
-        spriteOne.sprite.firstChild.setAttribute("is-editable",true)
+        
 
         mainSprite.sprite.firstChild.setAttribute("width",posOne.width)
         mainSprite.sprite.firstChild.setAttribute("height",posOne.height)
+        spriteOne.sprite.firstChild.setAttribute("is-editable",true)
         mainSprite.sprite.firstChild.setAttribute("is-editable",false)
 
       	spriteOne.sprite.position(posMain.x, posMain.y).update()
@@ -131,6 +132,11 @@
           posMain[key] = temp
         }
         this.files.mainIndex = index
+        for(let i=0; i<this.files.list.length;i++){
+          if(this.files.list[i] !== index){
+            this.files.list[i].sprite.firstChild.setAttribute("is-editable",false)
+          }
+        }
         
       	// spriteOne.x
       	// spriteOne.y
