@@ -42,8 +42,8 @@
   </style>
   <template>
     <div modelid="{{id}}" id="main" >
-      <h1 on-click="toggleactive">{{title}}</h1>
-      <div id="body" class="passive" contenteditable$="[[isEditable]]" spellcheck="false">
+      <h1 >{{title}}</h1>
+      <div  on-click="toggleactive" id="body" class="passive" contenteditable$="[[isEditable]]" spellcheck="false">
           
 
          <prism-highlighter></prism-highlighter>
@@ -89,8 +89,7 @@
         },
         isEditable:{
           type: Boolean,
-          value: false,
-          observer:'toggleactive'
+          value: false
         },
         title:{
           type:String,
@@ -123,7 +122,7 @@
       },
       
       toggleactive: function(){
-        // this.isEditable = !this.isEditable;
+        this.isEditable = !this.isEditable;
         // console.log("isedtiable",this.title,this.isEditable);
         if(this.isEditable){
           this.$.body.className = "active style-scope hc-file-displayer";
@@ -133,8 +132,6 @@
           // this.$.styleimport.setAttribute('include') = "prism-theme-dark";
         }
       }
-
-
 
     });
 })();
