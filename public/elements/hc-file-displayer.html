@@ -3,7 +3,6 @@
 <link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
 <link rel="import" href="../../bower_components/prism-element/prism-highlighter.html">
 <link rel="import" href="../../bower_components/prism-element/prism-theme-default.html">
-<link rel="import" href="../../css/prism-theme-dark.html">
 <link rel="import" href="../../bower_components/prism-element/demo/prism-demo.html">
 <link rel="import" href="../../bower_components/prism-element/prism-import.html">
 
@@ -90,7 +89,8 @@
         },
         isEditable:{
           type: Boolean,
-          value: false
+          value: false,
+          observer:'toggleactive'
         },
         title:{
           type:String,
@@ -110,7 +110,6 @@
       },
 
       _render: function() {
-        console.log(Prism.languages)
         this.$.output.innerHTML = this.highlight(this.code, Prism.languages.js);
       },
       highlight: function(code, lang) {
@@ -124,7 +123,8 @@
       },
       
       toggleactive: function(){
-        this.isEditable = !this.isEditable;
+        // this.isEditable = !this.isEditable;
+        // console.log("isedtiable",this.title,this.isEditable);
         if(this.isEditable){
           this.$.body.className = "active style-scope hc-file-displayer";
           // this.$.styleimport.setAttribute('include') = "prism-theme-default";
