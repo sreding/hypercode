@@ -26,7 +26,7 @@ module.exports = {
    */
   show(req, res) {
     const id = req.params.id;
-    FileModel.findOne({ _id: id }, (err, File) => {
+    FileModel.findById(id, (err, File) => {
       if (err) {
         return res.status(500).json({
           message: 'Error when getting File.',
@@ -70,7 +70,7 @@ module.exports = {
    */
   update(req, res) {
     const id = req.params.id;
-    FileModel.findOne({ _id: id }, (err, File) => {
+    FileModel.findById(id, (err, File) => {
       if (err) {
         return res.status(500).json({
           message: 'Error when getting File',
