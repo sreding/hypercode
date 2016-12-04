@@ -38,7 +38,25 @@ module.exports = {
           message: 'No such File',
         });
       }
+
+      if(req.query.rel && req.query.rel != 0){
+       FileModel.find({
+        '_id': { $in: File.relations}}, (err, relations) => {
+      if (err) {
+        return res.status(500).json({
+          message: 'Error when getting relations.',
+          error: err,
+        });
+      }; 
+       File.relations = relations;
+          return res.json(File);
+  });
+      }
+    else{
       return res.json(File);
+    }
+  
+  
     });
   },
 
