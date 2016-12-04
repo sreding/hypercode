@@ -1,25 +1,14 @@
 <template>
-<<<<<<< HEAD
-  <div id="file-container">
-    <textarea name="code" id="code"></textarea>
-    <button v-on:click="list">List</button>
-    <button v-on:click="show">Show</button>
-     <button v-on:click="relations">Relations</button>
-    <button v-on:click="create">Create</button>
-    <button v-on:click="update">Update</button>
-    <button v-on:click="remove">Remove</button>
-=======
   <div id="file-container" >
   <div id="wrapper">
   <a href="#" id="exit-btn">x</a>
   <h1>{{title}}</h1>
     <textarea name="code" id="code">{{text}}</textarea>
-    <a href="#" id="prev-btn">&lt</a>
-    <a href="#" id="next-btn">&gt</a>
-    <a href="#" id="save-btn">Save</a>
+    <a href="#" v-on:click="prev.stop" id="prev-btn">&lt</a>
+    <a href="#" v-on:click="next.stop" id="next-btn">&gt</a>
+    <a href="#" v-on:click="update.stop" id="save-btn">Save</a>
 
   </div>
->>>>>>> 75f9c45848f94c2b1740ac8d1db025d39554645d
   </div>
 </template>
 
@@ -44,18 +33,14 @@ export default {
     this.container =  this.$el.querySelector('#wrapper');
 
     this.container.style.width=this.width+"px";
-    this.container.style.height=this.height+"px"
-    
+    this.container.style.height=this.height+"px";
+
+    this.relations();
   },
   props: {
-<<<<<<< HEAD
-    'width': { default: 600 },
-    'height': { default: 400 },
-=======
     'width': { default: 400 },
     'height': { default: 500 },
     'code': {default:"hello world"}
->>>>>>> 75f9c45848f94c2b1740ac8d1db025d39554645d
   },
   data: function () {
     return {
@@ -78,7 +63,7 @@ export default {
       // error callback   
   }); 
     },
-        show: function(event){
+         show: function(event){
                var self = this;
             this.$http({url: 'http://localhost:3000/api/files/58447d87e9846e43e4a19ea1', method: 'GET'}).then(function (response) {
       // success callback
