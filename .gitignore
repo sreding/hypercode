@@ -34,3 +34,9 @@ npm-debug.log
 
 # No env file in versioning
 .env
+
+# Visual Studio Code config files
+.vscode
+
+# Bower dependency directory
+public/bower_components
