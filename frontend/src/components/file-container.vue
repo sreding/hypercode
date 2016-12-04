@@ -1,12 +1,12 @@
 <template>
   <div id="file-container" >
-  <div id="wrapper">
-  <a href="#" id="exit-btn">x</a>
+  <div class="wrapper">
+  <a href="#" class="exit-btn">x</a>
   <h1>{{title}}</h1>
     <textarea name="code" id="code">{{text}}</textarea>
-    <a href="#" id="prev-btn">&lt</a>
-    <a href="#" id="next-btn">&gt</a>
-    <a href="#" id="save-btn">Save</a>
+    <a href="#" class="prev-btn">&lt</a>
+    <a href="#" class="next-btn">&gt</a>
+    <a href="#" class="save-btn">Save</a>
 
   </div>
   </div>
@@ -26,23 +26,53 @@ export default {
     this.cm.setSize(this.width, this.height-100);
 
     this.container =  this.$el.querySelector('#wrapper');
-
+    if(this.height < 500){
+        this.hideButtons();
+      }else{
+        this.showButtons();
+      }
     this.container.style.width=this.width+"px";
-    this.container.style.height=this.height+"px"
+    this.container.style.height=this.height+"px";
     
   },
   props: {
     'width': { default: 400 },
     'height': { default: 500 },
-    'code': {default:"hello world"}
+    'text':{default: 'hello world'},
+    'title': {default:'fileName.java'}
   },
   data: function () {
     return {
       cm: null,
-      title: 'fileName.java',
-      text: 'hello world'
     };
+  },
+  methods:{
+    hideButtons: function(){
+      this.$el.querySelector('.prev-btn').style.visibility = "hidden";
+      this.$el.querySelector('.next-btn').style.visibility = "hidden";
+      this.$el.querySelector('.exit-btn').style.visibility = "hidden";
+      this.$el.querySelector('.save-btn').style.visibility = "hidden";
+    },
+    showButtons: function(){
+      this.$el.querySelector('.prev-btn').style.visibility = "visible";
+      this.$el.querySelector('.next-btn').style.visibility = "visible";
+      this.$el.querySelector('.exit-btn').style.visibility = "visible";
+      this.$el.querySelector('.save-btn').style.visibility = "visible";
+    } 
+  },
+  watch:{
+    height: function (val, oldVal) {
+      if(val < 500){
+        this.hideButtons();
+      }else{
+        this.showButtons();
+      }
+      
+      console.log(val);
+    }
   }
+  
+    
 }
 </script>
 
@@ -50,7 +80,7 @@ export default {
 
 </style>
 <style>
-#exit-btn{
+.exit-btn{
   background-color:#991f00;
   cursor:pointer;
   color:#ffffff;
@@ -63,7 +93,7 @@ export default {
   left:0px;
 }
 
-#save-btn{
+.save-btn{
   background-color:#cc8800;
   display:inline-block;
   cursor:pointer;
@@ -77,7 +107,7 @@ export default {
   right:25px;
 }
 
-#next-btn{
+.next-btn{
   background-color:#cc8800;
   display:inline-block;
   cursor:pointer;
@@ -91,7 +121,7 @@ export default {
   right:0px;
 }
 
-#prev-btn{
+.prev-btn{
   background-color:#cc8800;
   display:inline-block;
   cursor:pointer;
@@ -105,7 +135,7 @@ export default {
   left:0px;
 }
 
-#wrapper{
+.wrapper{
   background-color:#333333;
   width:400px;
   height: 550px;
