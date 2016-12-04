@@ -24,13 +24,13 @@ export default {
       mode: 'text/x-java',
     });
     this.cm.setSize(this.width, this.height-100);
-
-    this.container =  this.$el.querySelector('#wrapper');
     if(this.height < 500){
         this.hideButtons();
       }else{
         this.showButtons();
       }
+    this.container =  this.$el.querySelector('.wrapper');
+    
     this.container.style.width=this.width+"px";
     this.container.style.height=this.height+"px";
     
@@ -67,7 +67,6 @@ export default {
       }else{
         this.showButtons();
       }
-      
       console.log(val);
     }
   }
