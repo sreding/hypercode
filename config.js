@@ -1,8 +1,11 @@
+// Require the .env file and loads it.
+require('dotenv').config();
+
+// Exports the configuration.
 module.exports = {
   // MongoDB
   // Url of the Mongodb server
-  mongoUrl: "mongodb://localhost/",
+  MONGO_URL: process.env.MONGO_URL || 'mongodb://localhost/',
   // Database name
-  mongoDbName: "hypercode",
- 
-}
+  MONGO_DB: process.env.MONGO_DB || 'hypercode',
+};

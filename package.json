@@ -1,32 +1,37 @@
 {
   "name": "hypercode",
-  "version": "1.0.0",
   "description": "3D IDE in browser with dependency visualization",
-  "main": "app.js",
+  "version": "1.0.0",
+  "author": "Robert Talling, Alexander Camenzind, Valerio Battaglia, Simon Reding",
+  "private": true,
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node ./bin/www"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/sreding/hypercode.git"
+    "url": "https://github.com/sreding/hypercode.git"
   },
   "keywords": [
     "hypercode",
     "3D",
     "IDE"
   ],
-  "author": "Robert Talling, Alexander Camenzind, Valerio Battaglia, Simon Reding",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/sreding/hypercode/issues"
   },
-  "homepage": "https://github.com/sreding/hypercode#readme",
+  "homepage": "https://github.com/sreding/hypercode",
   "dependencies": {
-    "express": "^4.14.0",
-    "mongoose": "^4.7.0",
-    "body-parser": "^1.15.2",
-    "bower": "^1.8.0",
-    "morgan": "^1.7.0",
-    "socket.io": "^1.6.0"
+    "bluebird": "^3.4.6",
+    "body-parser": "~1.15.2",
+    "cookie-parser": "~1.4.3",
+    "debug": "~2.2.0",
+    "dotenv": "^2.0.0",
+    "ejs": "~2.5.2",
+    "express": "~4.14.0",
+    "less-middleware": "~2.2.0",
+    "mongoose": "^4.7.1",
+    "morgan": "~1.7.0",
+    "serve-favicon": "~2.3.0"
   }
 }
