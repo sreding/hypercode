@@ -23,17 +23,17 @@ export default {
       lineNumbers: true,
       mode: 'text/x-java',
     });
-    this.cm.setSize(this.width, this.height);
+    this.cm.setSize(this.width, this.height-100);
 
     this.container =  this.$el.querySelector('#wrapper');
 
     this.container.style.width=this.width+"px";
-    this.container.style.height=100+this.height+"px"
+    this.container.style.height=this.height+"px"
     
   },
   props: {
     'width': { default: 400 },
-    'height': { default: 400 },
+    'height': { default: 500 },
     'code': {default:"hello world"}
   },
   data: function () {
