@@ -1,14 +1,15 @@
-<template>
+<template id="main-template">
   <div id="app">
   <div id="stage"></div>
-    <file-container class="fileContainer" id="no1"></file-container>
-    <file-container class="fileContainer" id="no2"></file-container>
-    <file-container class="fileContainer" id="no3"></file-container>
+  
+    <file-container :fileid="id1" class="fileContainer" id="no1"></file-container>
+    <file-container :fileid="id2" class="fileContainer" id="no2"></file-container>
+    <file-container :fileid="id3" class="fileContainer" id="no3"></file-container>
 
-  </div>
 </template>
 
 <script>
+
 import FileContainer from './components/file-container.vue';
 
 var Sprite3D = Sprite3D || {
@@ -616,10 +617,15 @@ function placeElementsOnCircle(sprites,radius, centerX, centerY, centerZ){
 function rotateElements(elements,deg){
     
 }
+
+var Vue = require('vue');
+var VueResource = require('vue-resource');
+Vue.use(VueResource);
+
 export default {
   name: 'app',
   components: {
-    FileContainer
+    'file-container': FileContainer
   },
   mounted: function () {
   let s = this.$el.querySelector("#stage")
@@ -649,16 +655,25 @@ export default {
   //     item.firstChild.rotate(0,-90,0).update()
   //   })
   // }
+
+  this.list();
+  },
+  created: function (){
+      this.mainFile = "none";
+      
   },
   data () {
     return {
       sprites:[],
-      stage:{}
+      stage:{},
+      id1 : "none",
+      id2 : "none",
+      id3 : "none",
     }
   },
   methods:{
     setUpButtons:function(that){
-      let buttons = this.$el.querySelectorAll(".prev-btn")
+      let buttons = this.$el.querySelectorAll(".next-btn")
       buttons.forEach(function(item){
         item.onclick=function(){
           that.sprites.forEach(function(item){
@@ -667,7 +682,7 @@ export default {
         })
         }
       })
-      buttons = this.$el.querySelectorAll(".next-btn")
+      buttons = this.$el.querySelectorAll(".prev-btn")
       buttons.forEach(function(item){
         item.onclick=function(){
           that.sprites.forEach(function(item){
@@ -683,7 +698,122 @@ export default {
       item.rotate(0,90,0).update();
       item.firstChild.rotate(0,-90,0).update()
     })
-    }
+    },
+
+    //Ajax calls
+    preload:function(){
+        var item1 = {
+        name: "Code1.java",
+        extension: "java",
+        type: "class",
+        source: "public void HelloWorld{ return 'Hello World!' }", };
+
+        var id1;
+
+      this.$http({url: 'http://localhost:3000/api/files/', method: 'POST', body: item1}).then(function (response) {
+      // success callback
+      id1 = response.body._id;
+      this.id1 = id1;
+
+        var item2 = {
+        name: "Code2.java",
+        extension: "java",
+        type: "class",
+        source: "public void HelloWorld{ return 'Hello World!' }", };
+
+        var id2;
+
+           this.$http({url: 'http://localhost:3000/api/files/', method: 'POST', body: item2}).then(function (response) {
+      // success callback
+      id2 = response.body._id;
+      this.id3 = id2;
+
+        var item3 = {
+        name: "Code3.java",
+        extension: "java",
+        type: "class",
+        relations:[id1, id2],
+        source: "public void HelloWorld{ return 'Hello World!' }", };
+
+        var id3;
+
+         this.$http({url: 'http://localhost:3000/api/files/', method: 'POST', body: item3}).then(function (response) {
+      // success callback
+      id3 = response.body._id;
+      this.id2 = id3;
+
+       }, function (response) {
+      // error callback   
+      });
+
+       }, function (response) {
+      // error callback   
+      });
+
+       }, function (response) {
+      // error callback   
+      }); 
+
+        
+
+        var item2 = {
+        name: "Filename",
+        extension: "java",
+        type: "class",
+        source: "public void HelloWorld{ return 'Hello World!' }", };
+    },
+
+        list: function(event){
+         var self = this; 
+        this.$http({url: 'http://localhost:3000/api/files/', method: 'GET'}).then(function (response) {
+      // success callback
+      if(response.body.length < 1){
+          self.preload();
+      }
+      else{
+        console.log(response.body);
+        var id1 = response.body[0]._id;
+        var id3 = response.body[1]._id;
+        var id2 = response.body[2]._id;
+
+        this.id1 = id1;
+        this.id2 = id2;
+        this.id3 = id3;
+      }
+  }, function (response) {
+      // error callback   
+  }); 
+    },  
+        create: function(data){
+             var self = this;
+        //dummy object
+
+      this.$http({url: 'http://localhost:3000/api/files/', method: 'POST', body: data}).then(function (response) {
+      // success callback
+  }, function (response) {
+      // error callback   
+  }); 
+
+      
+    },
+      relations:function(event){
+      var self = this;
+      console.log(this.mainFile);
+            this.$http({url: 'http://localhost:3000/api/files/'+ this.mainFile +'?rel=1', method: 'GET'}).then(function (response) {
+    
+    // success callback
+  
+    self.id2 = response.body._id;
+    self.id1 = response.body.relations[0];
+    self.id3 = response.body.relations[1];
+    console.log(self.id2);
+    console.log("props changed");
+    console.log(response.body);
+
+  }, function (response) {
+      // error callback   
+  }); 
+    },
   }   
   
 }

@@ -1,4 +1,6 @@
 const FileModel = require('../models/FileModel.js');
+var mongoose = require('mongoose');
+var ObjectId = mongoose.Types.ObjectId;
 
 /**
  * FileController.js
@@ -49,6 +51,7 @@ module.exports = {
         });
       }; 
        File.relations = relations;
+       console.log( File.relations);
           return res.json(File);
   });
       }
@@ -64,11 +67,18 @@ module.exports = {
    * FileController.create()
    */
   create(req, res) {
+   let rel = [];
+  if(req.body.relations){
+   for(let r = 0; r <req.body.relations.length;r++){
+    rel.push(new ObjectId(req.body.relations[r]));
+   }
+  }
+   
     const File = new FileModel({
       name: req.body.name,
       type: req.body.type,
       parent: req.body.parent,
-      relations: req.body.relations,
+      relations: rel,
       source: req.body.source,
     });
 
