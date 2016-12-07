@@ -4,6 +4,9 @@
 <template v-for="(item,index) in horizontal">
   <file-container :id="index" class="hFileContainer" >{{index}}</file-container>
 </template>
+<template v-for="(item,index) in vertical">
+  <file-container :id="index" class="vFileContainer" >{{index}}</file-container>
+</template>
 </div>
 
 </div>
@@ -334,6 +337,7 @@ export default {
 
     // makes first element go in front and the rest in 
     this.setUpHorizontalCircle(800,(2*Math.PI)/this.horizontal.length,-Math.PI/2)
+    this.setUpVerticalCircle(800,(2*Math.PI)/this.horizontal.length,-Math.PI/2)
 
 
     let that = this;
@@ -348,6 +352,15 @@ export default {
         .to({a:angle},d)
         .easing(TWEEN.Easing.Exponential.InOut)
         .onUpdate(rotationFunction(item,axis,angle,o))
+        .start()
+      })
+      let axis2= new THREE.Vector3(   1,0 ,0 )
+      that.vSprites.forEach(function(item){
+        let o = {a:0}
+        new TWEEN.Tween(o)
+        .to({a:angle},d)
+        .easing(TWEEN.Easing.Exponential.InOut)
+        .onUpdate(rotationFunction(item,axis2,angle,o))
         .start()
       })
       requestAnimationFrame(animate)
@@ -365,11 +378,13 @@ export default {
   data () {
     return {
       hSprites:[],
+      vSprites:[],
       stage:{},
       id1 : "none",
       id2 : "none",
       id3 : "none",
       horizontal:["some code maybe","id","aa","a","some code maybe","id","aa","a"],
+      vertical:["some code maybe","id","aa","a","some code maybe","id","aa","a"]
     }
   },
   watch: {
@@ -380,8 +395,6 @@ export default {
   methods:{
     setUpHorizontalCircle:function(r,angle,offsetAngle){
       let elements = this.$el.querySelectorAll(".hFileContainer")
-      console.log(elements)
-      let sprites=[]
       elements.forEach((item, i)=>{
 
         let sprite = new THREE.CSS3DObject( item );
@@ -394,8 +407,21 @@ export default {
         scene.add(sprite)
         this.hSprites.push(sprite)
       })
-      
-      
+    },
+    setUpVerticalCircle:function(r,angle,offsetAngle){
+      let elements = this.$el.querySelectorAll(".vFileContainer")
+      let sprites=[]
+      elements.forEach((item, i)=>{
+
+        let sprite = new THREE.CSS3DObject( item );
+        let y = r * Math.cos(offsetAngle)
+        let z = -r * Math.sin(offsetAngle)
+        offsetAngle+=angle
+        sprite.position.set(0,y, z)
+        // rotateAboutWorldAxis(sprite,new THREE.Vector3(   1, 0,0 ),(Math.PI/180)*25 ) //tilted circle by 25 deg
+        scene.add(sprite)
+        this.vSprites.push(sprite)
+      })
 
     },
     //Ajax calls
