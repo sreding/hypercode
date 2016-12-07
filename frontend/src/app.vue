@@ -1,626 +1,318 @@
 <template id="main-template">
-  <div id="app">
-  <div id="stage"></div>
-  
-    <file-container :fileid="id1" class="fileContainer" id="no1"></file-container>
-    <file-container :fileid="id2" class="fileContainer" id="no2"></file-container>
-    <file-container :fileid="id3" class="fileContainer" id="no3"></file-container>
+<div id="app">
+<div class="hidden">
+<template v-for="(item,index) in horizontal">
+  <file-container :id="index" class="hFileContainer" >{{index}}</file-container>
+</template>
+</div>
 
+</div>
+</template>
+<!-- <div id="app"></div> -->
 </template>
 
 <script>
 
 import FileContainer from './components/file-container.vue';
+import * as THREE from 'three';
+import * as TWEEN from 'tween.js';
+// let TWEEN = require("tween.js")
+/**
+ * Based on http://www.emagix.net/academic/mscs-project/item/camera-sync-with-css3-and-webgl-threejs
+ * @author mrdoob / http://mrdoob.com/
+ */
 
-var Sprite3D = Sprite3D || {
+THREE.CSS3DObject = function ( element ) {
 
-  
-  /********* [PUBLIC STATIC] isSupported() ***********/
-  /*
-  returns: Boolean
-  This method is automatically called when we create the first element, 
-  but you can call it earlier if you want to provide an alternative content 
-  to unsupported browsers.
-  */
-  isSupported: function(){
-    // init if needed
-    if ( !this._isInit ) this._init();
-    // return support value
-    return this._isSupported;
-  },
-  
-  /********* [PUBLIC STATIC] stage() ***********/
-  /*
-  Creates a root container for your 3D content.
+  THREE.Object3D.call( this );
 
-  Usage 1 : 
-    Sprite3D.stage()
+  this.element = element;
+  this.element.style.position = 'absolute';
 
-  Creates and returns a new <div> element that is added to the page.
-  The stage is centered, so the position (0,0,0) is in the center of the window.
-  This is the easiest and most common way to start a project
+  this.addEventListener( 'removed', function ( event ) {
 
-  Usage 2 : 
-    Sprite3D.stage( document.querySelector("#myContainer") )
+    if ( this.element.parentNode !== null ) {
 
-  Uses an existing HTML element as root container. The element is only tweaked a bit,
-  adjusting a few transform-related CSS properties, as well as setting the CSS "position"
-  property to "relative" if it is "static".
-  This method gives you more freedom, but more responsabilities :)
-  
-  */
-  stage: function(element) {
-    // init if needed
-    if ( !this._isInit ) this._init();
-    // tweak or create root element
-    var c,s;
-    if (element){
-      c = element;
-      s = element.style;
-      if(s.position === "static" ) s.position = "relative";
-    } else {
-      c = document.createElement("div");
-      s = c.style;
-      s[this._browserPrefix+"PerspectiveOrigin"] = "0 0";
-      s[this._browserPrefix+"TransformOrigin"] = "0 0";
-      s.position = "absolute";
-      s.top = "50%";
-      s.left = "50%";
-      s.margin = "0px";
-      s.padding = "0px";
-      document.body.appendChild(c);
-    }
-    s[this._browserPrefix+"Perspective"] = "800px";
-    s[this._browserPrefix+"Transform"] = "translateZ(0px)";
-    c = this.create(c);
-    // fix for the glitch problems under Safari6 / Mountain Lion
-    // (root container must NOT have its transform-style property set to "preserve-3d")
-    s[this._browserPrefix+"TransformStyle"] = "flat";
-    // end fix
-    return c;
-  },
-  
-  /********* [PUBLIC STATIC] create() ***********/
-  /*
-  Creates a new Sprite3D element
+      this.element.parentNode.removeChild( this.element );
 
-  Usage 1 :
-    Sprite3D.create()
-
-    Creates a <div> element and turn it into a 
-
-  Usage 2 :
-    Sprite3D.create( document.querySelector("#myElement") )
-
-  Usage 3 :
-    Sprite3D.create( "#id" )
-    Sprite3D.create( "id" )
-
-  Usage 4 : 
-    Sprite3D.create( ".class" )
-    Sprite3D.create( ".class1 class2" )
-
-  */
-  create: function(element){
-    // init Sprite3D if needed
-    if ( !this._isInit ) this._init();
-    
-    // create or tweak html element
-    if ( arguments.length === 0 ) {
-      element = document.createElement("div");
-      element.style.margin = "0px";
-      element.style.padding = "0px";
-      element.style.position = "absolute";
-    } else if ( typeof(element) === "string" ) {
-      var str = element;
-      element = document.createElement("div");
-      element.style.margin = "0px";
-      element.style.padding = "0px";
-      element.style.position = "absolute";
-      this._handleStringArgument(element,str);
-    } else if ( element.style.position == "static" ) {
-      element.style.position = "relative";
-    }
-    element.style[ this._browserPrefix + "TransformStyle" ] = "preserve-3d";
-    element.style[ this._transformProperty ] = "translateZ(0px)";
-
-    // extend element with 3D methods
-    for(var prop in this._props) {
-      if (this._props.hasOwnProperty(prop)){
-        element[prop] = this._props[prop];
-      }
-    }
-    
-    // add private properties
-    element._string = [
-      "translate3d(", 0, "px,", 0, "px,", 0, "px) ", 
-      "rotateX(", 0, "deg) ", 
-      "rotateY(", 0, "deg) ", 
-      "rotateZ(", 0, "deg) ", 
-      "scale3d(", 1, ", ", 1, ", ", 1, ") "
-    ];
-    element._positions = [
-       1,  3,  5, // x, y, z
-       8, 11, 14, // rotationX, rotationY, rotationZ
-      17, 19, 21 // scaleX, scaleY, scaleZ
-    ];
-    element._ox = 0;
-    element._oy = 0;
-    element._oz = 0;
-    
-    // return
-    return element;
-  },
-  
-  /********* [PUBLIC STATIC] box() ***********/
-  box: function(width,height,depth,idOrClassName) {
-    // init if needed
-    if ( !this._isInit ) this._init();
-    
-    // create container element
-    var box = this.create();
-    
-    if ( arguments.length === 1 ) {
-      height = width;
-      depth = width;
-    } else if ( arguments.length === 2 && typeof(arguments[1]) === "string" ) { 
-      this._handleStringArgument(box,arguments[1]);
-      height = width;
-      depth = width;
-    } else if ( idOrClassName && typeof(idOrClassName) === "string" ) {
-      this._handleStringArgument(box,idOrClassName);
-    }
-    
-    // add faces
-    var hwidth = width*.5,
-      hheight = height*.5,
-      hdepth = depth*.5;
-      
-    box.appendChild( Sprite3D.create(".front").position( -hwidth, -hheight, hdepth).size(width,height).update() );
-    box.appendChild( Sprite3D.create(".back").position( -hwidth, -hheight, -hdepth).size(width,height).rotationY(180).update() );
-    box.appendChild( Sprite3D.create(".left").position( -hwidth-hdepth, -hheight, 0).size(depth,height).rotationY(-90).update() );
-    box.appendChild( Sprite3D.create(".right").position( hwidth-hdepth, -hheight, 0).size(depth,height).rotationY(90).update() );
-    box.appendChild( Sprite3D.create(".bottom").position( -hwidth, hheight-hdepth, 0).size(width,depth).rotationX(-90).update() );
-    box.appendChild( Sprite3D.create(".top").position( -hwidth, -hheight-hdepth, 0).size(width,depth).rotationX(90).update() );
-    
-    return box;
-  },
-  
-  /********* [PUBLIC STATIC] prefix() ***********/
-  prefix: function(cssPropertyName) {
-    return Sprite3D._browserPrefix + cssPropertyName;
-  },
-
-  /********* [PRIVATE STATIC] library's global properties ***********/
-  _isInit: false,
-  _isSupported: false,
-  _browserPrefix: "webkit",
-  _transformProperty: "webkitTransform",
-
-  /********* [PRIVATE STATIC] _init() ***********/  
-  _init: function(){
-    var d = document.createElement("div"), 
-      prefixes = ["", "webkit", "Moz", "O", "ms" ],
-      n = prefixes.length, i;
-      
-    Sprite3D._isInit = true;
-    // check for 3D transforms
-    for( i = 0; i < n; i++ ) {
-      if ( ( prefixes[i] + "Perspective" ) in d.style ) {
-        Sprite3D._transformProperty = prefixes[i] + "Transform";
-        Sprite3D._isSupported = true;
-        Sprite3D._browserPrefix = prefixes[i];
-        if ( i==2 ) Sprite3D._props.update = Sprite3D._props.updateJoin;
-        //console.log( "Sprite3D found support for 3D transforms using prefix: " + prefixes[i] );
-        return true;
-      }
     }
 
-    // no transform support
-    alert("Sorry, but your browser does not support CSS 3D transfroms.");
-    return false;
-  },
-  
-  /********* [PRIVATE STATIC] _handleStringArgument() ***********/
-  _handleStringArgument: function( element, str ){
-    switch( str[0] ) {
-      case ".":
-        element.className = str.substr(1);
-        break;
-      case "#":
-        element.id = str.substr(1);
-        break;
-      default:
-        element.id = str;
-        break;
-    }
-  },
-  
-  /********* Sprite3D objects properties ***********/
-  _props: {
-    
-      /////////////////////////////////////////////
-     //////////// Position / absolute ////////////
-    /////////////////////////////////////////////
-    x : function(px) {
-      if ( arguments.length ) {
-        this._string[this._positions[0]] = px - this._ox;
-        return this;
-      } else {
-        return this._string[this._positions[0]] + this._ox;
-      }
-    },
-    y : function(py) {
-      if ( arguments.length ) {
-        this._string[this._positions[1]] = py - this._oy;
-        return this;
-      } else {
-        return this._string[this._positions[1]] + this._oy;
-      }
-    },
-    z : function(pz) {
-      if ( arguments.length ) {
-        this._string[this._positions[2]] = pz - this._oz;
-        return this;
-      } else {
-        return this._string[this._positions[2]] + this._oz;
-      }
-    },
-    position : function( px, py, pz) {
-      this._string[this._positions[0]] = px - this._ox;
-      this._string[this._positions[1]] = py - this._oy;
-      if ( arguments.length >= 3 ) this._string[this._positions[2]] = pz - this._oz;
-      return this;
-    },
-    
-      /////////////////////////////////////////////
-     //////////// Position / relative ////////////
-    /////////////////////////////////////////////
-    move : function(px,py,pz) {
-      this._string[this._positions[0]] += px;
-      this._string[this._positions[1]] += py;
-      if ( arguments.length >= 3 ) this._string[this._positions[2]] += pz;
-      return this;
-    },
-    
-      /////////////////////////////////////////////
-     //////////// Rotation / absolute ////////////
-    /////////////////////////////////////////////
-    rotationX : function(rx) {
-      if ( arguments.length ) {
-        this._string[this._positions[3]] = rx;
-        return this;
-      } else {
-        return this._string[this._positions[3]];
-      }
-    },
-    rotationY : function(ry) {
-      if ( arguments.length ) {
-        this._string[this._positions[4]] = ry;
-        return this;
-      } else {
-        return this._string[this._positions[4]];
-      }
-    },
-    rotationZ : function(rz) {
-      if ( arguments.length ) {
-        this._string[this._positions[5]] = rz;
-        return this;
-      } else {
-        return this._string[this._positions[5]];
-      }
-    },
-    rotation : function(rx,ry,rz) {
-      this._string[this._positions[3]] = rx;
-      this._string[this._positions[4]] = ry;
-      this._string[this._positions[5]] = rz;
-      return this;
-    },
-    
-      /////////////////////////////////////////////
-     //////////// Rotation / relative ////////////
-    /////////////////////////////////////////////
-    rotate : function(rx,ry,rz) {
-      this._string[this._positions[3]] += rx;
-      this._string[this._positions[4]] += ry;
-      this._string[this._positions[5]] += rz;
-      return this;
-    },
-    
-      /////////////////////////////////////////////
-     /////////////////   Scale  //////////////////
-    /////////////////////////////////////////////
-    scaleX : function(sx) {
-      if ( arguments.length ) {
-        this._string[this._positions[6]] = sx;
-        return this;
-      } else {
-        return this._string[this._positions[6]];
-      }
-    },
-    scaleY : function(sy) {
-      if ( arguments.length ) {
-        this._string[this._positions[7]] = sy;
-        return this;
-      } else {
-        return this._string[this._positions[7]];
-      }
-    },
-    scaleZ : function(sz) {
-      if ( arguments.length ) {
-        this._string[this._positions[8]] = sz;
-        return this;
-      } else {
-        return this._string[this._positions[8]];
-      }
-    },
-    scale : function(sx,sy,sz) {
-      switch(arguments.length){
-        case 0:
-          return this._string[this._positions[6]];
-        case 1: 
-          this._string[this._positions[6]] = sx;
-          this._string[this._positions[7]] = sx;
-          this._string[this._positions[8]] = sx;
-          return this;
-        case 2:
-          this._string[this._positions[6]] = sx;
-          this._string[this._positions[7]] = sy;
-          //this._string[this._positions[8]] = 1;
-          return this;
-        case 3:
-          this._string[this._positions[6]] = sx;
-          this._string[this._positions[7]] = sy;
-          this._string[this._positions[8]] = sz;
-          return this;
-      }
-      return this;
-    },
-    
-      /////////////////////////////////////////////
-     /////////////////  Origin  //////////////////
-    /////////////////////////////////////////////
-    origin : function(ox,oy,oz) {
-      // failed attempt at auto-centering the registration point of the object
-      if ( typeof(ox) === "string" ) {
-        /*
-        switch(ox){
-          case "center":
-            this._string[this._positions[0]] = -this.offsetWidth>>1;
-            this._string[this._positions[1]] = -this.offsetHeight>>1;
-            debugger
-            console.log("centering");
-            break;
-        }
-        */
-        var cs = window.getComputedStyle(this,null);
-        console.log(cs);
-        console.log("w:"+ cs.getPropertyValue("width") + " || h: " + cs.height );
-      } else {
-        if (arguments.length<3) oz = 0;
-        this._string[this._positions[0]] += this._ox - ox;
-        this._string[this._positions[1]] += this._oy - oy;
-        this._string[this._positions[2]] += this._oz - oz;
-        this._ox = ox;
-        this._oy = oy;
-        this._oz = oz;
-      }
-      return this;
-    },
+  } );
 
-      /////////////////////////////////////////////
-     ////////////  Transform Origin  /////////////
-    /////////////////////////////////////////////
-    transformOrigin : function(tx,ty) {
-      this.style[ Sprite3D._browserPrefix + "TransformOrigin" ] = (Number(tx)?tx+"px":tx) + " " + (Number(ty)?ty+"px":ty);
-      return this;
-    },
-    
-      /////////////////////////////////////////////
-     ////////////  Transform String  /////////////
-    /////////////////////////////////////////////
-    transformString : function(s) {
-      var parts = s.toLowerCase().split(" "),
-        numParts = parts.length,
-        i = 0,
-        strings = [],
-        positions = [ 0,0,0, 0,0,0, 0,0,0 ],
-        n = 0;
-        
-      for(i;i<numParts;i++){
-        switch( parts[i] ){
-          case "p":
-          case "position":
-          case "translate":
-          // todo: use rx ry rz (regPoint) when re-defining transform order
-            n = strings.push( "translate3d(", this._string[this._positions[0]], "px,", this._string[this._positions[1]], "px,", this._string[this._positions[2]], "px) " );
-            positions[0] = n-6; 
-            positions[1] = n-4;
-            positions[2] = n-2;
-            break;
-          case "rx":
-          case "rotatex":
-          case "rotationx":
-            n = strings.push( "rotateX(", this._string[this._positions[3]], "deg) " );
-            positions[3] = n-2;
-            break;
-          case "ry" :
-          case "rotatey":
-          case "rotationy":
-            n = strings.push( "rotateY(", this._string[this._positions[4]], "deg) " );
-            positions[4] = n-2;
-            break;
-          case "rz":
-          case "rotatez":
-          case "rotationz":
-            n = strings.push( "rotateZ(", this._string[this._positions[5]], "deg) " );
-            positions[5] = n-2;
-            break;
-          case "s":
-          case "scale":
-            n = strings.push( "scale3d(", this._string[this._positions[6]], ",", this._string[this._positions[7]], ",", this._string[this._positions[8]], ") " );
-            positions[6] = n-6; 
-            positions[7] = n-4;
-            positions[8] = n-2;
-            break;
-        }
-      }
-      
-      this._string = strings;
-      this._positions = positions;
-      
-      return this;
-    },
-    
-      /////////////////////////////////////////////
-     /////////////////  Update  //////////////////
-    ///////////////////////////////////////////// 
-    updateJoin : function(){
-      this.style[Sprite3D._transformProperty] = this._string.join("");
-      return this;
-    },
-
-    update : function(){
-      var s = "";
-      this._string.every( function(value){ s += value; return true; } );
-      this.style[Sprite3D._transformProperty] = s;
-      return this;
-    },
-
-      /////////////////////////////////////////////
-     ////////////  Helper Functions //////////////
-    /////////////////////////////////////////////
-  
-    //////////// Perspective helper function ////////////
-    perspective : function(value) {
-      switch(arguments.length) {
-        case 0:
-          return this.style[Sprite3D._browserPrefix + "Perspective"];
-    
-        case 1:
-          this.style[Sprite3D._browserPrefix + "Perspective"] = (typeof(value)==="string")?value:value+"px";
-          return this;
-      }
-    },
-  
-    //////////// CSS helper function ////////////
-    css : function(name, value) {
-      switch(arguments.length) {
-        case 0:
-          return this.style;
-        case 1:
-          return this.style[name];
-        case 2:
-          this.style[name] = value;
-          return this;
-        case 3:
-          this.style[Sprite3D._browserPrefix + name] = value;
-          return this;
-      }
-    },
-    
-    //////////// Class names helper functions ////////////
-    addClass : function(name) {
-      this.classList.add(name);
-      return this;
-    },
-
-    removeClass : function(name) {
-      this.classList.remove(name);
-      return this;
-    },
-    
-    //////////// HTML helper function ////////////
-    html : function(value) {
-      if (arguments.length){
-        this.innerHTML = value;
-        return this;
-      }else{
-        return this.innerHTML;
-      }
-      return this;
-    },
-    
-    //////////// SIZE helper function ////////////
-    size: function(width, height){
-      this.style.width = Number(width)?width+"px":width;
-      this.style.height = Number(height)?height+"px":height;
-      return this;
-    },
-    
-    //////////// BIND helper function ////////////
-    bind: function(events){
-      if(typeof(events)==="object"){
-        for( var i in events ){
-          this.addEventListener( i, events[i], false );
-        }
-      } else if(arguments.length===2) {
-        this.addEventListener( arguments[0], arguments[1], false );
-      } else if(arguments.length===3) {
-        this.addEventListener( arguments[0], arguments[1], arguments[2] );
-      }
-      return this;
-    },
-    
-    //////////// UNBIND helper function ////////////
-    unbind: function(events){
-      if(typeof(events)==="object"){
-        for( var i in events ){
-          this.removeEventListener( i, events[i], false );
-        }
-      } else if(arguments.length===2) {
-        this.removeEventListener( arguments[0], arguments[1], false );
-      }
-      return this;
-    },
-        
-    //////////// Spritesheet helper functions ////////////
-    tileWidth: 0,
-    tileHeight: 0,
-    tileSize : function(width, height) {
-      this.tileWidth = width;
-      this.tileHeight = height;
-      return this;
-    },
-    tilePosition : function(tilePosX, tilePosY) {
-      this.style.backgroundPosition = "-" + (tilePosX * this.tileWidth) + "px -" + (tilePosY * this.tileHeight) + "px";
-      return this;
-    },
-
-    //////////// Generic setter for chaining ////////////
-    set : function(name, value) {
-      this[name] = value;
-      return this;
-    }
-    
-  }
 };
-// takes the first 3 elements and plaes them on a circle with 90 degres between
-// centerX and centerY and centerZ are the position of the circle center relative to stage
-function placeElementsOnCircle(sprites,radius, centerX, centerY, centerZ){
-  let alpha = 0//3*Math.PI/2
-  for(let i =0; i<3; i++){
-    // console.log(Math.sin(Math.PI))
-    let el =sprites[i]
-    let y = centerY
-    let x = radius*Math.cos(alpha)+centerX - el.offsetWidth/2
-    let z = radius*Math.sin(alpha)+centerZ
-    console.log(el)
-    console.log(`x: ${x-centerX}  y:${y}  z:${z} `)
-    el.position(x,y,z)
-    .css("transform-origin",`${-radius*Math.cos(alpha)+el.offsetWidth/2}px ${centerY+el.offsetHeight/2}px ${-radius*Math.sin(alpha)}px`)
-    .update()//css("transform-origin","-200px 100px 0px")
 
-    alpha+=Math.PI/2
-  }
-}
-function rotateElements(elements,deg){
-    
-}
+THREE.CSS3DObject.prototype = Object.create( THREE.Object3D.prototype );
+THREE.CSS3DObject.prototype.constructor = THREE.CSS3DObject;
+
+THREE.CSS3DSprite = function ( element ) {
+
+  THREE.CSS3DObject.call( this, element );
+
+};
+
+THREE.CSS3DSprite.prototype = Object.create( THREE.CSS3DObject.prototype );
+THREE.CSS3DSprite.prototype.constructor = THREE.CSS3DSprite;
+
+//
+
+THREE.CSS3DRenderer = function () {
+
+  console.log( 'THREE.CSS3DRenderer', THREE.REVISION );
+
+  var _width, _height;
+  var _widthHalf, _heightHalf;
+
+  var matrix = new THREE.Matrix4();
+
+  var cache = {
+    camera: { fov: 0, style: '' },
+    objects: {}
+  };
+
+  var domElement = document.createElement( 'div' );
+  domElement.style.overflow = 'hidden';
+
+  domElement.style.WebkitTransformStyle = 'preserve-3d';
+  domElement.style.MozTransformStyle = 'preserve-3d';
+  domElement.style.oTransformStyle = 'preserve-3d';
+  domElement.style.transformStyle = 'preserve-3d';
+
+  this.domElement = domElement;
+
+  var cameraElement = document.createElement( 'div' );
+
+  cameraElement.style.WebkitTransformStyle = 'preserve-3d';
+  cameraElement.style.MozTransformStyle = 'preserve-3d';
+  cameraElement.style.oTransformStyle = 'preserve-3d';
+  cameraElement.style.transformStyle = 'preserve-3d';
+
+  domElement.appendChild( cameraElement );
+
+  this.setClearColor = function () {};
+
+  this.getSize = function() {
+
+    return {
+      width: _width,
+      height: _height
+    };
+
+  };
+
+  this.setSize = function ( width, height ) {
+
+    _width = width;
+    _height = height;
+
+    _widthHalf = _width / 2;
+    _heightHalf = _height / 2;
+
+    domElement.style.width = width + 'px';
+    domElement.style.height = height + 'px';
+
+    cameraElement.style.width = width + 'px';
+    cameraElement.style.height = height + 'px';
+
+  };
+
+  var epsilon = function ( value ) {
+
+    return Math.abs( value ) < Number.EPSILON ? 0 : value;
+
+  };
+
+  var getCameraCSSMatrix = function ( matrix ) {
+
+    var elements = matrix.elements;
+
+    return 'matrix3d(' +
+      epsilon( elements[ 0 ] ) + ',' +
+      epsilon( - elements[ 1 ] ) + ',' +
+      epsilon( elements[ 2 ] ) + ',' +
+      epsilon( elements[ 3 ] ) + ',' +
+      epsilon( elements[ 4 ] ) + ',' +
+      epsilon( - elements[ 5 ] ) + ',' +
+      epsilon( elements[ 6 ] ) + ',' +
+      epsilon( elements[ 7 ] ) + ',' +
+      epsilon( elements[ 8 ] ) + ',' +
+      epsilon( - elements[ 9 ] ) + ',' +
+      epsilon( elements[ 10 ] ) + ',' +
+      epsilon( elements[ 11 ] ) + ',' +
+      epsilon( elements[ 12 ] ) + ',' +
+      epsilon( - elements[ 13 ] ) + ',' +
+      epsilon( elements[ 14 ] ) + ',' +
+      epsilon( elements[ 15 ] ) +
+    ')';
+
+  };
+
+  var getObjectCSSMatrix = function ( matrix ) {
+
+    var elements = matrix.elements;
+
+    return 'translate3d(-50%,-50%,0) matrix3d(' +
+      epsilon( elements[ 0 ] ) + ',' +
+      epsilon( elements[ 1 ] ) + ',' +
+      epsilon( elements[ 2 ] ) + ',' +
+      epsilon( elements[ 3 ] ) + ',' +
+      epsilon( - elements[ 4 ] ) + ',' +
+      epsilon( - elements[ 5 ] ) + ',' +
+      epsilon( - elements[ 6 ] ) + ',' +
+      epsilon( - elements[ 7 ] ) + ',' +
+      epsilon( elements[ 8 ] ) + ',' +
+      epsilon( elements[ 9 ] ) + ',' +
+      epsilon( elements[ 10 ] ) + ',' +
+      epsilon( elements[ 11 ] ) + ',' +
+      epsilon( elements[ 12 ] ) + ',' +
+      epsilon( elements[ 13 ] ) + ',' +
+      epsilon( elements[ 14 ] ) + ',' +
+      epsilon( elements[ 15 ] ) +
+    ')';
+
+  };
+
+  var renderObject = function ( object, camera ) {
+
+    if ( object instanceof THREE.CSS3DObject ) {
+
+      var style;
+
+      if ( object instanceof THREE.CSS3DSprite ) {
+
+        // http://swiftcoder.wordpress.com/2008/11/25/constructing-a-billboard-matrix/
+
+        matrix.copy( camera.matrixWorldInverse );
+        matrix.transpose();
+        matrix.copyPosition( object.matrixWorld );
+        matrix.scale( object.scale );
+
+        matrix.elements[ 3 ] = 0;
+        matrix.elements[ 7 ] = 0;
+        matrix.elements[ 11 ] = 0;
+        matrix.elements[ 15 ] = 1;
+
+        style = getObjectCSSMatrix( matrix );
+
+      } else {
+
+        style = getObjectCSSMatrix( object.matrixWorld );
+
+      }
+
+      var element = object.element;
+      var cachedStyle = cache.objects[ object.id ];
+
+      if ( cachedStyle === undefined || cachedStyle !== style ) {
+
+        element.style.WebkitTransform = style;
+        element.style.MozTransform = style;
+        element.style.oTransform = style;
+        element.style.transform = style;
+
+        cache.objects[ object.id ] = style;
+
+      }
+
+      if ( element.parentNode !== cameraElement ) {
+
+        cameraElement.appendChild( element );
+
+      }
+
+    }
+
+    for ( var i = 0, l = object.children.length; i < l; i ++ ) {
+
+      renderObject( object.children[ i ], camera );
+
+    }
+
+  };
+
+  this.render = function ( scene, camera ) {
+
+    var fov = 0.5 / Math.tan( THREE.Math.degToRad( camera.getEffectiveFOV() * 0.5 ) ) * _height;
+
+    if ( cache.camera.fov !== fov ) {
+
+      domElement.style.WebkitPerspective = fov + "px";
+      domElement.style.MozPerspective = fov + "px";
+      domElement.style.oPerspective = fov + "px";
+      domElement.style.perspective = fov + "px";
+
+      cache.camera.fov = fov;
+
+    }
+
+    scene.updateMatrixWorld();
+
+    if ( camera.parent === null ) camera.updateMatrixWorld();
+
+    camera.matrixWorldInverse.getInverse( camera.matrixWorld );
+
+    var style = "translate3d(0,0," + fov + "px)" + getCameraCSSMatrix( camera.matrixWorldInverse ) +
+      " translate3d(" + _widthHalf + "px," + _heightHalf + "px, 0)";
+
+    if ( cache.camera.style !== style ) {
+
+      cameraElement.style.WebkitTransform = style;
+      cameraElement.style.MozTransform = style;
+      cameraElement.style.oTransform = style;
+      cameraElement.style.transform = style;
+
+      cache.camera.style = style;
+
+    }
+
+    renderObject( scene, camera );
+
+  };
+
+};
+
+
+
 
 var Vue = require('vue');
 var VueResource = require('vue-resource');
 Vue.use(VueResource);
+let scene,camera,renderer;
+function render(){
+  renderer.render(scene,camera)
+}
+function animate(time) {
+
+        requestAnimationFrame( animate );
+
+        TWEEN.update(time);
+        render()
+  }
+
+function rotationFunction(object,axis,angle,o){
+
+  let old_position = new THREE.Vector4(object.position.x, object.position.y, object.position.z, 1);
+  
+  let rotationMatrix=new THREE.Matrix4();
+  return function(time){
+    rotationMatrix = rotationMatrix.makeRotationAxis( axis.normalize(), o.a );
+    // console.log(angle*time)
+    var newPos = old_position.clone().applyMatrix4(rotationMatrix);
+    object.position.x = newPos.x;
+    object.position.y = newPos.y;
+    object.position.z = newPos.z;
+
+  }
+
+}
+function rotateAboutWorldAxis(object, axis, angle) {
+      var rotationMatrix = new THREE.Matrix4();
+      rotationMatrix.makeRotationAxis( axis.normalize(), angle );
+      var currentPos = new THREE.Vector4(object.position.x, object.position.y, object.position.z, 1);
+      var newPos = currentPos.applyMatrix4(rotationMatrix);
+      object.position.x = newPos.x;
+      object.position.y = newPos.y;
+      object.position.z = newPos.z;
+}
 
 export default {
   name: 'app',
@@ -628,35 +320,43 @@ export default {
     'file-container': FileContainer
   },
   mounted: function () {
-  let s = this.$el.querySelector("#stage")
-  let fileContainers=this.$el.querySelectorAll(".fileContainer")
-  let that = this;
-  let stage = Sprite3D.stage(this.$el.querySelector("#stage"));
-  stage.css("transform-style", "preserve-3d")
+    this.list()
+    scene = new THREE.Scene();
+    camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
+    camera.position.set(0, 0, 1500);
 
-  fileContainers.forEach(function(item){
-    let wrapper = document.createElement("div")
-   
-    wrapper.style.width = item.offsetWidth+"px"
-    wrapper.style.height = item.offsetHeight+"px"//item.offsetHeight
+    
+    renderer = new THREE.CSS3DRenderer();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.domElement.style.position = 'absolute';
+    renderer.domElement.style.top = 0;
+    document.body.appendChild(renderer.domElement);
 
-    wrapper.className="contentWrapper"
-    wrapper.appendChild(Sprite3D.create(item))
+    // makes first element go in front and the rest in 
+    this.setUpHorizontalCircle(800,(2*Math.PI)/this.horizontal.length,-Math.PI/2)
 
-    that.sprites.push(stage.appendChild(Sprite3D.create(wrapper)))
-  })
-  
-  placeElementsOnCircle(this.sprites, 600, s.offsetWidth/2,100,-600)
-  this.setUpButtons(that)
-  // window.onclick=function(){
-  //   console.log("clicked")
-  //   that.sprites.forEach(function(item){
-  //     item.rotate(0,90,0).update();
-  //     item.firstChild.rotate(0,-90,0).update()
-  //   })
-  // }
 
-  this.list();
+    let that = this;
+    window.onclick = function(){
+      console.log("asfds")
+      let d = 2000
+      let angle=Math.PI/4//45 deg
+      let axis = new THREE.Vector3(   0,1 ,0 )
+      that.hSprites.forEach(function(item){
+        let o = {a:0}
+        new TWEEN.Tween(o)
+        .to({a:angle},d)
+        .easing(TWEEN.Easing.Exponential.InOut)
+        .onUpdate(rotationFunction(item,axis,angle,o))
+        .start()
+      })
+      requestAnimationFrame(animate)
+     
+    }
+
+    renderer.render( scene, camera );
+
+    
   },
   created: function (){
       this.mainFile = "none";
@@ -664,42 +364,40 @@ export default {
   },
   data () {
     return {
-      sprites:[],
+      hSprites:[],
       stage:{},
       id1 : "none",
       id2 : "none",
       id3 : "none",
+      horizontal:["some code maybe","id","aa","a","some code maybe","id","aa","a"],
+    }
+  },
+  watch: {
+    horizontal:function(){
+      console.log("xD")
     }
   },
   methods:{
-    setUpButtons:function(that){
-      let buttons = this.$el.querySelectorAll(".next-btn")
-      buttons.forEach(function(item){
-        item.onclick=function(){
-          that.sprites.forEach(function(item){
-          item.rotate(0,-90,0).update();
-          item.firstChild.rotate(0,90,0).update()
-        })
-        }
+    setUpHorizontalCircle:function(r,angle,offsetAngle){
+      let elements = this.$el.querySelectorAll(".hFileContainer")
+      console.log(elements)
+      let sprites=[]
+      elements.forEach((item, i)=>{
+
+        let sprite = new THREE.CSS3DObject( item );
+        let x = r * Math.cos(offsetAngle)
+        let z = -r * Math.sin(offsetAngle)
+        console.log(x,z)
+        offsetAngle+=angle
+        sprite.position.set(x,0, z)
+        // rotateAboutWorldAxis(sprite,new THREE.Vector3(   1, 0,0 ),(Math.PI/180)*25 ) //tilted circle by 25 deg
+        scene.add(sprite)
+        this.hSprites.push(sprite)
       })
-      buttons = this.$el.querySelectorAll(".prev-btn")
-      buttons.forEach(function(item){
-        item.onclick=function(){
-          that.sprites.forEach(function(item){
-          item.rotate(0,90,0).update();
-          item.firstChild.rotate(0,-90,0).update()
-        })
-        }
-      })
+      
+      
 
     },
-    rotateStuff:function(that){
-      that.sprites.forEach(function(item){
-      item.rotate(0,90,0).update();
-      item.firstChild.rotate(0,-90,0).update()
-    })
-    },
-
     //Ajax calls
     preload:function(){
         var item1 = {
@@ -773,6 +471,7 @@ export default {
       else{
         console.log(response.body);
         var id1 = response.body[0]._id;
+        console.log(id1)
         var id3 = response.body[1]._id;
         var id2 = response.body[2]._id;
 
@@ -832,9 +531,19 @@ export default {
   position: absolute;
   transition: all 2s;
 }
-.fileContainer{
+/*.fileContainer{
   background-color: red;
   position:absolute;
   transition: all 2s;
+}*/
+.hidden{
+display: none;
+}
+.three-div{
+    background: #BADA55;
+    color: #E50000;
+    font-family: Arial, Helvetica, Sans-serif;
+    font-size: 2em;
+    padding: 2em;
 }
 </style>
