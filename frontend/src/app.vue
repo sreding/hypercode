@@ -2,10 +2,13 @@
 <div id="app">
 <div class="hidden">
 <template v-for="(item,index) in horizontal">
-  <file-container :id="index" class="hFileContainer" >{{index}}</file-container>
+  <file-container :id="index" :width="700" :height="700" class="hFileContainer" >{{index}}</file-container>
+  <!-- <div class="hFileContainer three-div" contenteditable="true">asdfasdfasdfasdfasdf</div> -->
 </template>
+<file-container id="main-container" :width="700" :height="700"></file-container>
 <template v-for="(item,index) in vertical">
-  <file-container :id="index" class="vFileContainer" >{{index}}</file-container>
+  <file-container :id="index" :width="700" :height="700" class="vFileContainer" >{{index}}</file-container>
+  <!-- <div class="vFileContainer three-div" contenteditable="true">asasdfasdfasdfasdfdf</div> -->
 </template>
 </div>
 
@@ -279,7 +282,15 @@ THREE.CSS3DRenderer = function () {
 var Vue = require('vue');
 var VueResource = require('vue-resource');
 Vue.use(VueResource);
-let scene,camera,renderer;
+let scene,camera,renderer,hcontainer,vcontainer;
+
+//keycodes
+const LEFT = 37
+const UP = 38
+const RIGHT = 39
+const DOWN = 40
+
+
 function render(){
   renderer.render(scene,camera)
 }
@@ -291,13 +302,14 @@ function animate(time) {
         render()
   }
 
-function rotationFunction(object,axis,angle,o){
+//returns a function for tween to use on update if a tweened angle o.a
+function rotationFunction(object,axis,to){
 
   let old_position = new THREE.Vector4(object.position.x, object.position.y, object.position.z, 1);
   
   let rotationMatrix=new THREE.Matrix4();
   return function(time){
-    rotationMatrix = rotationMatrix.makeRotationAxis( axis.normalize(), o.a );
+    rotationMatrix = rotationMatrix.makeRotationAxis( axis.normalize(), to.angle );
     // console.log(angle*time)
     var newPos = old_position.clone().applyMatrix4(rotationMatrix);
     object.position.x = newPos.x;
@@ -325,10 +337,19 @@ export default {
   mounted: function () {
     this.list()
     scene = new THREE.Scene();
+    let rH = 2000
+    let rV = 800
     camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
-    camera.position.set(0, 0, 1500);
+    camera.position.set(0, 0, 1000);
 
-    
+    hcontainer = new THREE.CSS3DObject(document.createElement("div"));
+    vcontainer = new THREE.CSS3DObject(document.createElement("div"));
+
+    vcontainer.position.z=-rV //makes the main content always be in the z=0 plane
+    hcontainer.position.z=-rH //makes the main content always be in the z=0 plane
+
+    scene.add(hcontainer)
+    scene.add(vcontainer)
     renderer = new THREE.CSS3DRenderer();
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.domElement.style.position = 'absolute';
@@ -336,38 +357,24 @@ export default {
     document.body.appendChild(renderer.domElement);
 
     // makes first element go in front and the rest in 
-    this.setUpHorizontalCircle(800,(2*Math.PI)/this.horizontal.length,-Math.PI/2)
-    this.setUpVerticalCircle(800,(2*Math.PI)/this.horizontal.length,-Math.PI/2)
+    let hAngleBetween = (2*Math.PI)/(this.horizontal.length+1) //+1 for main file
+    let vAngleBetween = (2*Math.PI)/(this.vertical.length+1)
+    this.setUpHorizontalCircle(rH,hAngleBetween,-Math.PI/2 +hAngleBetween)
+    this.setUpVerticalCircle(rV,vAngleBetween,-Math.PI/2+vAngleBetween)
+    this.setUpMain();
 
 
     let that = this;
-    window.onclick = function(){
-      console.log("asfds")
-      let d = 2000
-      let angle=Math.PI/4//45 deg
-      let axis = new THREE.Vector3(   0,1 ,0 )
-      that.hSprites.forEach(function(item){
-        let o = {a:0}
-        new TWEEN.Tween(o)
-        .to({a:angle},d)
-        .easing(TWEEN.Easing.Exponential.InOut)
-        .onUpdate(rotationFunction(item,axis,angle,o))
-        .start()
-      })
-      let axis2= new THREE.Vector3(   1,0 ,0 )
-      that.vSprites.forEach(function(item){
-        let o = {a:0}
-        new TWEEN.Tween(o)
-        .to({a:angle},d)
-        .easing(TWEEN.Easing.Exponential.InOut)
-        .onUpdate(rotationFunction(item,axis2,angle,o))
-        .start()
-      })
-      requestAnimationFrame(animate)
+    document.addEventListener("keydown", this.handleKeyEvent.bind(this));
+    function f(){
+     
+       
+      
      
     }
 
     renderer.render( scene, camera );
+    requestAnimationFrame(animate)
 
     
   },
@@ -384,6 +391,7 @@ export default {
       id2 : "none",
       id3 : "none",
       horizontal:["some code maybe","id","aa","a","some code maybe","id","aa","a"],
+      // vertical:["one","two","threee"]
       vertical:["some code maybe","id","aa","a","some code maybe","id","aa","a"]
     }
   },
@@ -400,29 +408,69 @@ export default {
         let sprite = new THREE.CSS3DObject( item );
         let x = r * Math.cos(offsetAngle)
         let z = -r * Math.sin(offsetAngle)
-        console.log(x,z)
+
         offsetAngle+=angle
         sprite.position.set(x,0, z)
-        // rotateAboutWorldAxis(sprite,new THREE.Vector3(   1, 0,0 ),(Math.PI/180)*25 ) //tilted circle by 25 deg
-        scene.add(sprite)
+
+        hcontainer.add(sprite)
         this.hSprites.push(sprite)
       })
     },
     setUpVerticalCircle:function(r,angle,offsetAngle){
       let elements = this.$el.querySelectorAll(".vFileContainer")
-      let sprites=[]
+
       elements.forEach((item, i)=>{
 
         let sprite = new THREE.CSS3DObject( item );
         let y = r * Math.cos(offsetAngle)
         let z = -r * Math.sin(offsetAngle)
+
         offsetAngle+=angle
         sprite.position.set(0,y, z)
-        // rotateAboutWorldAxis(sprite,new THREE.Vector3(   1, 0,0 ),(Math.PI/180)*25 ) //tilted circle by 25 deg
-        scene.add(sprite)
+        vcontainer.add(sprite)
         this.vSprites.push(sprite)
       })
 
+    },
+    setUpMain:function(){
+      let element = this.$el.querySelector("#main-container");
+      let sprite = new THREE.CSS3DObject( element );
+      scene.add(sprite)
+    },
+    handleKeyEvent:function(e){
+      let d = 500
+      let that = this
+
+      if(e.keyCode === RIGHT || e.keyCode === LEFT){
+        let targetAngle = (2*Math.PI)/(that.horizontal.length+1)
+        let axis = new THREE.Vector3(   0,1 ,0 );
+        if(e.keyCode == LEFT){
+          targetAngle*=-1
+        }
+        this.hSprites.forEach(function(item){
+          let o = {angle:0}
+          new TWEEN.Tween(o)
+            .to({angle:targetAngle},d)
+            .easing(TWEEN.Easing.Exponential.InOut)
+            .onUpdate(rotationFunction(item,axis,o))
+            .start()
+          })
+      }
+      console.log(e.keyCode)
+      
+      
+      
+      
+      // let axis2= new THREE.Vector3(   1,0 ,0 )
+      // this.vSprites.forEach(function(item){
+      //   let o = {angle:0}
+      //   new TWEEN.Tween(o)
+      //   .to({angle:(2*Math.PI)/(that.vertical.length+1)},d)
+      //   .easing(TWEEN.Easing.Exponential.InOut)
+      //   .onUpdate(rotationFunction(item,axis2,o))
+      //   .start()
+      // })
+      
     },
     //Ajax calls
     preload:function(){
@@ -495,9 +543,7 @@ export default {
           self.preload();
       }
       else{
-        console.log(response.body);
         var id1 = response.body[0]._id;
-        console.log(id1)
         var id3 = response.body[1]._id;
         var id2 = response.body[2]._id;
 
@@ -531,10 +577,6 @@ export default {
     self.id2 = response.body._id;
     self.id1 = response.body.relations[0];
     self.id3 = response.body.relations[1];
-    console.log(self.id2);
-    console.log("props changed");
-    console.log(response.body);
-
   }, function (response) {
       // error callback   
   }); 
@@ -564,6 +606,9 @@ export default {
 }*/
 .hidden{
 display: none;
+}
+body{
+  background-color: #27292d;
 }
 .three-div{
     background: #BADA55;
