@@ -432,7 +432,7 @@ export default {
     handleKeyEvent:function(e){
       let d = 500
       let that = this
-      console.log(this.mainSprite.rotation)
+      console.log(Math.floor(this.mainSprite.position.x))
       if(e.keyCode === RIGHT || e.keyCode === LEFT){
         let targetAngle = (2*Math.PI)/(that.horizontal.length+1)
         if(e.keyCode == LEFT){
