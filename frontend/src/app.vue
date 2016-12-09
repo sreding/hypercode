@@ -1,11 +1,10 @@
 <template id="main-template">
 <div id="app">
 
-
 <context-view></context-view>
 
-<!-- <focus-view :id="1"></focus-view> -->
 </div>
+
 </template>
 
 <script>
