@@ -302,7 +302,7 @@ function animate(time) {
         render()
   }
 
-//returns a function for tween to use on update if a tweened angle o.a
+//returns a function for tween to use on update
 function rotationFunction(object,axis,to){
 
   let old_position = new THREE.Vector4(object.position.x, object.position.y, object.position.z, 1);
@@ -310,7 +310,6 @@ function rotationFunction(object,axis,to){
   let rotationMatrix=new THREE.Matrix4();
   return function(time){
     rotationMatrix = rotationMatrix.makeRotationAxis( axis.normalize(), to.angle );
-    // console.log(angle*time)
     var newPos = old_position.clone().applyMatrix4(rotationMatrix);
     object.position.x = newPos.x;
     object.position.y = newPos.y;
@@ -366,13 +365,7 @@ export default {
 
     let that = this;
     document.addEventListener("keydown", this.handleKeyEvent.bind(this));
-    function f(){
-     
-       
-      
-     
-    }
-
+  
     renderer.render( scene, camera );
     requestAnimationFrame(animate)
 
@@ -386,6 +379,7 @@ export default {
     return {
       hSprites:[],
       vSprites:[],
+      mainSprite:{},
       stage:{},
       id1 : "none",
       id2 : "none",
@@ -418,13 +412,10 @@ export default {
     },
     setUpVerticalCircle:function(r,angle,offsetAngle){
       let elements = this.$el.querySelectorAll(".vFileContainer")
-
       elements.forEach((item, i)=>{
-
         let sprite = new THREE.CSS3DObject( item );
         let y = r * Math.cos(offsetAngle)
         let z = -r * Math.sin(offsetAngle)
-
         offsetAngle+=angle
         sprite.position.set(0,y, z)
         vcontainer.add(sprite)
@@ -436,41 +427,53 @@ export default {
       let element = this.$el.querySelector("#main-container");
       let sprite = new THREE.CSS3DObject( element );
       scene.add(sprite)
+      this.mainSprite=sprite
     },
     handleKeyEvent:function(e){
       let d = 500
       let that = this
-
+      console.log(this.mainSprite.rotation)
       if(e.keyCode === RIGHT || e.keyCode === LEFT){
         let targetAngle = (2*Math.PI)/(that.horizontal.length+1)
-        let axis = new THREE.Vector3(   0,1 ,0 );
         if(e.keyCode == LEFT){
           targetAngle*=-1
         }
-        this.hSprites.forEach(function(item){
-          let o = {angle:0}
-          new TWEEN.Tween(o)
-            .to({angle:targetAngle},d)
-            .easing(TWEEN.Easing.Exponential.InOut)
-            .onUpdate(rotationFunction(item,axis,o))
-            .start()
-          })
+        console.log(hcontainer.children.indexOf(this.mainSprite))
+        if(hcontainer.children.indexOf(this.mainSprite)===-1){
+          hcontainer.add(this.mainSprite)
+          this.mainSprite.position.z= 2000//rH
+        }
+       
+        
+        this.animateRotation(this.hSprites, new THREE.Vector3(0,1,0), targetAngle, d )
       }
-      console.log(e.keyCode)
-      
-      
-      
-      
-      // let axis2= new THREE.Vector3(   1,0 ,0 )
-      // this.vSprites.forEach(function(item){
-      //   let o = {angle:0}
-      //   new TWEEN.Tween(o)
-      //   .to({angle:(2*Math.PI)/(that.vertical.length+1)},d)
-      //   .easing(TWEEN.Easing.Exponential.InOut)
-      //   .onUpdate(rotationFunction(item,axis2,o))
-      //   .start()
-      // })
-      
+      else if(e.keyCode === UP || e.keyCode === DOWN){
+        let targetAngle = (2*Math.PI)/(that.vertical.length+1)
+        if(e.keyCode===UP){
+          targetAngle*=-1
+        }
+        if(vcontainer.children.indexOf(this.mainSprite)===-1){
+          vcontainer.add(this.mainSprite)
+          this.mainSprite.position.z= 800//rH
+        }
+        this.animateRotation(this.vSprites, new THREE.Vector3(1,0,0), targetAngle, d )
+      }
+    },
+    animateRotation:function(elements, axis, targetAngle,duration){
+      let tweenObject ={angle:0} //goes from 0 to target angle according to tweening function
+        elements.forEach(function(item){
+          new TWEEN.Tween(tweenObject)
+            .to({angle:targetAngle}, duration)
+            .easing(TWEEN.Easing.Exponential.InOut)
+            .onUpdate(rotationFunction(item,axis,tweenObject))
+            .start()
+        })
+        new TWEEN.Tween(tweenObject)
+            .to({angle:targetAngle}, duration)
+            .easing(TWEEN.Easing.Exponential.InOut)
+            .onUpdate(rotationFunction(this.mainSprite,axis,tweenObject))
+            .start()
+
     },
     //Ajax calls
     preload:function(){
