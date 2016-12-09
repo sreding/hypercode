@@ -1,22 +1,25 @@
 <template id="main-template">
 <div id="app">
 <div class="hidden">
-<template v-for="(item,index) in horizontal">
+<!-- <template v-for="(item,index) in horizontal">
   <file-container :id="index" class="hFileContainer" >{{index}}</file-container>
 </template>
 <template v-for="(item,index) in vertical">
   <file-container :id="index" class="vFileContainer" >{{index}}</file-container>
-</template>
-</div>
+</template> -->
 
 </div>
+<focus-view :id="1"></focus-view>
+</div>
 </template>
-<!-- <div id="app"></div> -->
-</template>
+
+<!-- <div id="app"></div>
+</template> -->
 
 <script>
 
 import FileContainer from './components/file-container.vue';
+import focusView from './components/focus-view.vue';
 import * as THREE from 'three';
 import * as TWEEN from 'tween.js';
 // let TWEEN = require("tween.js")
@@ -320,7 +323,8 @@ function rotateAboutWorldAxis(object, axis, angle) {
 export default {
   name: 'app',
   components: {
-    'file-container': FileContainer
+    'file-container': FileContainer,
+    'focus-view': focusView
   },
   mounted: function () {
     this.list()

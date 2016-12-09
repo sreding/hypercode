@@ -4,10 +4,11 @@
       <a href="#" v-on:click="remove" id="exit-btn">x</a>
       <h1>{{title}}</h1>
       <textarea name="code" id="code"></textarea>
-      <a href="#" class="prev-btn" id="prev-btn">&lt</a>
-      <a href="#" class="next-btn" id="next-btn">&gt</a>
+      
+   <!--    <a href="#" class="prev-btn" id="prev-btn">&lt</a>
+      <a href="#" class="next-btn" id="next-btn">&gt</a> -->
       <a href="#" v-on:click="update" class="save-btn" id="save-btn">Save</a>
-      <a href="#" v-on:click="focus" class="focus-btn" id="focus-btn">Focus</a>
+      <a href="#" v-on:click="goBack" class="back-btn" id="focus-btn">Back</a>
     </div>
   </div>
 </template>
@@ -22,19 +23,18 @@ import CodeMirror from 'codemirror';
 import 'codemirror/mode/clike/clike';
 
 export default {
-  name: 'file-container',
-  mounted: function () {
+  name: 'focus-view',
+   mounted: function () {
     this.cm = CodeMirror.fromTextArea(this.$el.querySelector('#code'), {
       lineNumbers: true,
       mode: 'text/x-java'
-      // readOnly: 'true'
     });
-    this.cm.setSize(this.width+"vmin", (this.height-10)+"vmin");
+    this.cm.setSize("50vw", "70vmin");
 
     this.container =  this.$el.querySelector('#wrapper');
 
-    this.container.style.width=this.width+"vmin";
-    this.container.style.height=this.height+"vmin";
+    // this.container.style.width=this.width+"vmin";
+    // this.container.style.height=this.height+"vmin";
 
   },
   props: {
@@ -76,7 +76,6 @@ export default {
       relations: body.relations || [],
       source: body.source || ""
     }
-
       },
 
     show: function(event){
@@ -115,19 +114,7 @@ export default {
       // error callback
   });
     }
-    ,
-    focus: function(event){
-      console.log("focus");
-      event.preventDefault();
-      event.stopPropagation();
-      // this.container.setAttribute("style","height="+Math.max(document.documentElement.clientHeight, window.innerHeight || 0)
-      //   +"px"+" width="+Math.max(document.documentElement.clientWidth, window.innerWidth || 0)+"px");
-      this.height = 100;
-      this.width = 50;
-      // this.cm.setSize(this.width+, this.height-100); 
-
-  }
-}
+   }
 }
 
 </script>
@@ -190,6 +177,7 @@ export default {
     bottom: 30%;
     left: 0px;
   }
+
   #focus-btn{
     background-color: #cc8800;
     display: inline-block;
@@ -206,18 +194,19 @@ export default {
   
   #wrapper {
     background-color: #333333;
-    width: 50vmin;
-    height: 80vmin;
-    margin: 10px;
+    width: 100vmin;
+    margin: auto;
     padding: 3vmin 3vmin 6vmin 3vmin;
-    position: relative;
-  }
-
-  .CodeMirror pre {
-    white-space: pre-wrap;
-    word-break: break-all;
-    word-wrap: break-word;
-  }
+    position: absolute;
+}
+.CodeMirror {
+  border: 1px solid #eee;
+  height: auto;
+  width: auto;
+  max-height: 80vh;
+  max-width: 80vw;
+  margin: auto;
+}
   
   h1 {
     color: white;
