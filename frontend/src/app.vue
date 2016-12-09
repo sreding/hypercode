@@ -7,10 +7,9 @@
 <template v-for="(item,index) in vertical">
   <file-container :id="index" class="vFileContainer" >{{index}}</file-container>
 </template> -->
-<context-view></context-view>
+<<!--context-view></context-view>-->
 </div>
-<!-- <focus-view :id="1"></focus-view> -->
-</div>
+<file-container :id="1"></file-container>
 </template>
 
 <script>
