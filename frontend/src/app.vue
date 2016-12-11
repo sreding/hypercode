@@ -9,7 +9,7 @@
 
 <script>
 import ContextView from './components/context-view.vue';
-import FocusView from './components/focus-view.vue';
+// import FocusView from './components/focus-view.vue';
 import FileContainer from './components/file-container.vue';
 
 
@@ -20,7 +20,7 @@ export default {
     'file-container': FileContainer,
     // 'focus-view': FocusView,
     'context-view': ContextView,
-    'focus-view': FocusView
+    // 'focus-view': FocusView
 
   }
  
