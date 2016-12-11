@@ -63,7 +63,6 @@ THREE.CSS3DSprite.prototype.constructor = THREE.CSS3DSprite;
 
 THREE.CSS3DRenderer = function () {
 
-  console.log( 'THREE.CSS3DRenderer', THREE.REVISION );
 
   var _width, _height;
   var _widthHalf, _heightHalf;
@@ -328,6 +327,25 @@ function rotateAboutWorldAxis(object, axis, angle) {
       object.position.z = newPos.z;
 }
 
+//TODO: make it its own thing
+function MainFile(sprite,vLength,hLength,vRadius,hRadius){
+  this.sprite = sprite
+  this.vPos=0 //pos
+  this.hPos=0 //pos
+  this.vLength=vLength
+  this.hLength=hLength
+  this.rotatingVertical = false
+  this.rotatingHorizontal = false
+  this.verticalRotateable = function(){
+    return (this.hPos%this.hLength) === 0
+  }
+  this.horizontalRotateable = function(){
+    return (this.vPos%this.vLength) === 0
+  }
+
+
+}
+
 export default {
   name: 'context-view',
   components: {
@@ -349,6 +367,7 @@ export default {
 
     scene.add(hcontainer)
     scene.add(vcontainer)
+
     renderer = new THREE.CSS3DRenderer();
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.domElement.style.position = 'absolute';
@@ -358,6 +377,7 @@ export default {
     // makes first element go in front and the rest in 
     let hAngleBetween = (2*Math.PI)/(this.horizontal.length+1) //+1 for main file
     let vAngleBetween = (2*Math.PI)/(this.vertical.length+1)
+
     this.setUpHorizontalCircle(rH,hAngleBetween,-Math.PI/2 +hAngleBetween)
     this.setUpVerticalCircle(rV,vAngleBetween,-Math.PI/2+vAngleBetween)
     this.setUpMain();
@@ -379,7 +399,7 @@ export default {
     return {
       hSprites:[],
       vSprites:[],
-      mainSprite:{},
+      main:{},
       stage:{},
       id1 : "none",
       id2 : "none",
@@ -427,35 +447,50 @@ export default {
       let element = this.$el.querySelector("#main-container");
       let sprite = new THREE.CSS3DObject( element );
       scene.add(sprite)
-      this.mainSprite=sprite
+      this.main=new MainFile(sprite,this.vertical.length,this.horizontal.length,0,0)
     },
     handleKeyEvent:function(e){
       let d = 500
       let that = this
-      console.log(Math.floor(this.mainSprite.position.x))
+
       if(e.keyCode === RIGHT || e.keyCode === LEFT){
         let targetAngle = (2*Math.PI)/(that.horizontal.length+1)
-        if(e.keyCode == LEFT){
-          targetAngle*=-1
+       
+        if(!this.main.horizontalRotateable() ){
+          return
         }
-        console.log(hcontainer.children.indexOf(this.mainSprite))
-        if(hcontainer.children.indexOf(this.mainSprite)===-1){
-          hcontainer.add(this.mainSprite)
-          this.mainSprite.position.z= 2000//rH
+        if(hcontainer.children.indexOf(this.main.sprite)===-1){
+          vcontainer.remove(this.main.sprite)
+          hcontainer.add(this.main.sprite)
+          this.main.sprite.position.z= 2000//rH
+        }
+         if(e.keyCode == LEFT){
+          targetAngle*=-1
+          this.main.hPos-=1
+        }else{
+          this.main.hPos+=1
         }
        
-        
         this.animateRotation(this.hSprites, new THREE.Vector3(0,1,0), targetAngle, d )
       }
       else if(e.keyCode === UP || e.keyCode === DOWN){
         let targetAngle = (2*Math.PI)/(that.vertical.length+1)
+        
+        if(!this.main.verticalRotateable() ){
+          return
+        }
+        if(vcontainer.children.indexOf(this.main.sprite)===-1){
+          hcontainer.remove(this.main.sprite)
+          vcontainer.add(this.main.sprite)
+          this.main.sprite.position.z= 800//rH
+        }
         if(e.keyCode===UP){
           targetAngle*=-1
+          this.main.vPos-=1
+        }else{
+          this.main.vPos+=1
         }
-        if(vcontainer.children.indexOf(this.mainSprite)===-1){
-          vcontainer.add(this.mainSprite)
-          this.mainSprite.position.z= 800//rH
-        }
+        
         this.animateRotation(this.vSprites, new THREE.Vector3(1,0,0), targetAngle, d )
       }
     },
@@ -471,7 +506,7 @@ export default {
         new TWEEN.Tween(tweenObject)
             .to({angle:targetAngle}, duration)
             .easing(TWEEN.Easing.Exponential.InOut)
-            .onUpdate(rotationFunction(this.mainSprite,axis,tweenObject))
+            .onUpdate(rotationFunction(this.main.sprite,axis,tweenObject))
             .start()
 
     },
@@ -601,6 +636,9 @@ export default {
 .contentWrapper{
   position: absolute;
   transition: all 2s;
+}
+#main-container{
+  background-color: red;
 }
 /*.fileContainer{
   background-color: red;
