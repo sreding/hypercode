@@ -1,5 +1,5 @@
 <template>
-  <div id="file-container">
+  <div id="focus-view">
     <div id="wrapper">
       <a href="#" v-on:click="remove" id="exit-btn">x</a>
       <h1>{{title}}</h1>
@@ -8,7 +8,7 @@
    <!--    <a href="#" class="prev-btn" id="prev-btn">&lt</a>
       <a href="#" class="next-btn" id="next-btn">&gt</a> -->
       <a href="#" v-on:click="update" class="save-btn" id="save-btn">Save</a>
-      <a href="#" v-on:click="goBack" class="back-btn" id="focus-btn">Back</a>
+      <a href="#" v-on:click="goBack" class="back-btn" id="back-btn">Back</a>
     </div>
   </div>
 </template>
@@ -29,7 +29,7 @@ export default {
       lineNumbers: true,
       mode: 'text/x-java'
     });
-    this.cm.setSize("50vw", "70vmin");
+    // this.cm.setSize("50vw", "70vmin");
 
     this.container =  this.$el.querySelector('#wrapper');
 
@@ -137,61 +137,48 @@ export default {
   }
   
   #save-btn {
-    background-color: #cc8800;
+    background: rgba(255, 130, 0, 0.7);
     display: inline-block;`
     cursor: pointer;
     color: #ffffff;
     font-family: Helvetica, Arial;
-    font-size: 100%;
+    font-size: auto;
+    text-align: center;
     padding: 1% 1%;
+    height: 3vmin;
+    width: 6vmin;
     text-decoration: none;
     position: absolute;
     bottom: 0px;
     right: 10%;
   }
-  
-  #next-btn {
-    background-color: #cc8800;
-    display: inline-block;
-    cursor: pointer;
-    color: #ffffff;
-    font-family: Helvetica, Arial;
-    font-size: 100%;
-    padding: 10% 1%;
-    text-decoration: none;
-    position: absolute;
-    bottom: 30%;
-    right: 0px;
+  #save-btn:hover{
+    background: rgba(255, 60, 0, 0.9);
   }
-  
-  #prev-btn {
-    background-color: #cc8800;
-    display: inline-block;
-    cursor: pointer;
-    color: #ffffff;
-    font-family: Helvetica, Arial;
-    font-size: 100%;
-    padding: 10% 1%;
-    text-decoration: none;
-    position: absolute;
-    bottom: 30%;
-    left: 0px;
+  #back-btn:hover{
+    background: rgba(255, 60, 0, 0.9);
   }
-
-  #focus-btn{
-    background-color: #cc8800;
+  #exit-btn:hover{
+    background: rgba(255, 0, 0, 1);
+  }
+  #back-btn{
+  /*  background-color: #cc8800;*/
+  background: rgba(255, 130, 0, 0.7);
     display: inline-block;
     cursor: pointer;
     color: #ffffff;
     font-family: Helvetica, Arial;
-    font-size: 100%;
+     font-size: auto;
+    text-align: center;
     padding: 1% 1%;
+    height: 3vmin;
+    width: 6vmin;
     text-decoration: none;
     position: absolute;
     bottom: 0px;
     right: 20%;
+    opacity: 90%;
   }
-  
   #wrapper {
     background-color: #333333;
     width: 100vmin;
@@ -199,12 +186,15 @@ export default {
     padding: 3vmin 3vmin 6vmin 3vmin;
     position: absolute;
 }
+.focus-view{
+  margin: auto;
+  position: absolute;
+}
 .CodeMirror {
   border: 1px solid #eee;
-  height: auto;
-  width: auto;
-  max-height: 80vh;
-  max-width: 80vw;
+  position: absolute;
+  width: 100vmin;
+  height: 70vmin;
   margin: auto;
 }
   
@@ -213,5 +203,6 @@ export default {
     font-family: 'Helvetica Neue', Helvetica, Arial;
     font-weight: normal;
     text-align: center;
+    font-size: 100%;
   }
 </style>
