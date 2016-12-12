@@ -7,12 +7,15 @@
 </template>
 <file-container id="main-container" :width="700" :height="700"></file-container>
 <template v-for="(item,index) in vertical">
-  <file-container :id="index" :width="700" :height="700" class="vFileContainer" >{{index}}</file-container>
+  <file-container :id="index" :width="700" :height="1000000" class="vFileContainer" >{{index}}</file-container>
   <!-- <div class="vFileContainer three-div" contenteditable="true">asasdfasdfasdfasdfdf</div> -->
 </template>
 </div>
+<input type="button" id="zoomButton"  value="zoom" style="position:relative;z-index: 10;">
+<input type="button" id="clearButton"  value="clear" style="position:absolute;z-index: 10;">
 
 </div>
+
 </template>
 <!-- <div id="app"></div> -->
 </template>
@@ -910,7 +913,7 @@ function animate(time) {
 
         TWEEN.update(time);
         render()
-        controls.update();
+        // controls.update();
   }
 
 //returns a function for tween to use on update
@@ -954,6 +957,9 @@ function MainFile(sprite,vLength,hLength,vRadius,hRadius){
   this.horizontalRotateable = function(){
     return (this.vPos%this.vLength) === 0
   }
+  this.clear=function(){
+    this.sprite.parent.remove(this.sprite)
+  }
 
 
 }
@@ -973,7 +979,8 @@ export default {
     let rH = 2000
     let rV = 800
     camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
-    camera.position.set(0, 0, 1000);
+    camera.position.set(0, 0,2*window.innerHeight);
+    console.log(window.innerHeight)
     
 
 
@@ -1011,6 +1018,12 @@ export default {
   
     renderer.render( scene, camera );
     requestAnimationFrame(animate)
+    this.setUpZoom()
+
+    this.$el.querySelector("#clearButton").onclick=function(){
+      console.log(vcontainer.children)
+      that.clearEverything(vcontainer);
+  }
 
     
   },
@@ -1024,9 +1037,8 @@ export default {
       vSprites:[],
       main:{},
       stage:{},
-      id1 : "none",
-      id2 : "none",
-      id3 : "none",
+      width:700,
+      height:700,
       rotationsRunning:0,
       horizontal:["some code maybe","id","aa","a","some code maybe","id","aa","a"],
       // vertical:["one","two","threee"]
@@ -1150,6 +1162,42 @@ export default {
       }
       
     },
+    setUpZoom(){
+      let toggle = true
+      let near = window.innerHeight/1.5
+      let far = 2*window.innerHeight;
+      let tweenAmount
+      this.$el.querySelector("#zoomButton").onclick=function(){
+        if(toggle){
+          tweenAmount=near
+        }else{
+          tweenAmount=far
+        }
+        toggle = !toggle
+        let tweenObject={z:camera.position.z}
+        new TWEEN.Tween(tweenObject)
+            .to({z:tweenAmount}, 500)
+            .easing(TWEEN.Easing.Exponential.InOut)
+            .onUpdate(function(){
+              camera.position.z=tweenObject.z;
+              camera.updateProjectionMatrix()})
+            .start()
+      }
+    },
+
+    clearEverything:function(element){ //css3dobject
+      console.log(scene.children)
+      this.clearChildren(vcontainer);
+      this.clearChildren(hcontainer);
+      this.main.clear();
+  },
+    clearChildren:function(element){
+      for( var i = element.children.length - 1; i >= 0; i--) { 
+        element.remove(element.children[i])
+      }
+    },
+
+
     //Ajax calls
     preload:function(){
         var item1 = {
