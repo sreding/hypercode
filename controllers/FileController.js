@@ -42,8 +42,9 @@ module.exports = {
       }
 
       if(req.query.rel && req.query.rel != 0){
+
        FileModel.find({
-        '_id': { $in: File.relations}}, (err, relations) => {
+        '_id': { $in: File.relations}}).lean().exec(function (err, relations){
       if (err) {
         return res.status(500).json({
           message: 'Error when getting relations.',
@@ -51,10 +52,9 @@ module.exports = {
         });
       }; 
        File.relations = relations;
-       console.log( File.relations);
           return res.json(File);
-  });
-      }
+        });
+  }
     else{
       return res.json(File);
     }
