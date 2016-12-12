@@ -967,6 +967,13 @@ export default {
   },
   mounted: function () {
     this.list()
+    function onWindowResize() {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize( window.innerWidth, window.innerHeight );
+        render();
+      }
+    window.addEventListener("resize",onWindowResize)
  
 
     scene = new THREE.Scene();
@@ -1074,7 +1081,7 @@ export default {
       this.main=new MainFile(sprite,this.vertical.length,this.horizontal.length,0,0)
     },
     handleKeyEvent:function(e){
-      let d = 500
+      let d = 300
       let that = this
       if(this.rotationsRunning !== 0){
         return
