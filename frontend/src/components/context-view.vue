@@ -2,12 +2,12 @@
 <div id="context-view">
 <div class="hidden">
 <template v-for="(item,index) in horizontal">
-  <file-container :id="index" :width="700" :height="700" class="hFileContainer" >{{index}}</file-container>
+  <file-container :fileid="item" :id="index" :width="700" :height="700" class="hFileContainer" >{{index}}</file-container>
   <!-- <div class="hFileContainer three-div" contenteditable="true">asdfasdfasdfasdfasdf</div> -->
 </template>
-<file-container id="main-container" :width="700" :height="700"></file-container>
+<file-container :fileid="vertical[0]" id="main-container" :width="700" :height="700"></file-container>
 <template v-for="(item,index) in vertical">
-  <file-container :id="index" :width="700" :height="700" class="vFileContainer" >{{index}}</file-container>
+  <file-container :fileid="item" :id="index" :width="700" :height="700" class="vFileContainer" >{{index}}</file-container>
   <!-- <div class="vFileContainer three-div" contenteditable="true">asasdfasdfasdfasdfdf</div> -->
 </template>
 </div>
@@ -883,14 +883,8 @@ THREE.TrackballControls = function ( object, domElement ) {
 THREE.TrackballControls.prototype = Object.create( THREE.EventDispatcher.prototype );
 THREE.TrackballControls.prototype.constructor = THREE.TrackballControls;
 
-
-
-
-
-
-
-var Vue = require('vue');
-var VueResource = require('vue-resource');
+let Vue = require('vue');
+let VueResource = require('vue-resource');
 Vue.use(VueResource);
 let scene,camera,renderer,hcontainer,vcontainer,controls;
 
@@ -958,14 +952,13 @@ function MainFile(sprite,vLength,hLength,vRadius,hRadius){
 
 }
 
-
-
 export default {
   name: 'context-view',
   components: {
     'file-container': FileContainer
   },
   mounted: function () {
+
     this.list()
     function onWindowResize() {
         camera.aspect = window.innerWidth / window.innerHeight;
@@ -976,12 +969,12 @@ export default {
     window.addEventListener("resize",onWindowResize)
  
 
+
     scene = new THREE.Scene();
     let rH = 2000
     let rV = 800
     camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
-    camera.position.set(0, 0, 1000);
-    
+    camera.position.set(0, 0, 1000);   
 
 
     hcontainer = new THREE.CSS3DObject(document.createElement("div"));
@@ -1010,39 +1003,32 @@ export default {
 
     this.setUpHorizontalCircle(rH,hAngleBetween,-Math.PI/2 +hAngleBetween)
     this.setUpVerticalCircle(rV,vAngleBetween,-Math.PI/2+vAngleBetween)
+    
     this.setUpMain();
-
 
     let that = this;
     document.addEventListener("keydown", this.handleKeyEvent.bind(this));
   
     renderer.render( scene, camera );
     requestAnimationFrame(animate)
-
-    
-  },
-  created: function (){
-      this.mainFile = "none";
-      
   },
   data () {
     return {
       hSprites:[],
       vSprites:[],
+      mainid: null,
       main:{},
       stage:{},
-      id1 : "none",
-      id2 : "none",
-      id3 : "none",
       rotationsRunning:0,
-      horizontal:["some code maybe","id","aa","a","some code maybe","id","aa","a"],
+      horizontal:["1 code", "maybe","id", "a"],
       // vertical:["one","two","threee"]
-      vertical:["some code maybe","id","aa","a","some code maybe","id","aa","a"]
+      vertical:["some code maybe","id","aa", "a"]
     }
   },
   watch: {
     horizontal:function(){
-      console.log("xD")
+    
+  
     }
   },
   methods:{
@@ -1078,6 +1064,7 @@ export default {
       let element = this.$el.querySelector("#main-container");
       let sprite = new THREE.CSS3DObject( element );
       scene.add(sprite)
+      this.list()
       this.main=new MainFile(sprite,this.vertical.length,this.horizontal.length,0,0)
     },
     handleKeyEvent:function(e){
@@ -1157,111 +1144,42 @@ export default {
       }
       
     },
-    //Ajax calls
-    preload:function(){
-        var item1 = {
-        name: "Code1.java",
-        extension: "java",
-        type: "class",
-        source: "public void HelloWorld{ return 'Hello World!' }", };
+    //Ajax calls 
+      list: function(){
+          let self = this;
+         this.$http({url: 'http://localhost:3000/api/files/', method: 'GET'}).then(function (response) {
+         console.log(response.body);
+         self.mainid = response.body[0]._id;
+         self.relations();
 
-        var id1;
-
-      this.$http({url: 'http://localhost:3000/api/files/', method: 'POST', body: item1}).then(function (response) {
-      // success callback
-      id1 = response.body._id;
-      this.id1 = id1;
-
-        var item2 = {
-        name: "Code2.java",
-        extension: "java",
-        type: "class",
-        source: "public void HelloWorld{ return 'Hello World!' }", };
-
-        var id2;
-
-           this.$http({url: 'http://localhost:3000/api/files/', method: 'POST', body: item2}).then(function (response) {
-      // success callback
-      id2 = response.body._id;
-      this.id3 = id2;
-
-        var item3 = {
-        name: "Code3.java",
-        extension: "java",
-        type: "class",
-        relations:[id1, id2],
-        source: "public void HelloWorld{ return 'Hello World!' }", };
-
-        var id3;
-
-         this.$http({url: 'http://localhost:3000/api/files/', method: 'POST', body: item3}).then(function (response) {
-      // success callback
-      id3 = response.body._id;
-      this.id2 = id3;
-
-       }, function (response) {
+      }, function (response) {
       // error callback   
-      });
+  });
 
-       }, function (response) {
-      // error callback   
-      });
+      },
 
-       }, function (response) {
-      // error callback   
-      }); 
+      relations:function(){
+        let self = this;
+        console.log(this.mainid);
+          
+            console.log("Load horizontal:" + this.mainid);
 
-        
+            this.$http({url: 'http://localhost:3000/api/files/'+ this.mainid +'?rel=1', method: 'GET'}).then(function (response) {
+              console.log(response.body.relations);
+            self.horizontal = [self.mainid].concat(response.body.relations);
+            
+            let subid = response.body.relations[1]; 
 
-        var item2 = {
-        name: "Filename",
-        extension: "java",
-        type: "class",
-        source: "public void HelloWorld{ return 'Hello World!' }", };
-    },
-
-        list: function(event){
-         var self = this; 
-        this.$http({url: 'http://localhost:3000/api/files/', method: 'GET'}).then(function (response) {
-      // success callback
-      if(response.body.length < 1){
-          self.preload();
-      }
-      else{
-        var id1 = response.body[0]._id;
-        var id3 = response.body[1]._id;
-        var id2 = response.body[2]._id;
-
-        this.id1 = id1;
-        this.id2 = id2;
-        this.id3 = id3;
-      }
-  }, function (response) {
-      // error callback   
-  }); 
-    },  
-        create: function(data){
-             var self = this;
-        //dummy object
-
-      this.$http({url: 'http://localhost:3000/api/files/', method: 'POST', body: data}).then(function (response) {
-      // success callback
-  }, function (response) {
-      // error callback   
-  }); 
-
-      
-    },
-      relations:function(event){
-      var self = this;
-      console.log(this.mainFile);
-            this.$http({url: 'http://localhost:3000/api/files/'+ this.mainFile +'?rel=1', method: 'GET'}).then(function (response) {
+          console.log("Load vertical:" + subid);
+            this.$http({url: 'http://localhost:3000/api/files/'+ subid +'?rel=1', method: 'GET'}).then(function (response) {
     
-    // success callback
+              self.vertical = [subid].concat(response.body.relations);
+ 
   
-    self.id2 = response.body._id;
-    self.id1 = response.body.relations[0];
-    self.id3 = response.body.relations[1];
+  }, function (response) {
+      // error callback   
+  }); 
+  
   }, function (response) {
       // error callback   
   }); 

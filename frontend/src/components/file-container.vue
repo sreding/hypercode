@@ -3,9 +3,8 @@
     <div id="wrapper">
       <a href="#" v-on:click="remove" id="exit-btn">x</a>
       <h1>{{title}}</h1>
-      <code name="code" class="java.jsp" id="code">public static void main(){
-        return "hello";
-      }
+      <code name="code" style="height:700px; overflow: scroll;" class="java.jsp" id="code">
+        
       </code>
       <a href="#" class="prev-btn" id="prev-btn">&lt</a>
       <a href="#" class="next-btn" id="next-btn">&gt</a>
@@ -17,12 +16,9 @@
 
 <script>
 // enable ajax
-var Vue = require('vue');
-var VueResource = require('vue-resource');
+let Vue = require('vue');
+let VueResource = require('vue-resource');
 Vue.use(VueResource);
-
-import CodeMirror from 'codemirror';
-import 'codemirror/mode/clike/clike';
 
 import hljs from 'highlight.js';
 
@@ -32,19 +28,23 @@ export default {
     this.container =  this.$el.querySelector('#wrapper');
     this.container.style.width=this.width+"vmin";
     this.container.style.height=this.height+"vmin";
-    var block = this.$el.querySelector('code#code');
-
+    
+    let block = this.$el.querySelector('code#code');
     hljs.highlightBlock(block);
+
+    block.addEventListener("focusout", function(){
+      hljs.highlightBlock(block);
+    });
   },
   props: {
-    'fileid':{default: "none"}
+    'fileid':{default: null}
   },
   watch: {
-    // whenever field changes, this function will run
     fileid: function (newFileid) {
-      console.log("NEWFIELD", newFileid);
-       if(newFileid!='none'){
-       this.show(); // ready to insert the component
+      console.log("Reload: ", newFileid);
+      
+       if(newFileid!=null){
+       this.show();
        }
     }
     // height: function(newH, oldH){
@@ -57,7 +57,6 @@ export default {
     },
   data: function () {
     return {
-      cm: null,
       title: 'fileName.ext',
       file: {},
       'width':  80 ,
@@ -67,7 +66,8 @@ export default {
 
   methods: {
     saveFileData(body){
-  this.data = {
+    
+    this.data = {
       name: body.name,
       extension: body.extension || "",
       type:  body.type || "",
@@ -85,6 +85,10 @@ export default {
     // success callback
     self.title = response.body.name;
     this.saveFileData(response.body);
+    
+    let block = this.$el.querySelector('code#code');
+    block.innerHTML = response.body.source;
+    hljs.highlightBlock(block);
 
   }, function (response) {
       // error callback
@@ -92,7 +96,6 @@ export default {
     },
       update: function(event){
       var self = this;
-      this.file.source = this.cm.getValue();
       this.$http({url: 'http://localhost:3000/api/files/'+ this.fileid, body:this.file, method: 'PUT'}).then(function (response) {
 
       // success callback
@@ -108,7 +111,6 @@ export default {
       // success callback
       self.cm.setValue(response.body + "DELETE");
       this.data = {};
-      self.cm.setValue("File deleted");
   }, function (response) {
       // error callback
   });
@@ -129,11 +131,9 @@ export default {
 }
 
 </script>
-
-<style src="codemirror/lib/codemirror.css">
-
 </style>
 <style>
+
   #exit-btn {
     background-color: #991f00;
     cursor: pointer;
@@ -216,6 +216,10 @@ export default {
     word-break: break-all;
     word-wrap: break-word;
   }
+
+  #code{
+    word-wrap: break-word;
+  }
   
   h1 {
     color: white;
@@ -224,100 +228,7 @@ export default {
     text-align: center;
   }
 
-  /*
+ </style>
 
-Atom One Dark by Daniel Gamage
-Original One Dark Syntax theme from https://github.com/atom/one-dark-syntax
-
-base:    #282c34
-mono-1:  #abb2bf
-mono-2:  #818896
-mono-3:  #5c6370
-hue-1:   #56b6c2
-hue-2:   #61aeee
-hue-3:   #c678dd
-hue-4:   #98c379
-hue-5:   #e06c75
-hue-5-2: #be5046
-hue-6:   #d19a66
-hue-6-2: #e6c07b
-
-*/
-
-.hljs {
-  display: block;
-  overflow-x: auto;
-  padding: 0.5em;
-  color: #abb2bf;
-  background: #282c34;
-}
-
-.hljs-comment,
-.hljs-quote {
-  color: #5c6370;
-  font-style: italic;
-}
-
-.hljs-doctag,
-.hljs-keyword,
-.hljs-formula {
-  color: #c678dd;
-}
-
-.hljs-section,
-.hljs-name,
-.hljs-selector-tag,
-.hljs-deletion,
-.hljs-subst {
-  color: #e06c75;
-}
-
-.hljs-literal {
-  color: #56b6c2;
-}
-
-.hljs-string,
-.hljs-regexp,
-.hljs-addition,
-.hljs-attribute,
-.hljs-meta-string {
-  color: #98c379;
-}
-
-.hljs-built_in,
-.hljs-class .hljs-title {
-  color: #e6c07b;
-}
-
-.hljs-attr,
-.hljs-variable,
-.hljs-template-variable,
-.hljs-type,
-.hljs-selector-class,
-.hljs-selector-attr,
-.hljs-selector-pseudo,
-.hljs-number {
-  color: #d19a66;
-}
-
-.hljs-symbol,
-.hljs-bullet,
-.hljs-link,
-.hljs-meta,
-.hljs-selector-id,
-.hljs-title {
-  color: #61aeee;
-}
-
-.hljs-emphasis {
-  font-style: italic;
-}
-
-.hljs-strong {
-  font-weight: bold;
-}
-
-.hljs-link {
-  text-decoration: underline;
-}
-</style>
+<style src="../../node_modules/highlight.js/styles/atom-one-dark.css">
+ </style>
