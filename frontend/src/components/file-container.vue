@@ -7,8 +7,8 @@
         return "hello";
       }
       </code>
-      <a href="#" class="prev-btn" id="prev-btn">&lt</a>
-      <a href="#" class="next-btn" id="next-btn">&gt</a>
+     <!--  <a href="#" class="prev-btn" id="prev-btn">&lt</a>
+      <a href="#" class="next-btn" id="next-btn">&gt</a> -->
       <a href="#" v-on:click="update" class="save-btn" id="save-btn">Save</a>
       <a href="#" v-on:click="focus" class="focus-btn" id="focus-btn">Focus</a>
     </div>
@@ -209,6 +209,19 @@ export default {
     margin: 10px;
     padding: 3vmin 3vmin 6vmin 3vmin;
     position: relative;
+  }
+
+   #save-btn:hover{
+    background: rgba(255, 60, 0, 0.9);
+  }
+  #back-btn:hover{
+    background: rgba(255, 60, 0, 0.9);
+  }
+  #exit-btn:hover{
+    background: rgba(255, 0, 0, 1);
+  }
+   #focus-btn:hover{
+    background: rgba(255, 0, 0, 1);
   }
 
   .CodeMirror pre {

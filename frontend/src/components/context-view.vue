@@ -1278,7 +1278,7 @@ export default {
   transition: all 2s;
 }
 #main-container{
-  background-color: red;
+  background-color: white;
 }
 /*.fileContainer{
   background-color: red;
@@ -1289,8 +1289,9 @@ export default {
 display: none;
 }
 body{
-  background-color: #27292d;
-  overflow: hidden;
+  /*background-color: #0086b3;
+  background: radial-gradient(#8c8c8c 10%, #1a1a1a 15%,  #595959 75%);*/
+ overflow: hidden;
 }
 .three-div{
     background: #BADA55;
