@@ -1,15 +1,19 @@
 <template>
   <div id="file-container">
     <div id="wrapper">
-      <a href="#" v-on:click="remove" id="exit-btn">x</a>
+    <div class="container-menu-top">
+      <a href="#" v-on:click="remove" class="exit-btn" id="exit-btn">x</a>
+      </div>
       <h1>{{title}}</h1>
       <code name="code" style=" overflow: scroll;" class="java.jsp" id="code">
         
       </code>
      <!--  <a href="#" class="prev-btn" id="prev-btn">&lt</a>
       <a href="#" class="next-btn" id="next-btn">&gt</a> -->
-      <a href="#" v-on:click="update" class="save-btn" id="save-btn">Save</a>
-      <a href="#" v-on:click="focus" class="focus-btn" id="focus-btn">Focus</a>
+      <div class="container-menu">
+      <a href="#" v-on:click="update" class="btn" id="save-btn">Save</a>
+      <a href="#" v-on:click="focus" class="btn" id="focus-btn">Focus</a>
+      </div>
     </div>
   </div>
 </template>
@@ -125,73 +129,70 @@ export default {
 </script>
 </style>
 <style>
-
-  #exit-btn {
+  .container-menu{
+    /*background: rgba(255, 0, 0, 1);*/
+    position: absolute;
+    bottom: 0px;
+    right: 0;
+    width: 100%;
+    height: 8%;
+    background: grey;
+    display: inline-flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-content: stretch;
+  }
+  .container-menu-top{
+    /*background: rgba(255, 0, 0, 1);*/
+    position: absolute;
+    top: 0px;
+    right: 0;
+    width: 100%;
+    height: 5%;
+    background: #262626;
+    display: inline-flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+     align-content: stretch;
+   
+  }
+  .exit-btn {
     background-color: #991f00;
     cursor: pointer;
     color: #ffffff;
     font-family: Helvetica, Arial;
     font-size: 2vmin;
     padding: 1.5vmin 1.5vmin;
+    text-align: center;
     text-decoration: none;
-    position: absolute;
-    top: 0px;
-    left: 0px;
+    width: 5%;
   }
   
-  #save-btn {
-    background-color: #cc8800;
-    display: inline-block;
+  .btn {
+    background-color: #262626;
+    
+    /*display: inline-block;*/
+    flex-grow: 1;
     cursor: pointer;
-    color: #ffffff;
-    font-family: Helvetica, Arial;
-    font-size: 100%;
-    padding: 1% 1%;
+    color: white;
+    font-family: 'Helvetica Neue Thin',Helvetica, Arial;
+    font-size: 140%;
+    padding: 2%;
+    width: auto;
     text-decoration: none;
-    position: absolute;
-    bottom: 0px;
-    right: 10%;
+ 
+    text-align: center;
+
   }
-  
-  #next-btn {
-    background-color: #cc8800;
-    display: inline-block;
-    cursor: pointer;
-    color: #ffffff;
-    font-family: Helvetica, Arial;
-    font-size: 100%;
-    padding: 10% 1%;
-    text-decoration: none;
-    position: absolute;
-    bottom: 30%;
-    right: 0px;
+
+  .btn:hover{
+    background-color: #a6a6a6;
   }
-  
-  #prev-btn {
-    background-color: #cc8800;
-    display: inline-block;
-    cursor: pointer;
-    color: #ffffff;
-    font-family: Helvetica, Arial;
-    font-size: 100%;
-    padding: 10% 1%;
-    text-decoration: none;
-    position: absolute;
-    bottom: 30%;
-    left: 0px;
-  }
-  #focus-btn{
-    background-color: #cc8800;
-    display: inline-block;
-    cursor: pointer;
-    color: #ffffff;
-    font-family: Helvetica, Arial;
-    font-size: 100%;
-    padding: 1% 1%;
-    text-decoration: none;
-    position: absolute;
-    bottom: 0px;
-    right: 20%;
+
+  a:first-child{
+    border-right-style: solid;
+    border-right-color: black;
+    border-right-width: 1px;
   }
   
   #wrapper {
@@ -202,19 +203,7 @@ export default {
     padding: 3vmin 3vmin 6vmin 3vmin;
     position: relative;
   }
-
-   #save-btn:hover{
-    background: rgba(255, 60, 0, 0.9);
-  }
-  #back-btn:hover{
-    background: rgba(255, 60, 0, 0.9);
-  }
-  #exit-btn:hover{
-    background: rgba(255, 0, 0, 1);
-  }
-   #focus-btn:hover{
-    background: rgba(255, 0, 0, 1);
-  }
+ 
 
   .CodeMirror pre {
     white-space: pre-wrap;

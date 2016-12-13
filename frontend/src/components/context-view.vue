@@ -1357,8 +1357,12 @@ export default {
   position: absolute;
   transition: all 2s;
 }
-#main-container{
-  background-color: white;
+#main-container .container-menu-top{
+  
+  background: #00001a;
+}
+#main-container .btn{
+  background-color: #00001a;
 }
 /*.fileContainer{
   background-color: red;
@@ -1369,9 +1373,10 @@ export default {
 display: none;
 }
 body{
-  /*background-color: #0086b3;
-  background: radial-gradient(#8c8c8c 10%, #1a1a1a 15%,  #595959 75%);*/
+  background-image: url("http://www.thewallpapers.org/photo/44424/Background-Blue.jpg");
+  background-color: #0086b3;
  overflow: hidden;
+
 }
 .three-div{
     background: #BADA55;
