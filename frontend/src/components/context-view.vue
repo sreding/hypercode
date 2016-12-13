@@ -1,14 +1,14 @@
 <template id="main-template">
 <div id="context-view">
 <div class="hidden">
+
 <!-- <template id="horizontalTemplate" v-for="(item,index) in horizontal"> -->
-  <file-container v-for="(item,index) in horizontal"   :key="Math.random()*40000" class="hFileContainer" >{{index}}</file-container>
+  <file-container :filedata="item" v-for="(item,index) in horizontal"   :key="Math.random()*40000" class="hFileContainer" >{{index}}</file-container>
   <!-- <div class="hFileContainer three-div" contenteditable="true">asdfasdfasdfasdfasdf</div> -->
 <!-- </template> -->
-<file-container  id="main-container" ></file-container>
+<file-container :filedata="maindata" id="main-container" ></file-container>
 <!-- <template id="verticalTemplate" v-for="(item,index) in vertical"> -->
-  <file-container v-for="(item,index) in vertical"   :key="Math.random()*40000" class="vFileContainer" >{{index}}</file-container>
-
+  <file-container :filedata="item" v-for="(item,index) in vertical"   :key="Math.random()*40000" class="vFileContainer" >{{index}}</file-container>
   <!-- <div class="vFileContainer three-div" contenteditable="true">asasdfasdfasdfasdfdf</div> -->
 <!-- </template> -->
 </div>
@@ -973,7 +973,6 @@ export default {
   },
   mounted: function () {
 
-    // this.list()
     function onWindowResize() {
         camera.aspect = window.innerWidth / window.innerHeight;
         camera.updateProjectionMatrix();
@@ -1019,6 +1018,7 @@ export default {
     // this.setUpHorizontalCircle(rH,hAngleBetween,-Math.PI/2 +hAngleBetween)
     // this.setUpVerticalCircle(rV,vAngleBetween,-Math.PI/2+vAngleBetween)
     
+
     // this.setUpMain();
 
     let that = this;
@@ -1050,7 +1050,9 @@ export default {
       hSprites:[],
       vSprites:[],
       mainid: null,
+
       sync:0,//used to call a function after both vertical and horizontal heve been called
+      maindata: {},
       main:{},
       stage:{},
       rotationsRunning:0,
@@ -1077,6 +1079,8 @@ export default {
          while (that.vertical.length!==0){
             that.vertical.pop()
           }
+
+          // load vertical
          let a =[Math.random(),Math.random(),Math.random()]
          for(let i = 0; i<a.length;i++){
           that.vertical.push(a[i])
@@ -1086,6 +1090,7 @@ export default {
     },
     mainid:function(){  
       this.clearEverything()
+      //this.relations();
 
 
       this.hSprites=[]
@@ -1093,6 +1098,8 @@ export default {
       this.rotationsRunning=0
       
       // this.horizontal = ["1 code", "maybe"]''
+     
+     //load horizontal
       let that = this
       while (that.horizontal.length!==0){
             that.horizontal.pop()
@@ -1150,7 +1157,7 @@ export default {
       let element = this.$el.querySelector("#main-container");
       let sprite = new THREE.CSS3DObject( element );
       scene.add(sprite)
-      // this.list()
+
       this.main=new MainFile(sprite,this.vertical.length,this.horizontal.length,0,0)
     },
     handleKeyEvent:function(e){
@@ -1276,10 +1283,10 @@ export default {
     },
     //Ajax calls 
       list: function(){
-          let self = this;
+         let self = this;
          this.$http({url: 'http://localhost:3000/api/files/', method: 'GET'}).then(function (response) {
          self.mainid = response.body[0]._id;
-         self.relations();
+         self.maindata = response.body[0];
 
       }, function (response) {
 
@@ -1290,28 +1297,47 @@ export default {
 
       relations:function(){
         let self = this;
+
+
+            console.log("Load horizontal:" + self.mainid);
+
+            this.$http({url: 'http://localhost:3000/api/files/'+ self.mainid +'?rel=true', method: 'GET'}).then(function (response) {
+           
+              let hdata = [];
+              
+              let hrelations = response.body.horizontal;
+              
+              for(let i = 0; i < hrelations.length; i++){
+                
+                let hrelation = hrelations[i];
+                
+                if(hrelation._id != self.mainid){
+                // self.horizontal.push(hrelation);
+                }
+              }
+
+              
+
           
-            console.log("Load horizontal:" + this.mainid);
+               console.log("Load vertical:" + self.mainid);    
 
-            this.$http({url: 'http://localhost:3000/api/files/'+ this.mainid +'?rel=1', method: 'GET'}).then(function (response) {
-              console.log(response.body.relations);
-            self.horizontal = [self.mainid].concat(response.body.relations);
-            
-            let subid = response.body.relations[1]; 
+               let vdata = [];
+                let vrelations = response.body.vertical;
+                for(let j = 0; j < vrelations.length; j++){
+                let vrelation = vrelations[j];
+         
+                if(vrelation._id != self.mainid){
+                //self.vertical.push(vrelation);
+                }
+                
+                }
 
-          console.log("Load vertical:" + subid);
-            this.$http({url: 'http://localhost:3000/api/files/'+ subid +'?rel=1', method: 'GET'}).then(function (response) {
-    
-              self.vertical = [subid].concat(response.body.relations);
- 
-  
+               
+
   }, function (response) {
       // error callback   
   }); 
-  
-  }, function (response) {
-      // error callback   
-  }); 
+          
     },
   }   
   
@@ -1354,4 +1380,6 @@ body{
     font-size: 2em;
     padding: 2em;
 }
+
+
 </style>
