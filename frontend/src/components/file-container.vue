@@ -124,10 +124,9 @@ export default {
         this.$http({url: 'http://localhost:3000/api/files/'+ this.file._id, method: 'DELETE'}).then(function (response) {
 
       // success callback
-      let block = this.$el.querySelector('code#code');
-      block.innerHTML = "DELETED!"
+      self.cm.setValue("DELETED!");
 
-      this.file = {};
+      self.file = {};
   }, function (response) {
       // error callback
   });
