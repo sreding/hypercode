@@ -54,7 +54,7 @@ module.exports = {
         });
       }; 
       
-       relations = [File].concat(relations) 
+       //relations = [File].concat(relations) 
     
        FileModel.find({relations: ObjectId(id)}).lean().exec((err, Files) => {
         
@@ -71,7 +71,7 @@ module.exports = {
         });
       }  
     
-        return res.json({horizontal: relations, vertical: Files});
+        return res.json({horizontal: relations, vertical: Files, mainfile: File});
     });
         });
       }else{

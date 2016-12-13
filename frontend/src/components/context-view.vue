@@ -1047,18 +1047,18 @@ export default {
     return {
       rH:2000,
       rV:800,
-      hSprites:[],
-      vSprites:[],
-      mainid: null,
+      hSprites:[], // horizontal sprites
+      vSprites:[],  // vertical sprites
+      mainid: null, // id of main file
 
       sync:0,//used to call a function after both vertical and horizontal heve been called
-      maindata: {},
-      main:{},
-      stage:{},
+      maindata: {}, //main data file
+      main:{}, // keeping track of main sprite and general state of rotations
       rotationsRunning:0,
-      horizontal:[],//["1 code", "maybe","id", "a"],
-      // vertical:["one","two","threee"]
-      vertical:[]
+      horizontal:[], //horizontal 
+      vertical:[],
+      hFiles:[],
+      vFiles:[],
     }
   },
   watch: {
@@ -1068,6 +1068,7 @@ export default {
         let vAngleBetween = (2*Math.PI)/(that.vertical.length+1)
         that.setUpVerticalCircle(that.rV,vAngleBetween,-Math.PI/2+vAngleBetween)
         that.main.clear(that.vertical.length,that.horizontal.length)
+        
     })
     },
     horizontal:function(){
@@ -1081,34 +1082,42 @@ export default {
           }
 
           // load vertical
-         let a =[Math.random(),Math.random(),Math.random()]
-         for(let i = 0; i<a.length;i++){
-          that.vertical.push(a[i])
+         
+         for(let i = 0; i<that.vFiles.length;i++){
+          that.vertical.push(that.vFiles[i])
          }
+         that.vFiles=[]
 
     })
     },
     mainid:function(){  
+      this.mainid = this.$route.params.id
       this.clearEverything()
       //this.relations();
-
-
       this.hSprites=[]
       this.vSprites=[]
       this.rotationsRunning=0
+      this.relations()
+
+
+      
       
       // this.horizontal = ["1 code", "maybe"]''
-     
-     //load horizontal
-      let that = this
-      while (that.horizontal.length!==0){
-            that.horizontal.pop()
-          }
-      this.horizontal.push("asdf","asf","xD")
+
     
     }
   },
   methods:{
+    update:function(){
+      let that = this
+      while (that.horizontal.length!==0){
+            that.horizontal.pop()
+          }
+      for(let i = 0; i<that.hFiles.length;i++){
+          that.horizontal.push(that.hFiles[i])
+         }
+        this.hFiles=[]
+    },
     setup:function(){
       // makes first element go in front and the rest in 
     let hAngleBetween = (2*Math.PI)/(this.horizontal.length+1) //+1 for main file
@@ -1299,27 +1308,25 @@ export default {
         let self = this;
 
 
-            console.log("Load horizontal:" + self.mainid);
 
             this.$http({url: 'http://localhost:3000/api/files/'+ self.mainid +'?rel=true', method: 'GET'}).then(function (response) {
            
               let hdata = [];
               
               let hrelations = response.body.horizontal;
-              
+              self.maindata = response.data.mainfile;
               for(let i = 0; i < hrelations.length; i++){
                 
                 let hrelation = hrelations[i];
                 
                 if(hrelation._id != self.mainid){
-                // self.horizontal.push(hrelation);
+                self.hFiles.push(hrelation);
                 }
               }
 
               
 
           
-               console.log("Load vertical:" + self.mainid);    
 
                let vdata = [];
                 let vrelations = response.body.vertical;
@@ -1327,10 +1334,11 @@ export default {
                 let vrelation = vrelations[j];
          
                 if(vrelation._id != self.mainid){
-                //self.vertical.push(vrelation);
+                self.vFiles.push(vrelation)
                 }
                 
                 }
+                self.update()
 
                
 
