@@ -1,16 +1,16 @@
 <template id="main-template">
 <div id="context-view">
 <div class="hidden">
-<template v-for="(item,index) in horizontal">
-  <file-container :fileid="item" :id="index"  class="hFileContainer" >{{index}}</file-container>
+<!-- <template id="horizontalTemplate" v-for="(item,index) in horizontal"> -->
+  <file-container v-for="(item,index) in horizontal"   :key="Math.random()*40000" class="hFileContainer" >{{index}}</file-container>
   <!-- <div class="hFileContainer three-div" contenteditable="true">asdfasdfasdfasdfasdf</div> -->
-</template>
-<file-container :fileid="vertical[0]" id="main-container" ></file-container>
-<template v-for="(item,index) in vertical">git diff master temp
-  <file-container :fileid="item" :id="index" class="vFileContainer" >{{index}}</file-container>
+<!-- </template> -->
+<file-container  id="main-container" ></file-container>
+<!-- <template id="verticalTemplate" v-for="(item,index) in vertical"> -->
+  <file-container v-for="(item,index) in vertical"   :key="Math.random()*40000" class="vFileContainer" >{{index}}</file-container>
 
   <!-- <div class="vFileContainer three-div" contenteditable="true">asasdfasdfasdfasdfdf</div> -->
-</template>
+<!-- </template> -->
 </div>
 <input type="button" id="zoomButton"  value="zoom" style="position:relative;z-index: 10;">
 <input type="button" id="clearButton"  value="clear" style="position:absolute;z-index: 10;">
@@ -27,7 +27,6 @@ import FileContainer from './file-container.vue';
 import * as THREE from 'three';
 import * as TWEEN from 'tween.js';
 
-// let TWEEN = require("tween.js")
 /**
  * Based on http://www.emagix.net/academic/mscs-project/item/camera-sync-with-css3-and-webgl-threejs
  * @author mrdoob / http://mrdoob.com/
@@ -43,7 +42,6 @@ THREE.CSS3DObject = function ( element ) {
   this.addEventListener( 'removed', function ( event ) {
 
     if ( this.element.parentNode !== null ) {
-
       this.element.parentNode.removeChild( this.element );
 
     }
@@ -68,6 +66,7 @@ THREE.CSS3DSprite.prototype.constructor = THREE.CSS3DSprite;
 
 THREE.CSS3DRenderer = function () {
 
+  console.log( 'THREE.CSS3DRenderer', THREE.REVISION );
 
   var _width, _height;
   var _widthHalf, _heightHalf;
@@ -952,8 +951,16 @@ function MainFile(sprite,vLength,hLength,vRadius,hRadius){
   this.horizontalRotateable = function(){
     return (this.vPos%this.vLength) === 0
   }
-  this.clear=function(){
-    this.sprite.parent.remove(this.sprite)
+  this.clear=function(newVLength,newHLength){
+    this.sprite.position.z=0
+    this.sprite.position.y=0
+    this.sprite.position.x=0
+    this.vLength=newVLength+1
+    this.hLength=newHLength+1
+    this.rotatingVertical = false
+    this.rotatingHorizontal = false
+    this.vPos=0 //pos
+    this.hPos=0 //pos
   }
 
 
@@ -966,7 +973,7 @@ export default {
   },
   mounted: function () {
 
-    this.list()
+    // this.list()
     function onWindowResize() {
         camera.aspect = window.innerWidth / window.innerHeight;
         camera.updateProjectionMatrix();
@@ -974,34 +981,31 @@ export default {
         render();
       }
     window.addEventListener("resize",onWindowResize)
- 
-
-
+    
     scene = new THREE.Scene();
     let rH = 2000
     let rV = 800
     camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
 
     camera.position.set(0, 0,2*window.innerHeight);
-    console.log(window.innerHeight)
+    scene.add(camera)
     
-
-
-
     hcontainer = new THREE.CSS3DObject(document.createElement("div"));
     vcontainer = new THREE.CSS3DObject(document.createElement("div"));
 
-    vcontainer.position.z=-rV //makes the main content always be in the z=0 plane
-    hcontainer.position.z=-rH //makes the main content always be in the z=0 plane
+    vcontainer.position.z=-this.rV //makes the main content always be in the z=0 plane
+    hcontainer.position.z=-this.rH //makes the main content always be in the z=0 plane
 
     scene.add(hcontainer)
     scene.add(vcontainer)
+
 
     renderer = new THREE.CSS3DRenderer();
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.domElement.style.position = 'absolute';
     renderer.domElement.style.top = 0;
     document.body.appendChild(renderer.domElement);
+
     controls = new THREE.TrackballControls( camera, renderer.domElement );
     controls.rotateSpeed = 0.5;
     controls.minDistance = 500;
@@ -1009,13 +1013,13 @@ export default {
     controls.addEventListener( 'change', render );
 
     // makes first element go in front and the rest in 
-    let hAngleBetween = (2*Math.PI)/(this.horizontal.length+1) //+1 for main file
-    let vAngleBetween = (2*Math.PI)/(this.vertical.length+1)
+    // let hAngleBetween = (2*Math.PI)/(this.horizontal.length+1) //+1 for main file
+    // let vAngleBetween = (2*Math.PI)/(this.vertical.length+1)
 
-    this.setUpHorizontalCircle(rH,hAngleBetween,-Math.PI/2 +hAngleBetween)
-    this.setUpVerticalCircle(rV,vAngleBetween,-Math.PI/2+vAngleBetween)
+    // this.setUpHorizontalCircle(rH,hAngleBetween,-Math.PI/2 +hAngleBetween)
+    // this.setUpVerticalCircle(rV,vAngleBetween,-Math.PI/2+vAngleBetween)
     
-    this.setUpMain();
+    // this.setUpMain();
 
     let that = this;
     document.addEventListener("keydown", this.handleKeyEvent.bind(this));
@@ -1024,10 +1028,13 @@ export default {
     requestAnimationFrame(animate)
 
     this.setUpZoom()
+    this.setup()
 
     this.$el.querySelector("#clearButton").onclick=function(){
-      console.log(vcontainer.children)
-      that.clearEverything(vcontainer);
+      // that.clearEverything(vcontainer);
+      that.mainid={id:"asdf"}
+
+      // that.vertical.push("asf")
   }
 
     
@@ -1038,24 +1045,79 @@ export default {
   },
   data () {
     return {
+      rH:2000,
+      rV:800,
       hSprites:[],
       vSprites:[],
       mainid: null,
+      sync:0,//used to call a function after both vertical and horizontal heve been called
       main:{},
       stage:{},
       rotationsRunning:0,
-      horizontal:["1 code", "maybe","id", "a"],
+      horizontal:[],//["1 code", "maybe","id", "a"],
       // vertical:["one","two","threee"]
-      vertical:["some code maybe","id","aa", "a"]
+      vertical:[]
     }
   },
   watch: {
+    vertical:function(){
+      let that = this
+      Vue.nextTick(function () {
+        let vAngleBetween = (2*Math.PI)/(that.vertical.length+1)
+        that.setUpVerticalCircle(that.rV,vAngleBetween,-Math.PI/2+vAngleBetween)
+        that.main.clear(that.vertical.length,that.horizontal.length)
+    })
+    },
     horizontal:function(){
+      let that = this
+      Vue.nextTick(function () {
+        let hAngleBetween = (2*Math.PI)/(that.horizontal.length+1)
+         that.setUpHorizontalCircle(that.rH,hAngleBetween,-Math.PI/2 +hAngleBetween)
+         
+         while (that.vertical.length!==0){
+            that.vertical.pop()
+          }
+         let a =[Math.random(),Math.random(),Math.random()]
+         for(let i = 0; i<a.length;i++){
+          that.vertical.push(a[i])
+         }
+
+    })
+    },
+    mainid:function(){  
+      this.clearEverything()
+
+
+      this.hSprites=[]
+      this.vSprites=[]
+      this.rotationsRunning=0
+      
+      // this.horizontal = ["1 code", "maybe"]''
+      let that = this
+      while (that.horizontal.length!==0){
+            that.horizontal.pop()
+          }
+      this.horizontal.push("asdf","asf")
     
-  
     }
   },
   methods:{
+    setup:function(){
+      // makes first element go in front and the rest in 
+    let hAngleBetween = (2*Math.PI)/(this.horizontal.length+1) //+1 for main file
+    let vAngleBetween = (2*Math.PI)/(this.vertical.length+1)
+
+    this.setUpHorizontalCircle(this.rH,hAngleBetween,-Math.PI/2 +hAngleBetween)
+    this.setUpVerticalCircle(this.rV,vAngleBetween,-Math.PI/2+vAngleBetween)
+    this.setUpMain()
+
+    },
+    reloadCircles:function(){
+      let vAngleBetween = (2*Math.PI)/(this.vertical.length+1)
+      this.setUpVerticalCircle(this.rV,vAngleBetween,-Math.PI/2+vAngleBetween)
+      let hAngleBetween = (2*Math.PI)/(this.horizontal.length+1)  
+      this.setUpHorizontalCircle(this.rH,hAngleBetween,-Math.PI/2 +hAngleBetween)
+    },
     setUpHorizontalCircle:function(r,angle,offsetAngle){
       let elements = this.$el.querySelectorAll(".hFileContainer")
       elements.forEach((item, i)=>{
@@ -1088,7 +1150,7 @@ export default {
       let element = this.$el.querySelector("#main-container");
       let sprite = new THREE.CSS3DObject( element );
       scene.add(sprite)
-      this.list()
+      // this.list()
       this.main=new MainFile(sprite,this.vertical.length,this.horizontal.length,0,0)
     },
     handleKeyEvent:function(e){
@@ -1193,13 +1255,37 @@ export default {
     },
 
     clearEverything:function(element){ //css3dobject
-      console.log(scene.children)
-      this.clearChildren(vcontainer);
-      this.clearChildren(hcontainer);
-      this.main.clear();
+      scene.add(this.main.sprite)
+      this.main.clear()
+      let i = 0
+      this.hSprites.forEach(function(item){
+        hcontainer.remove(item)
+        i++
+      })
+      i=0
+      this.vSprites.forEach(function(item){
+        vcontainer.remove(item)
+        i++
+      })
+      // this.clearChildren(vcontainer);
+      // this.clearChildren(hcontainer);
+      // scene.remove(vcontainer)
+      // scene.remove(hcontainer)
+
+      // hcontainer = new THREE.CSS3DObject(document.createElement("div"));
+      // vcontainer = new THREE.CSS3DObject(document.createElement("div"));
+
+      // vcontainer.position.z=-this.rV //makes the main content always be in the z=0 plane
+      // hcontainer.position.z=-this.rH //makes the main content always be in the z=0 plane
+      
+      // scene.add(hcontainer)
+      // scene.add(vcontainer)
+      
+      
   },
     clearChildren:function(element){
       for( var i = element.children.length - 1; i >= 0; i--) { 
+        
         element.remove(element.children[i])
       }
     },
@@ -1207,7 +1293,6 @@ export default {
       list: function(){
           let self = this;
          this.$http({url: 'http://localhost:3000/api/files/', method: 'GET'}).then(function (response) {
-         console.log(response.body);
          self.mainid = response.body[0]._id;
          self.relations();
 
@@ -1220,7 +1305,6 @@ export default {
 
       relations:function(){
         let self = this;
-        console.log(this.mainid);
           
             console.log("Load horizontal:" + this.mainid);
 
