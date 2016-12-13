@@ -63,7 +63,8 @@ export default {
     return {
       file: {name:"Getting filname", source:"Loading source..."},
       'width':  80 ,
-      'height':  80
+      'height':  80,
+      title:"asfd"
     };
   },
 
