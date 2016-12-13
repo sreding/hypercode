@@ -13,7 +13,7 @@ const ObjectId = mongoose.Types.ObjectId;
 const FileModel = require('../models/FileModel.js');
 
 // drop
-fs.readFile('./weka.json', (err, data) => {
+fs.readFile('./boat.json', (err, data) => {
   const o = JSON.parse(data);
   // console.log(o[0].name)
   const nameToIdMap = {}; // used to populate the relations with ObjectId's
