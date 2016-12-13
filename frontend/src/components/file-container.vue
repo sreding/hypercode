@@ -2,9 +2,9 @@
   <div id="file-container">
     <div id="wrapper">
       <a href="#" v-on:click="remove" id="exit-btn">x</a>
-      <h1>{{title}}</h1>
+      <h1>{{filedata.name}}</h1>
       <code name="code" style=" overflow: scroll;" class="java.jsp" id="code">
-        
+        {{filedata.source}}
       </code>
      <!--  <a href="#" class="prev-btn" id="prev-btn">&lt</a>
       <a href="#" class="next-btn" id="next-btn">&gt</a> -->
@@ -28,8 +28,9 @@ export default {
     this.container =  this.$el.querySelector('#wrapper');
     this.container.style.width=this.width+"vmin";
     this.container.style.height=this.height+"vmin";
-
+    console.log(this.filedata)
      let block = this.$el.querySelector('code#code');
+
     block.addEventListener("focusout", function(){
       hljs.highlightBlock(block);
     });
