@@ -134,12 +134,12 @@ module.exports = {
           message: 'No such File',
         });
       }
-
-      File.name = req.body.name ? req.body.name : File.name;
-      File.type = req.body.type ? req.body.type : File.type;
-      File.parent = req.body.parent ? req.body.parent : File.parent;
-      File.relations = req.body.relations ? req.body.relations : File.relations;
-      File.source = req.body.source ? req.body.source : File.source;
+  
+      File.name = req.body.name;
+      File.type = req.body.type;
+      File.parent = req.body.parent;
+      File.relations = req.body.relations;
+      File.source = req.body.source;
 
       File.save((err, File) => {
         if (err) {
