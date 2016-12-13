@@ -1,7 +1,7 @@
-<template id="main-template">
+<!-- <template id="main-template">
 <div id="app">
-
-<context-view></context-view>
+<!-- 
+<focus-view></focus-view>  -->
 
 </div>
 
@@ -9,21 +9,39 @@
 
 <script>
 import ContextView from './components/context-view.vue';
-// import FocusView from './components/focus-view.vue';
+
 import FileContainer from './components/file-container.vue';
 
-
+const Entry = {
+	template: '<p>/file for ContextView, /container for FileContainer</p>'
+}
+const routes = {
+	'/' : Entry, //will eventually be replaced by overview
+  '/file': ContextView,
+  '/container':FileContainer
+}
 
 export default {
   name: 'app',
   components: {
     'file-container': FileContainer,
-    // 'focus-view': FocusView,
-    'context-view': ContextView,
+    'context-view': ContextView
     // 'focus-view': FocusView
-
-  }
+  },
+  data: function(){
+  	return{
+  		currentRoute: window.location.pathname
+  	}
+    
+  },
+  computed: {
+    ViewComponent () {
+      return routes[this.currentRoute] || NotFound
+    }
+  },
+  render (h) { return h(this.ViewComponent) }
  
+
   
 }
 </script>
@@ -31,3 +49,4 @@ export default {
 <style>
 
 </style>
+ -->

@@ -161,6 +161,9 @@ export default {
   #exit-btn:hover{
     background: rgba(255, 0, 0, 1);
   }
+  #focus-btn:hover{
+    background: rgba(255, 0, 0, 1);
+  }
   #back-btn{
   /*  background-color: #cc8800;*/
   background: rgba(255, 130, 0, 0.7);
