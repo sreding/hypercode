@@ -2,9 +2,9 @@
   <div id="file-container">
     <div id="wrapper">
       <a href="#" v-on:click="remove" id="exit-btn">x</a>
-      <h1>{{title}}</h1>
-      <code name="code" style="height:700px; overflow: scroll;" class="java.jsp" id="code">
-        
+      <h1>{{file.name}}</h1>
+      <code name="code" contenteditable="true" style="overflow: hidden;" class="java.jsp" id="code">
+          {{file.source}}
       </code>
       <a href="#" class="prev-btn" id="prev-btn">&lt</a>
       <a href="#" class="next-btn" id="next-btn">&gt</a>
@@ -28,24 +28,28 @@ export default {
     this.container =  this.$el.querySelector('#wrapper');
     this.container.style.width=this.width+"vmin";
     this.container.style.height=this.height+"vmin";
-    
-    let block = this.$el.querySelector('code#code');
-    hljs.highlightBlock(block);
 
+     let block = this.$el.querySelector('code#code');
     block.addEventListener("focusout", function(){
       hljs.highlightBlock(block);
     });
   },
   props: {
-    'fileid':{default: null}
+    'filedata':{}
   },
   watch: {
-    fileid: function (newFileid) {
-      console.log("Reload: ", newFileid);
+    filedata: function (newfiledata) {
+     
+  // DOM updated
+  console.log("Reload: ", newfiledata);
       
-       if(newFileid!=null){
-       this.show();
+       if(newfiledata){
+     //  this.file = this.filedata; 
+      // let block = this.$el.querySelector('code#code');
+     //  hljs.highlightBlock(block);
        }
+
+      
     }
     // height: function(newH, oldH){
     //   // this.container.style.width=newH+"vmin";
@@ -57,8 +61,7 @@ export default {
     },
   data: function () {
     return {
-      title: 'fileName.ext',
-      file: {},
+      file: {name:"Getting filname", source:"Loading source..."},
       'width':  80 ,
       'height':  80
     };
@@ -67,7 +70,7 @@ export default {
   methods: {
     saveFileData(body){
     
-    this.data = {
+    this.file = {
       name: body.name,
       extension: body.extension || "",
       type:  body.type || "",
@@ -77,40 +80,28 @@ export default {
     }
 
       },
-
-    show: function(event){
-    var self = this;
-    this.$http({url: 'http://localhost:3000/api/files/'+ this.fileid, method: 'GET'}).then(function (response) {
-    
-    // success callback
-    self.title = response.body.name;
-    this.saveFileData(response.body);
-    
-    let block = this.$el.querySelector('code#code');
-    block.innerHTML = response.body.source;
-    hljs.highlightBlock(block);
-
-  }, function (response) {
-      // error callback
-  });
-    },
       update: function(event){
       var self = this;
-      this.$http({url: 'http://localhost:3000/api/files/'+ this.fileid, body:this.file, method: 'PUT'}).then(function (response) {
+      this.$http({url: 'http://localhost:3000/api/files/'+ this.file._id, body:this.file, method: 'PUT'}).then(function (response) {
 
       // success callback
-      self.cm.setValue(response.body.source);
+      let block = this.$el.querySelector('code#code');
+      block.innerHTML = response.body.source;
+      hljs.highlightBlock(block);
+
       }, function (response) {
       // error callback
   });
     },
         remove: function(event){
         var self = this;
-        this.$http({url: 'http://localhost:3000/api/files/'+ this.fileid, method: 'DELETE'}).then(function (response) {
+        this.$http({url: 'http://localhost:3000/api/files/'+ this.file._id, method: 'DELETE'}).then(function (response) {
 
       // success callback
-      self.cm.setValue(response.body + "DELETE");
-      this.data = {};
+      let block = this.$el.querySelector('code#code');
+      block.innerHTML = "DELETED!"
+
+      this.file = {};
   }, function (response) {
       // error callback
   });
@@ -149,7 +140,7 @@ export default {
   
   #save-btn {
     background-color: #cc8800;
-    display: inline-block;`
+    display: inline-block;
     cursor: pointer;
     color: #ffffff;
     font-family: Helvetica, Arial;
@@ -219,6 +210,7 @@ export default {
 
   #code{
     word-wrap: break-word;
+    overflow:hidden;
   }
   
   h1 {
@@ -227,6 +219,22 @@ export default {
     font-weight: normal;
     text-align: center;
   }
+
+.loader {
+    border: 16px solid #f3f3f3; /* Light grey */
+    border-top: 16px solid #3498db; /* Blue */
+    border-radius: 50%;
+    width: 120px;
+    height: 120px;
+    animation: spin 2s linear infinite;
+    margin: 0 auto;
+    
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
 
  </style>
 

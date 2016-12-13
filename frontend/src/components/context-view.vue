@@ -2,12 +2,12 @@
 <div id="context-view">
 <div class="hidden">
 <template v-for="(item,index) in horizontal">
-  <file-container :fileid="item" :id="index" :width="700" :height="700" class="hFileContainer" >{{index}}</file-container>
+  <file-container :filedata="item" :id="index" :width="700" :height="700" class="hFileContainer" >{{index}}</file-container>
   <!-- <div class="hFileContainer three-div" contenteditable="true">asdfasdfasdfasdfasdf</div> -->
 </template>
-<file-container :fileid="vertical[0]" id="main-container" :width="700" :height="700"></file-container>
+<file-container :filedata="maindata"  id="main-container" :width="700" :height="700"></file-container>
 <template v-for="(item,index) in vertical">
-  <file-container :fileid="item" :id="index" :width="700" :height="700" class="vFileContainer" >{{index}}</file-container>
+  <file-container :filedata="item"  :id="index" :width="700" :height="700" class="vFileContainer" >{{index}}</file-container>
   <!-- <div class="vFileContainer three-div" contenteditable="true">asasdfasdfasdfasdfdf</div> -->
 </template>
 </div>
@@ -959,7 +959,6 @@ export default {
   },
   mounted: function () {
 
-    this.list()
     function onWindowResize() {
         camera.aspect = window.innerWidth / window.innerHeight;
         camera.updateProjectionMatrix();
@@ -1004,6 +1003,7 @@ export default {
     this.setUpHorizontalCircle(rH,hAngleBetween,-Math.PI/2 +hAngleBetween)
     this.setUpVerticalCircle(rV,vAngleBetween,-Math.PI/2+vAngleBetween)
     
+    this.list()
     this.setUpMain();
 
     let that = this;
@@ -1017,18 +1017,22 @@ export default {
       hSprites:[],
       vSprites:[],
       mainid: null,
+      maindata: {},
       main:{},
       stage:{},
       rotationsRunning:0,
-      horizontal:["1 code", "maybe","id", "a"],
+      horizontal:["one","two","threee"],
       // vertical:["one","two","threee"]
-      vertical:["some code maybe","id","aa", "a"]
+      vertical:["one","two","threee"]
     }
   },
   watch: {
     horizontal:function(){
-    
+
   
+    },
+    mainid:function(){
+    this.relations();
     }
   },
   methods:{
@@ -1064,7 +1068,6 @@ export default {
       let element = this.$el.querySelector("#main-container");
       let sprite = new THREE.CSS3DObject( element );
       scene.add(sprite)
-      this.list()
       this.main=new MainFile(sprite,this.vertical.length,this.horizontal.length,0,0)
     },
     handleKeyEvent:function(e){
@@ -1146,11 +1149,10 @@ export default {
     },
     //Ajax calls 
       list: function(){
-          let self = this;
+         let self = this;
          this.$http({url: 'http://localhost:3000/api/files/', method: 'GET'}).then(function (response) {
-         console.log(response.body);
          self.mainid = response.body[0]._id;
-         self.relations();
+         self.maindata = response.body[0];
 
       }, function (response) {
       // error callback   
@@ -1160,29 +1162,45 @@ export default {
 
       relations:function(){
         let self = this;
-        console.log(this.mainid);
+
+            console.log("Load horizontal:" + self.mainid);
+
+            this.$http({url: 'http://localhost:3000/api/files/'+ self.mainid +'?rel=true', method: 'GET'}).then(function (response) {
+           
+              let hdata = [];
+              
+              let hrelations = response.body.horizontal;
+              
+              for(let i = 0; i < hrelations.length; i++){
+                
+                let hrelation = hrelations[i];
+                
+                if(hrelation._id != self.mainid){
+                 self.horizontal.push(hrelation);
+                }
+              }
+
+              console.log(self.horizontal);
           
-            console.log("Load horizontal:" + this.mainid);
+               console.log("Load vertical:" + self.mainid);    
 
-            this.$http({url: 'http://localhost:3000/api/files/'+ this.mainid +'?rel=1', method: 'GET'}).then(function (response) {
-              console.log(response.body.relations);
-            self.horizontal = [self.mainid].concat(response.body.relations);
-            
-            let subid = response.body.relations[1]; 
+               let vdata = [];
+                let vrelations = response.body.vertical;
+                for(let j = 0; j < vrelations.length; j++){
+                let vrelation = vrelations[j];
+         
+                if(vrelation._id != self.mainid){
+                self.vertical.push(vrelation);
+                }
+                
+                }
 
-          console.log("Load vertical:" + subid);
-            this.$http({url: 'http://localhost:3000/api/files/'+ subid +'?rel=1', method: 'GET'}).then(function (response) {
-    
-              self.vertical = [subid].concat(response.body.relations);
- 
-  
+                console.log(self.vertical);
+
   }, function (response) {
       // error callback   
   }); 
-  
-  }, function (response) {
-      // error callback   
-  }); 
+          
     },
   }   
   
@@ -1224,4 +1242,6 @@ body{
     font-size: 2em;
     padding: 2em;
 }
+
+
 </style>

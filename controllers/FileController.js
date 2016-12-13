@@ -27,51 +27,75 @@ module.exports = {
    * FileController.show()
    */
   show(req, res) {
+    
     const id = req.params.id;
-    FileModel.findById(id, (err, File) => {
+    FileModel.findById(id, (err, File) => { 
       if (err) {
         return res.status(500).json({
           message: 'Error when getting File.',
           error: err,
         });
       }
+
       if (!File) {
         return res.status(404).json({
           message: 'No such File',
         });
       }
 
-      if(req.query.rel && req.query.rel != 0){
-
-       FileModel.find({
-        '_id': { $in: File.relations}}).lean().exec(function (err, relations){
-      if (err) {
+      if(req.query.rel){
+    
+        FileModel.find({
+        '_id': { $in: File.relations}}).lean().exec((err, relations) =>{
+        if (err) {
         return res.status(500).json({
           message: 'Error when getting relations.',
           error: err,
         });
       }; 
-       File.relations = relations;
-          return res.json(File);
+      
+       relations = [File].concat(relations) 
+    
+       FileModel.find({relations: ObjectId(id)}).lean().exec((err, Files) => {
+        
+        if (err) {
+        return res.status(500).json({
+          message: 'Error when getting File.',
+          error: err,
         });
-  }
-    else{
-      return res.json(File);
-    }
-  
-  
+        }
+        
+        if (!Files) {
+        return res.status(404).json({
+          message: 'No such File',
+        });
+      }  
+    
+        return res.json({horizontal: relations, vertical: Files});
     });
+        });
+      }else{
+      return res.json(File);
+      }
+      
+        
+  });
+  
   },
 
   /**
    * FileController.create()
    */
+
   create(req, res) {
-   let rel = [];
+  
+  let rel = [];
+  
   if(req.body.relations){
+   
    for(let r = 0; r <req.body.relations.length;r++){
-    rel.push(new ObjectId(req.body.relations[r]));
-   }
+    rel.push(new ObjectId(req.body.relations[r])); 
+  }
   }
    
     const File = new FileModel({
@@ -133,8 +157,10 @@ module.exports = {
   /**
    * FileController.remove()
    */
+
   remove(req, res) {
     const id = req.params.id;
+
     FileModel.findByIdAndRemove(id, (err, File) => {
       if (err) {
         return res.status(500).json({
