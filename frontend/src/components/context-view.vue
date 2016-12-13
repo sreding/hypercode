@@ -1097,7 +1097,7 @@ export default {
       while (that.horizontal.length!==0){
             that.horizontal.pop()
           }
-      this.horizontal.push("asdf","asf")
+      this.horizontal.push("asdf","asf","xD")
     
     }
   },
@@ -1267,21 +1267,6 @@ export default {
         vcontainer.remove(item)
         i++
       })
-      // this.clearChildren(vcontainer);
-      // this.clearChildren(hcontainer);
-      // scene.remove(vcontainer)
-      // scene.remove(hcontainer)
-
-      // hcontainer = new THREE.CSS3DObject(document.createElement("div"));
-      // vcontainer = new THREE.CSS3DObject(document.createElement("div"));
-
-      // vcontainer.position.z=-this.rV //makes the main content always be in the z=0 plane
-      // hcontainer.position.z=-this.rH //makes the main content always be in the z=0 plane
-      
-      // scene.add(hcontainer)
-      // scene.add(vcontainer)
-      
-      
   },
     clearChildren:function(element){
       for( var i = element.children.length - 1; i >= 0; i--) { 
