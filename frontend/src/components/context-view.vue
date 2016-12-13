@@ -1068,6 +1068,7 @@ export default {
         let vAngleBetween = (2*Math.PI)/(that.vertical.length+1)
         that.setUpVerticalCircle(that.rV,vAngleBetween,-Math.PI/2+vAngleBetween)
         that.main.clear(that.vertical.length,that.horizontal.length)
+        
     })
     },
     horizontal:function(){
@@ -1313,7 +1314,7 @@ export default {
               let hdata = [];
               
               let hrelations = response.body.horizontal;
-              
+              self.maindata = response.data.mainfile;
               for(let i = 0; i < hrelations.length; i++){
                 
                 let hrelation = hrelations[i];
