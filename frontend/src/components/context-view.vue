@@ -1032,7 +1032,7 @@ export default {
 
     this.$el.querySelector("#clearButton").onclick=function(){
       // that.clearEverything(vcontainer);
-      that.mainid={id:"asdf"}
+      that.mainid = that.$route.params.id
 
       // that.vertical.push("asf")
   }
@@ -1091,9 +1091,10 @@ export default {
     })
     },
     mainid:function(){  
-      this.mainid = this.$route.params.id
+      
       this.clearEverything()
       //this.relations();
+      console.log("heheheheheh")
       this.hSprites=[]
       this.vSprites=[]
       this.rotationsRunning=0
@@ -1315,6 +1316,7 @@ export default {
               
               let hrelations = response.body.horizontal;
               self.maindata = response.data.mainfile;
+              console.log(self.maindata)
               for(let i = 0; i < hrelations.length; i++){
                 
                 let hrelation = hrelations[i];

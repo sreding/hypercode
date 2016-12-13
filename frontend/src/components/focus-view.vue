@@ -29,6 +29,7 @@ export default {
       lineNumbers: true,
       mode: 'text/x-java'
     });
+    this.cm.setValue("asdf")
     // this.cm.setSize("50vw", "70vmin");
 
     this.container =  this.$el.querySelector('#wrapper');

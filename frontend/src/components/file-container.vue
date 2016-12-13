@@ -6,12 +6,8 @@
       <a href="#" v-on:click="remove" class="exit-btn" id="exit-btn">x</a>
       </div>
       <h1>{{filedata.name}}</h1>
-     
       
-
-      <code name="code" style=" overflow: scroll;" class="java.jsp" id="code">
-        {{filedata.source}}
-      </code>
+      <textarea name="editor" id="editor">{{filedata.source}}</textarea>
      <!--  <a href="#" class="prev-btn" id="prev-btn">&lt</a>
       <a href="#" class="next-btn" id="next-btn">&gt</a> -->
       <div class="container-menu">
@@ -29,28 +25,42 @@ let VueResource = require('vue-resource');
 Vue.use(VueResource);
 
 import hljs from 'highlight.js';
+import CodeMirror from 'codemirror'
+import 'codemirror/mode/clike/clike';
 
 export default {
   name: 'file-container',
   mounted: function () {
+    
+    this.cm = CodeMirror.fromTextArea(this.$el.querySelector('#editor'), {
+      lineNumbers: false,
+      mode: 'text/x-java'
+    });
+    let that = this
+    setTimeout(function(){that.cm.refresh()},100)
+    this.file = this.filedata
     this.container =  this.$el.querySelector('#wrapper');
     this.container.style.width=this.width+"vmin";
     this.container.style.height=this.height+"vmin";
     console.log(this.filedata)
-     let block = this.$el.querySelector('code#code');
-
-    block.addEventListener("focusout", function(){
-      hljs.highlightBlock(block);
-    });
+     let block = this.$el.querySelector('#code');
+     // hljs.highlightBlock(block);
+    // block.addEventListener("focusout", function(){
+    //   hljs.highlightBlock(block);
+    // });
   },
   props: {
     'filedata':{}
   },
   watch: {
     filedata: function (newfiledata) {
+      let that = this
+    this.cm.setValue(newfiledata.source)
+    setTimeout(function(){that.cm.refresh()},100)
      
   // DOM updated
-  console.log("Reload: ", newfiledata);
+  console.log("Reload: ", newfiledata.source);
+  this.file = this.filedata
       
        if(newfiledata){
      //  this.file = this.filedata; 
@@ -73,7 +83,8 @@ export default {
       file: {name:"Getting filname", source:"Loading source..."},
       'width':  80 ,
       'height':  80,
-      title:"asfd"
+      title:"asfd",
+      cm:{}
     };
   },
 
@@ -92,12 +103,14 @@ export default {
       },
       update: function(event){
       var self = this;
-      this.$http({url: 'http://localhost:3000/api/files/'+ this.file._id, body:this.file, method: 'PUT'}).then(function (response) {
+      this.$http({url: 'http://localhost:3000/api/files/'+ this.filedata._id, body:this.file, method: 'PUT'}).then(function (response) {
 
       // success callback
-      let block = this.$el.querySelector('code#code');
-      block.innerHTML = response.body.source;
-      hljs.highlightBlock(block);
+      
+      this.cm.setValue(response.body.source);
+      let that = this
+      setTimeout(function(){that.cm.refresh()},100)
+ 
 
       }, function (response) {
       // error callback
@@ -132,6 +145,8 @@ export default {
 }
 
 </script>
+<style src="codemirror/lib/codemirror.css">
+
 </style>
 <style>
   .container-menu{
@@ -159,7 +174,6 @@ export default {
     flex-direction: row;
     flex-wrap: wrap;
      align-content: stretch;
-   
   }
   .exit-btn {
     background-color: #991f00;
@@ -175,7 +189,6 @@ export default {
   
   .btn {
     background-color: #262626;
-    
     /*display: inline-block;*/
     flex-grow: 1;
     cursor: pointer;
@@ -185,7 +198,6 @@ export default {
     padding: 2%;
     width: auto;
     text-decoration: none;
- 
     text-align: center;
 
   }
@@ -194,10 +206,10 @@ export default {
     background-color: #a6a6a6;
   }
 
-  a:first-child{
-    border-right-style: solid;
-    border-right-color: black;
-    border-right-width: 1px;
+  a:nth-child(2){
+    border-left-style: solid;
+    border-left-color: white;
+    border-left-width: 1px;
   }
   
   #wrapper {
@@ -218,7 +230,8 @@ export default {
 
   #code{
     word-wrap: break-word;
-    overflow:hidden;
+    height: 70vmin;
+    width: 90%;
   }
   
   h1 {
