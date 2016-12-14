@@ -5,7 +5,7 @@
     <div class="container-menu-top">
     <router-link :to="{path:'/'}"  class="exit-btn" id="exit-btn">Overview</router-link>
       <a href="#" v-on:click="remove" class="exit-btn" id="exit-btn">Delete</a>
-      <div class="ctr">0</div>
+      <div id="ctr" class="ctr">0</div>
       </div>
       <h1>{{filedata.name}}</h1>
       
