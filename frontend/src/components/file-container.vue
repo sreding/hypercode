@@ -212,8 +212,6 @@ export default {
 
   }
 
-  
-
   a:nth-child(2){
     border-left-style: solid;
     border-left-color: white;

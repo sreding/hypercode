@@ -1098,6 +1098,7 @@ export default {
       this.hSprites=[]
       this.vSprites=[]
       this.rotationsRunning=0
+      // console.log("called this.relations");
       this.relations()
 
 
