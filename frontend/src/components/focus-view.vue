@@ -14,7 +14,6 @@
 </template>
 
 <script>
-// enable ajax
 var Vue = require('vue');
 var VueResource = require('vue-resource');
 Vue.use(VueResource);
