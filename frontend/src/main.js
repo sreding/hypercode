@@ -4,6 +4,7 @@ import VueRouter from 'vue-router';
 import ContextView from './components/context-view.vue';
 import FileContainer from './components/file-container.vue';
 import FocusView from './components/focus-view.vue';
+import OverView from './components/over-view.vue';
 
 
 const Entry = {
@@ -19,9 +20,9 @@ const routes = [
   { path: '/container', component: FileContainer },
   { path: '/file', component: ContextView },
   { path: '/file/:id', component: ContextView },
-   { path: '/single', component: FocusView },
+  { path: '/single', component: FocusView },
   { path: '/single/:id', component: FocusView },
-  { path: '/', component: Entry },
+  { path: '/', component: OverView },
   { path: '*', component: NotFound }
 ]
 

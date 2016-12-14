@@ -19,7 +19,7 @@
 </div>
 
 <div class="container-menu-top">
-    <router-link :to="{path:'/'}"  class="task-btn" id="exit-btn">Overview</router-link>
+    <a  v-on:click="clearStage()" class="task-btn" id="backToOverview">Overview</a>
     <a id="zoomButton"  class="task-btn">Zoom</a>
     <a id="clearButton"  class="task-btn">Clear</a>
       </div>
@@ -1019,7 +1019,9 @@ export default {
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.domElement.style.position = 'absolute';
     renderer.domElement.style.top = 0;
+    console.log(camera)
     document.body.appendChild(renderer.domElement);
+    console.log(renderer.domElement)
 
     controls = new THREE.TrackballControls( camera, renderer.domElement );
     controls.rotateSpeed = 0.5;
@@ -1048,9 +1050,7 @@ export default {
     that.mainid = that.$route.params.id
 
     this.$el.querySelector("#clearButton").onclick=function(){
-      that.clearEverything()
-      scene.add(that.main.sprite)
-      that.main.remove()
+      
 
 
   }
@@ -1357,6 +1357,14 @@ export default {
         
         element.remove(element.children[i])
       }
+    },
+    clearStage:function(){
+
+      this.clearEverything()
+      scene.add(this.main.sprite)
+      this.main.remove()
+      this.$router.push("/")
+      renderer.domElement.parentNode.removeChild(renderer.domElement)
     },
   
 
