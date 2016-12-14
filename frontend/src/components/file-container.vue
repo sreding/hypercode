@@ -34,7 +34,8 @@ export default {
     this.$el.querySelector('#editor')
     this.cm = CodeMirror.fromTextArea(this.$el.querySelector('#editor'), {
       lineNumbers: false,
-      mode: 'text/x-java'
+      mode: 'text/x-java',
+      theme: "monokai"
     });
     let that = this
     setTimeout(function(){that.cm.refresh()},100)
@@ -103,11 +104,13 @@ export default {
       },
       update: function(event){
       var self = this;
-      this.$http({url: 'http://localhost:3000/api/files/'+ this.filedata._id, body:this.file, method: 'PUT'}).then(function (response) {
+      this.file.source = this.cm.getValue();
+      this.$http({url: 'http://localhost:3000/api/files/'+ this.file._id, body:this.file, method: 'PUT'}).then(function (response) {
 
       // success callback
       
       this.cm.setValue(response.body.source);
+      console.log(response.body);
       let that = this
       setTimeout(function(){that.cm.refresh()},100)
  
@@ -121,10 +124,9 @@ export default {
         this.$http({url: 'http://localhost:3000/api/files/'+ this.file._id, method: 'DELETE'}).then(function (response) {
 
       // success callback
-      let block = this.$el.querySelector('code#code');
-      block.innerHTML = "DELETED!"
+      self.cm.setValue("DELETED!");
 
-      this.file = {};
+      self.file = {};
   }, function (response) {
       // error callback
   });
@@ -146,7 +148,8 @@ export default {
 
 </script>
 <style src="codemirror/lib/codemirror.css">
-
+</style>
+<style src="codemirror/theme/monokai.css">
 </style>
 <style>
   .container-menu{
