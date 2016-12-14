@@ -3,6 +3,8 @@
 
 <!-- <focus-view></focus-view>  -->
 <!-- <router-link></router-link> -->
+
+
 <router-view></router-view>
 </div>
 
@@ -19,11 +21,14 @@ export default {
     'context-view': ContextView
   }
 
+
   
 }
 </script>
 
 <style>
-
+#home{
+	z-index: 100;
+}
 </style>
- -->
+ 
