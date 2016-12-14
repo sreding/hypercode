@@ -1,14 +1,19 @@
 <template id="main-template">
 <div id="context-view">
 <div class="hidden">
+</div>
+
+<div class="hidden">
 
 <!-- <template id="horizontalTemplate" v-for="(item,index) in horizontal"> -->
   <file-container :filedata="item" v-for="(item,index) in horizontal"   :key="Math.random()*40000" class="hFileContainer" >{{index}}</file-container>
   <!-- <div class="hFileContainer three-div" contenteditable="true">asdfasdfasdfasdfasdf</div> -->
 <!-- </template> -->
-<file-container v-if="true" :filedata="maindata" id="main-container" ></file-container>
+  
+
 <!-- <template id="verticalTemplate" v-for="(item,index) in vertical"> -->
   <file-container :filedata="item" v-for="(item,index) in vertical"   :key="Math.random()*40000" class="vFileContainer" >{{index}}</file-container>
+  <file-container v-for="(item,index) in maindata" :filedata="item" :key="Math.random()*40000"  class="main-container" ></file-container>
   <!-- <div class="vFileContainer three-div" contenteditable="true">asasdfasdfasdfasdfdf</div> -->
 <!-- </template> -->
 </div>
@@ -962,6 +967,9 @@ function MainFile(sprite,vLength,hLength,vRadius,hRadius){
     this.vPos=0 //pos
     this.hPos=0 //pos
   }
+  this.remove = function(){
+    scene.remove(this.sprite)
+  }
 
 
 }
@@ -1028,9 +1036,10 @@ export default {
     requestAnimationFrame(animate)
 
     this.setUpZoom()
-    this.setup()
+    // this.setup()
     that.mainid = that.$route.params.id
     this.$el.querySelector("#clearButton").onclick=function(){
+      console.log(document.querySelector(".main-container"))
       // that.clearEverything(vcontainer);
       // that.mainid = that.$route.params.id
 
@@ -1052,13 +1061,14 @@ export default {
       mainid: null, // id of main file
 
       sync:0,//used to call a function after both vertical and horizontal heve been called
-      maindata: {}, //main data file
-      main:{}, // keeping track of main sprite and general state of rotations
+      maindata: [], //main data file
+      main:null, // keeping track of main sprite and general state of rotations
       rotationsRunning:0,
       horizontal:[], //horizontal 
       vertical:[],
       hFiles:[],
       vFiles:[],
+      tempMainData:{}
     }
   },
   watch: {
@@ -1066,17 +1076,41 @@ export default {
       console.log("route changed");
       this.mainid=this.$route.params.id
     },
+    maindata:function(){
+      console.log("xD")
+      let that = this
+      Vue.nextTick(function(){
+        let element = that.$el.querySelector(".main-container");
+        // scene.add(that.main.sprite)
+        if(that.main !== null){
+          scene.add(that.main.sprite)
+          that.main.remove()
+        }
+        // that.main.remove()
+        console.log(element)
+        let sprite = new THREE.CSS3DObject( element );
+        scene.add(sprite)
+
+        that.main=new MainFile(sprite,that.vertical.length,that.horizontal.length,0,0)
+      })
+    },
     vertical:function(){
       let that = this
+      console.log("here")
       Vue.nextTick(function () {
         let vAngleBetween = (2*Math.PI)/(that.vertical.length+1)
         that.setUpVerticalCircle(that.rV,vAngleBetween,-Math.PI/2+vAngleBetween)
-        that.main.clear(that.vertical.length,that.horizontal.length)
+        while(that.maindata.length !== 0){
+                that.maindata.pop()
+              }
+              
+        that.maindata.push(that.tempMainData);
         
     })
     },
     horizontal:function(){
       console.log(this.horizontal)
+      console.log(";aslkdfj;alksjf;lka")
       let that = this
       Vue.nextTick(function () {
         let hAngleBetween = (2*Math.PI)/(that.horizontal.length+1)
@@ -1115,7 +1149,7 @@ export default {
   },
   methods:{
     update:function(){
-      
+      console.log("update")
       let that = this
       while (that.horizontal.length!==0){
             that.horizontal.pop()
@@ -1171,7 +1205,7 @@ export default {
 
     },
     setUpMain:function(){
-      let element = this.$el.querySelector("#main-container");
+      let element = document.querySelector("#main-container");
       let sprite = new THREE.CSS3DObject( element );
       scene.add(sprite)
 
@@ -1279,7 +1313,7 @@ export default {
     },
 
     clearEverything:function(element){ //css3dobject
-      scene.add(this.main.sprite)
+      // scene.add(this.main.sprite)
       // this.main.clear()
       let i = 0
       this.hSprites.forEach(function(item){
@@ -1298,19 +1332,7 @@ export default {
         element.remove(element.children[i])
       }
     },
-    //Ajax calls 
-      list: function(){
-         let self = this;
-         this.$http({url: 'http://localhost:3000/api/files/', method: 'GET'}).then(function (response) {
-         self.mainid = response.body[0]._id;
-         self.maindata = response.body[0];
-
-      }, function (response) {
-
-      // error callback   
-  });
-
-      },
+  
 
       relations:function(){
         let self = this;
@@ -1323,7 +1345,8 @@ export default {
               console.log(response.data)
               
               let hrelations = response.body.horizontal;
-              self.maindata = response.data.mainfile;
+              
+              self.tempMainData = response.data.mainfile
               for(let i = 0; i < hrelations.length; i++){
                 
                 let hrelation = hrelations[i];
