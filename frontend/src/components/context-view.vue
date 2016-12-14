@@ -1374,6 +1374,9 @@ export default {
 #main-container .btn{
   background-color: #00001a;
 }
+ #main-container .btn:hover {
+    background-color: #000033!important;
+  }
 /*.fileContainer{
   background-color: red;
   position:absolute;
@@ -1382,6 +1385,7 @@ export default {
 .hidden{
 display: none;
 }
+
 body{
   background-image: url("http://www.thewallpapers.org/photo/44424/Background-Blue.jpg");
   background-color: #0086b3;

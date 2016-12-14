@@ -175,6 +175,10 @@ export default {
     flex-wrap: wrap;
      align-content: stretch;
   }
+  
+  .btn:hover {
+    background-color: #4d4d4d!important;
+  }
   .exit-btn {
     background-color: #991f00;
     cursor: pointer;
@@ -185,6 +189,9 @@ export default {
     text-align: center;
     text-decoration: none;
     width: 5%;
+  }
+  .exit-btn:hover{
+    background-color: #e62e00!important;
   }
   
   .btn {
@@ -202,9 +209,7 @@ export default {
 
   }
 
-  .btn:hover{
-    background-color: #a6a6a6;
-  }
+  
 
   a:nth-child(2){
     border-left-style: solid;
