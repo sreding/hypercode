@@ -17,8 +17,12 @@
   <!-- <div class="vFileContainer three-div" contenteditable="true">asasdfasdfasdfasdfdf</div> -->
 <!-- </template> -->
 </div>
-<input type="button" id="zoomButton"  value="zoom" style="position:relative;z-index: 10;">
-<input type="button" id="clearButton"  value="clear" style="position:absolute;z-index: 10;">
+
+<div class="container-menu-top">
+    <router-link :to="{path:'/'}"  class="task-btn" id="exit-btn">Overview</router-link>
+    <a id="zoomButton"  class="task-btn">Zoom</a>
+    <a id="clearButton"  class="task-btn">Clear</a>
+      </div>
 
 </div>
 
@@ -1425,6 +1429,22 @@ export default {
 .hidden{
 display: none;
 }
+.task-btn {
+    background-color: #666699;
+    cursor: pointer;
+    color: #ffffff;
+    font-family: Helvetica, Arial;
+    font-size: 2vmin;
+    padding: 1.5vmin 1.5vmin;
+    text-decoration: none;
+    /*position: absolute;*/
+    top: 0px;
+    left: 0px;
+    z-index: 10;
+  }
+  .task-btn:hover{
+    background-color: #000033!important;
+  }
 
 body{
   background-image: url("http://www.thewallpapers.org/photo/44424/Background-Blue.jpg");
