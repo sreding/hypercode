@@ -3,7 +3,7 @@
     <div id="wrapper">
 
     <div class="container-menu-top">
-    <router-link :to="{path:'/'}"  class="exit-btn" id="exit-btn">Overview</router-link>
+    <router-link :to="{path:'/'}"  class="exit-btn backtooverview" id="exit-btn">Overview</router-link>
       <a href="#" v-on:click="remove" class="exit-btn" id="exit-btn">Delete</a>
       <div id="ctr" class="ctr">0</div>
       </div>
@@ -45,7 +45,7 @@ export default {
     this.container =  this.$el.querySelector('#wrapper');
     this.container.style.width=this.width+"vmin";
     this.container.style.height=this.height+"vmin";
-    console.log("mounted" + this.file._id)
+    
 
   },
   props: {

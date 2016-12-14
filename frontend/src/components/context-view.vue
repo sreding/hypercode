@@ -980,6 +980,7 @@ export default {
     'file-container': FileContainer
   },
   mounted: function () {
+    console.log("mounted context")
 
     function onWindowResize() {
         camera.aspect = window.innerWidth / window.innerHeight;
@@ -1038,12 +1039,13 @@ export default {
     this.setUpZoom()
     // this.setup()
     that.mainid = that.$route.params.id
-    this.$el.querySelector("#clearButton").onclick=function(){
-      console.log(document.querySelector(".main-container"))
-      // that.clearEverything(vcontainer);
-      // that.mainid = that.$route.params.id
 
-      // that.vertical.push("asf")
+    this.$el.querySelector("#clearButton").onclick=function(){
+      that.clearEverything()
+      scene.add(that.main.sprite)
+      that.main.remove()
+
+
   }
 
     
@@ -1077,7 +1079,6 @@ export default {
       this.mainid=this.$route.params.id
     },
     maindata:function(){
-      console.log("xD")
       let that = this
       Vue.nextTick(function(){
         let element = that.$el.querySelector(".main-container");
@@ -1087,16 +1088,15 @@ export default {
           that.main.remove()
         }
         // that.main.remove()
-        console.log(element)
         let sprite = new THREE.CSS3DObject( element );
         scene.add(sprite)
 
         that.main=new MainFile(sprite,that.vertical.length,that.horizontal.length,0,0)
+   
       })
     },
     vertical:function(){
       let that = this
-      console.log("here")
       Vue.nextTick(function () {
         let vAngleBetween = (2*Math.PI)/(that.vertical.length+1)
         that.setUpVerticalCircle(that.rV,vAngleBetween,-Math.PI/2+vAngleBetween)
@@ -1109,8 +1109,6 @@ export default {
     })
     },
     horizontal:function(){
-      console.log(this.horizontal)
-      console.log(";aslkdfj;alksjf;lka")
       let that = this
       Vue.nextTick(function () {
         let hAngleBetween = (2*Math.PI)/(that.horizontal.length+1)
@@ -1136,7 +1134,6 @@ export default {
       this.hSprites=[]
       this.vSprites=[]
       this.rotationsRunning=0
-      // console.log("called this.relations");
       this.relations()
 
 
@@ -1149,7 +1146,6 @@ export default {
   },
   methods:{
     update:function(){
-      console.log("update")
       let that = this
       while (that.horizontal.length!==0){
             that.horizontal.pop()
@@ -1279,8 +1275,6 @@ export default {
             .onUpdate(rotationFunction(this.main.sprite,axis,tweenObject))
             .onComplete(that.changeNumberOfAnimations(-1).bind(that))
             .start()
-            
-
     },
     changeNumberOfAnimations:function(val){
       return function(){
@@ -1342,7 +1336,6 @@ export default {
             this.$http({url: 'http://localhost:3000/api/files/'+ self.mainid +'?rel=all', method: 'GET'}).then(function (response) {
            
               let hdata = [];
-              console.log(response.data)
               
               let hrelations = response.body.horizontal;
               
@@ -1355,7 +1348,6 @@ export default {
                 self.hFiles.push(hrelation);
                 }
               }
-              console.log(self.hFiles)
 
               
 
@@ -1430,6 +1422,20 @@ body{
     font-size: 2em;
     padding: 2em;
 }
+.btn {
+    background-color: #262626;
+    /*display: inline-block;*/
+    flex-grow: 1;
+    cursor: pointer;
+    color: white;
+    font-family: 'Helvetica Neue Thin',Helvetica, Arial;
+    font-size: 140%;
+    padding: 2%;
+    width: auto;
+    text-decoration: none;
+    text-align: center;
+
+  }
 
 
 </style>
