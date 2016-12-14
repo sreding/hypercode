@@ -1317,7 +1317,7 @@ export default {
 
 
 
-            this.$http({url: 'http://localhost:3000/api/files/'+ self.mainid +'?rel=true', method: 'GET'}).then(function (response) {
+            this.$http({url: 'http://localhost:3000/api/files/'+ self.mainid +'?rel=all', method: 'GET'}).then(function (response) {
            
               let hdata = [];
               console.log(response.data)
