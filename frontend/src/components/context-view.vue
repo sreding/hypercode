@@ -1087,6 +1087,7 @@ export default {
     $route:function(){
       console.log("route changed");
       this.mainid=this.$route.params.id
+      scene.remove(this.main.sprite)
     },
     maindata:function(){
       let that = this
@@ -1364,6 +1365,7 @@ export default {
       scene.add(this.main.sprite)
       this.main.remove()
       this.$router.push("/")
+      this.clearEverything()
       renderer.domElement.parentNode.removeChild(renderer.domElement)
     },
   
