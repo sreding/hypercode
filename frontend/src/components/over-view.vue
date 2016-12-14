@@ -52,7 +52,7 @@ export default {
       const width = +elBounding.width;
       const height = +elBounding.height;
       const simulation = d3.forceSimulation()
-        .force("link", d3.forceLink().id(function(d) { return d.id; }).distance(60))
+        .force("link", d3.forceLink().id(function(d) { return d.id; }).distance(80))
         .force("charge", d3.forceManyBody().strength(-100).distanceMax(200).distanceMin(100))
         .force("center", d3.forceCenter(width / 2, height / 2));
 
@@ -80,9 +80,10 @@ export default {
         
       const node = gnodes.append("circle")
           .attr("class", "node")
-          .attr("r", 5)
+          .attr("r", 10)
           .on("click", (e) => {
             console.log(e.id)
+            this.$router.push("/file/"+e.id)
           })
           .call(d3
                 .drag()
@@ -136,7 +137,10 @@ export default {
 <style>
 html, body, #app {
   height: 100%;
-  background-color: #FFF;
+  /*background-color: #FFF;*/
+}
+#app{
+  z-index: 100000;
 }
 
 #over-view, #over-view-svg {
@@ -149,8 +153,12 @@ html, body, #app {
   stroke-opacity: 0.6;
 }
 
+text{
+  color: blue;
+}
+
 .nodes circle {
-  stroke: #fff;
+  stroke: #FFF;
   stroke-width: 1.5px;
 }
 
