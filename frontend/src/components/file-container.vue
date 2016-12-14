@@ -3,7 +3,9 @@
     <div id="wrapper">
 
     <div class="container-menu-top">
-      <a href="#" v-on:click="remove" class="exit-btn" id="exit-btn">x</a>
+    <router-link :to="{path:'/'}"  class="exit-btn" id="exit-btn">Overview</router-link>
+      <a href="#" v-on:click="remove" class="exit-btn" id="exit-btn">Delete</a>
+
       </div>
       <h1>{{filedata.name}}</h1>
       
@@ -170,7 +172,7 @@ export default {
     display: inline-flex;
     flex-direction: row;
     flex-wrap: wrap;
-     align-content: stretch;
+    align-content: stretch;
   }
   
   .btn:hover {
@@ -185,7 +187,7 @@ export default {
     padding: 1.5vmin 1.5vmin;
     text-align: center;
     text-decoration: none;
-    width: 5%;
+    width: 10%;
   }
   .exit-btn:hover{
     background-color: #e62e00!important;
