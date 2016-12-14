@@ -1029,10 +1029,10 @@ export default {
 
     this.setUpZoom()
     this.setup()
-
+    that.mainid = that.$route.params.id
     this.$el.querySelector("#clearButton").onclick=function(){
       // that.clearEverything(vcontainer);
-      that.mainid = that.$route.params.id
+      // that.mainid = that.$route.params.id
 
       // that.vertical.push("asf")
   }

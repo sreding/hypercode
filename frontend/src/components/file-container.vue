@@ -12,7 +12,7 @@
       <a href="#" class="next-btn" id="next-btn">&gt</a> -->
       <div class="container-menu">
       <a href="#" v-on:click="update" class="btn" id="save-btn">Save</a>
-      <a href="#" v-on:click="focus" class="btn" id="focus-btn">Focus</a>
+      <a :href="filedata._id"  class="btn" id="focus-btn">Focus</a>
       </div>
     </div>
   </div>
@@ -31,7 +31,7 @@ import 'codemirror/mode/clike/clike';
 export default {
   name: 'file-container',
   mounted: function () {
-    
+    this.$el.querySelector('#editor')
     this.cm = CodeMirror.fromTextArea(this.$el.querySelector('#editor'), {
       lineNumbers: false,
       mode: 'text/x-java',
