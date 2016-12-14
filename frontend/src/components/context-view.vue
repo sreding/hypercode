@@ -960,6 +960,9 @@ function MainFile(sprite,vLength,hLength,vRadius,hRadius){
   this.horizontalRotateable = function(){
     return (this.vPos%this.vLength) === 0
   }
+  this.inFront = function(){
+    return ((this.hPos%this.hLength) === 0) && ((this.vPos%this.vLength) === 0)
+  }
   this.clear=function(newVLength,newHLength){
     this.sprite.position.z=0
     this.sprite.position.y=0
@@ -984,6 +987,7 @@ export default {
     'file-container': FileContainer
   },
   mounted: function () {
+    console.log("mounted context")
 
     function onWindowResize() {
         camera.aspect = window.innerWidth / window.innerHeight;
@@ -1042,12 +1046,13 @@ export default {
     this.setUpZoom()
     // this.setup()
     that.mainid = that.$route.params.id
-    this.$el.querySelector("#clearButton").onclick=function(){
-      console.log(document.querySelector(".main-container"))
-      // that.clearEverything(vcontainer);
-      // that.mainid = that.$route.params.id
 
-      // that.vertical.push("asf")
+    this.$el.querySelector("#clearButton").onclick=function(){
+      that.clearEverything()
+      scene.add(that.main.sprite)
+      that.main.remove()
+
+
   }
 
     
@@ -1063,6 +1068,9 @@ export default {
       hSprites:[], // horizontal sprites
       vSprites:[],  // vertical sprites
       mainid: null, // id of main file
+
+      vLocked:false,
+      hLocked:false,
 
       sync:0,//used to call a function after both vertical and horizontal heve been called
       maindata: [], //main data file
@@ -1081,7 +1089,6 @@ export default {
       this.mainid=this.$route.params.id
     },
     maindata:function(){
-      console.log("xD")
       let that = this
       Vue.nextTick(function(){
         let element = that.$el.querySelector(".main-container");
@@ -1091,16 +1098,15 @@ export default {
           that.main.remove()
         }
         // that.main.remove()
-        console.log(element)
         let sprite = new THREE.CSS3DObject( element );
         scene.add(sprite)
 
         that.main=new MainFile(sprite,that.vertical.length,that.horizontal.length,0,0)
+   
       })
     },
     vertical:function(){
       let that = this
-      console.log("here")
       Vue.nextTick(function () {
         let vAngleBetween = (2*Math.PI)/(that.vertical.length+1)
         that.setUpVerticalCircle(that.rV,vAngleBetween,-Math.PI/2+vAngleBetween)
@@ -1113,8 +1119,6 @@ export default {
     })
     },
     horizontal:function(){
-      console.log(this.horizontal)
-      console.log(";aslkdfj;alksjf;lka")
       let that = this
       Vue.nextTick(function () {
         let hAngleBetween = (2*Math.PI)/(that.horizontal.length+1)
@@ -1140,7 +1144,6 @@ export default {
       this.hSprites=[]
       this.vSprites=[]
       this.rotationsRunning=0
-      // console.log("called this.relations");
       this.relations()
 
 
@@ -1153,7 +1156,6 @@ export default {
   },
   methods:{
     update:function(){
-      console.log("update")
       let that = this
       while (that.horizontal.length!==0){
             that.horizontal.pop()
@@ -1233,13 +1235,18 @@ export default {
           hcontainer.add(this.main.sprite)
           this.main.sprite.position.z= 2000//rH
         }
+        if(this.main.inFront()){
+          this.toggleLock("v")
+        }
          if(e.keyCode == LEFT){
           targetAngle*=-1
           this.main.hPos-=1
         }else{
           this.main.hPos+=1
         }
-       
+        if(this.main.inFront()){
+          this.toggleLock("v")
+        }//vcontainer.children[0].element)
         this.animateRotation(this.hSprites, new THREE.Vector3(0,1,0), targetAngle, d )
       }
       else if(e.keyCode === UP || e.keyCode === DOWN){
@@ -1253,15 +1260,32 @@ export default {
           vcontainer.add(this.main.sprite)
           this.main.sprite.position.z= 800//rH
         }
+        if(this.main.inFront()){
+          this.toggleLock("h")
+        }
         if(e.keyCode===UP){
           targetAngle*=-1
           this.main.vPos-=1
         }else{
           this.main.vPos+=1
         }
+        if(this.main.inFront()){
+          this.toggleLock("h")
+        }
         
         this.animateRotation(this.vSprites, new THREE.Vector3(1,0,0), targetAngle, d )
       }
+    },
+    toggleLock:function(direction){
+      let elements;
+      if("v" == direction){
+        elements = this.vSprites
+      }else{
+        elements = this.hSprites
+      }
+      elements.forEach(function(item){
+        console.log(item.element.classList.toggle("locked"))
+      })
     },
     animateRotation:function(elements, axis, targetAngle,duration){
       let tweenObject ={angle:0} //goes from 0 to target angle according to tweening function
@@ -1283,8 +1307,6 @@ export default {
             .onUpdate(rotationFunction(this.main.sprite,axis,tweenObject))
             .onComplete(that.changeNumberOfAnimations(-1).bind(that))
             .start()
-            
-
     },
     changeNumberOfAnimations:function(val){
       return function(){
@@ -1346,7 +1368,6 @@ export default {
             this.$http({url: 'http://localhost:3000/api/files/'+ self.mainid +'?rel=all', method: 'GET'}).then(function (response) {
            
               let hdata = [];
-              console.log(response.data)
               
               let hrelations = response.body.horizontal;
               
@@ -1359,7 +1380,6 @@ export default {
                 self.hFiles.push(hrelation);
                 }
               }
-              console.log(self.hFiles)
 
               
 
@@ -1413,7 +1433,7 @@ export default {
 }
 
 .locked{
-  opacity: 0.5;
+  opacity: 0.8;
 }
 /*.main-container .btn{
   background-color: #ff00ff;
@@ -1459,6 +1479,20 @@ body{
     font-size: 2em;
     padding: 2em;
 }
+.btn {
+    background-color: #262626;
+    /*display: inline-block;*/
+    flex-grow: 1;
+    cursor: pointer;
+    color: white;
+    font-family: 'Helvetica Neue Thin',Helvetica, Arial;
+    font-size: 140%;
+    padding: 2%;
+    width: auto;
+    text-decoration: none;
+    text-align: center;
+
+  }
 
 
 </style>
