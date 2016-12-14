@@ -956,6 +956,9 @@ function MainFile(sprite,vLength,hLength,vRadius,hRadius){
   this.horizontalRotateable = function(){
     return (this.vPos%this.vLength) === 0
   }
+  this.inFront = function(){
+    return ((this.hPos%this.hLength) === 0) && ((this.vPos%this.vLength) === 0)
+  }
   this.clear=function(newVLength,newHLength){
     this.sprite.position.z=0
     this.sprite.position.y=0
@@ -1061,6 +1064,9 @@ export default {
       hSprites:[], // horizontal sprites
       vSprites:[],  // vertical sprites
       mainid: null, // id of main file
+
+      vLocked:false,
+      hLocked:false,
 
       sync:0,//used to call a function after both vertical and horizontal heve been called
       maindata: [], //main data file
@@ -1225,13 +1231,18 @@ export default {
           hcontainer.add(this.main.sprite)
           this.main.sprite.position.z= 2000//rH
         }
+        if(this.main.inFront()){
+          this.toggleLock("v")
+        }
          if(e.keyCode == LEFT){
           targetAngle*=-1
           this.main.hPos-=1
         }else{
           this.main.hPos+=1
         }
-       
+        if(this.main.inFront()){
+          this.toggleLock("v")
+        }//vcontainer.children[0].element)
         this.animateRotation(this.hSprites, new THREE.Vector3(0,1,0), targetAngle, d )
       }
       else if(e.keyCode === UP || e.keyCode === DOWN){
@@ -1245,15 +1256,32 @@ export default {
           vcontainer.add(this.main.sprite)
           this.main.sprite.position.z= 800//rH
         }
+        if(this.main.inFront()){
+          this.toggleLock("h")
+        }
         if(e.keyCode===UP){
           targetAngle*=-1
           this.main.vPos-=1
         }else{
           this.main.vPos+=1
         }
+        if(this.main.inFront()){
+          this.toggleLock("h")
+        }
         
         this.animateRotation(this.vSprites, new THREE.Vector3(1,0,0), targetAngle, d )
       }
+    },
+    toggleLock:function(direction){
+      let elements;
+      if("v" == direction){
+        elements = this.vSprites
+      }else{
+        elements = this.hSprites
+      }
+      elements.forEach(function(item){
+        console.log(item.element.classList.toggle("locked"))
+      })
     },
     animateRotation:function(elements, axis, targetAngle,duration){
       let tweenObject ={angle:0} //goes from 0 to target angle according to tweening function
