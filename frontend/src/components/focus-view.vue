@@ -1,52 +1,79 @@
 <template>
   <div id="focus-view">
     <div id="wrapper">
-      <a href="#" v-on:click="remove" id="exit-btn">x</a>
-      <h1>{{title}}</h1>
-      <textarea name="code" id="code"></textarea>
+
+    <div class="container-menu-top">
+
+      <a href="#" v-on:click="remove" class="exit-btn" id="exit-btn">Delete</a>
+      <div id="ctr" class="ctr">0</div>
+      </div>
+      <h1>{{filedata.name}}</h1>
       
-   <!--    <a href="#" class="prev-btn" id="prev-btn">&lt</a>
+      <textarea name="editor" id="editor">{{filedata.source}}</textarea>
+     <!--  <a href="#" class="prev-btn" id="prev-btn">&lt</a>
       <a href="#" class="next-btn" id="next-btn">&gt</a> -->
-      <a href="#" v-on:click="update" class="save-btn" id="save-btn">Save</a>
-      <a href="#" v-on:click="goBack" class="back-btn" id="back-btn">Back</a>
+      <div class="container-menu">
+      <a href="#" v-on:click="update" class="btn" id="save-btn">Save</a>
+      <router-link :to="{path:filedata._id}"  class="btn" id="focus-btn">Focus</router-link>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-var Vue = require('vue');
-var VueResource = require('vue-resource');
+// enable ajax
+let Vue = require('vue');
+let VueResource = require('vue-resource');
 Vue.use(VueResource);
 
-import CodeMirror from 'codemirror';
+import hljs from 'highlight.js';
+import CodeMirror from 'codemirror'
 import 'codemirror/mode/clike/clike';
 
 export default {
   name: 'focus-view',
-   mounted: function () {
-    this.cm = CodeMirror.fromTextArea(this.$el.querySelector('#code'), {
-      lineNumbers: true,
+  mounted: function () {
+    this.$el.querySelector('#editor')
+    this.cm = CodeMirror.fromTextArea(this.$el.querySelector('#editor'), {
+      lineNumbers: false,
       mode: 'text/x-java'
     });
-    this.cm.setValue("asdf")
-    // this.cm.setSize("50vw", "70vmin");
+    let that = this
+       this.connections();
+    setTimeout(function(){that.cm.refresh()},100);
 
+    this.file = this.filedata;
     this.container =  this.$el.querySelector('#wrapper');
-
-    // this.container.style.width=this.width+"vmin";
-    // this.container.style.height=this.height+"vmin";
+    this.container.style.width=this.width+"vmin";
+    this.container.style.height=this.height+"vmin";
+    console.log(this.cm);
+    
 
   },
   props: {
-    'fileid':{default: "none"}
+    'filedata':{id:'585159824b70181e6cf5f881',
+    name:"this",
+    source:"there"}
   },
   watch: {
-    // whenever field changes, this function will run
-    fileid: function (newFileid) {
-      console.log("NEWFIELD", newFileid);
-       if(newFileid!='none'){
-       this.show(); // ready to insert the component
+    filedata: function (newfiledata) {
+      let that = this
+    this.cm.setValue(newfiledata.source)
+    setTimeout(function(){that.cm.refresh()},100)
+     
+  // DOM updated
+ 
+  this.file = this.filedata
+      
+       if(newfiledata){
+     //  this.file = this.filedata; 
+      // let block = this.$el.querySelector('code#code');
+     //  hljs.highlightBlock(block);
+         this.connections();
+
        }
+
+      
     }
     // height: function(newH, oldH){
     //   // this.container.style.width=newH+"vmin";
@@ -58,17 +85,19 @@ export default {
     },
   data: function () {
     return {
-      cm: null,
-      title: 'fileName.ext',
-      file: {},
+      file: {name:"Getting filname", source:"Loading source..."},
       'width':  80 ,
-      'height':  80
+      'height':  80,
+      title:"asfd",
+      count: 0,
+      cm:{}
     };
   },
 
   methods: {
     saveFileData(body){
-  this.data = {
+
+    this.file = {
       name: body.name,
       extension: body.extension || "",
       type:  body.type || "",
@@ -76,136 +105,205 @@ export default {
       relations: body.relations || [],
       source: body.source || ""
     }
+
       },
+      connections:function(){
+         var self = this;
+            this.$http({url: 'http://localhost:3000/api/files/'+ self.filedata._id +'?rel=count', method: 'GET'}).then(function (response) {
+              console.log(response.body);
+              
+              if(response.body){
+              self.count = response.body;
+              let ctr = this.$el.querySelector('#ctr');
+              ctr.innerHTML = response.body;
+              }
 
-    show: function(event){
-    var self = this;
-    this.$http({url: 'http://localhost:3000/api/files/'+ this.fileid, method: 'GET'}).then(function (response) {
-    
-    // success callback
-    self.title = response.body.name;
-    self.cm.setValue(response.body.source);
-    this.saveFileData(response.body);
-
+             
   }, function (response) {
-      // error callback
-  });
-    },
+      // error callback   
+  }); 
+      },
       update: function(event){
       var self = this;
       this.file.source = this.cm.getValue();
-      this.$http({url: 'http://localhost:3000/api/files/'+ this.fileid, body:this.file, method: 'PUT'}).then(function (response) {
+      this.$http({url: 'http://localhost:3000/api/files/'+ this.file._id, body:this.file, method: 'PUT'}).then(function (response) {
 
       // success callback
-      self.cm.setValue(response.body.source);
+      
+      this.cm.setValue(response.body.source);
+      console.log(response.body);
+      let that = this
+      setTimeout(function(){that.cm.refresh()},100)
+ 
+
       }, function (response) {
       // error callback
   });
     },
         remove: function(event){
         var self = this;
-        this.$http({url: 'http://localhost:3000/api/files/'+ this.fileid, method: 'DELETE'}).then(function (response) {
+        this.$http({url: 'http://localhost:3000/api/files/'+ this.file._id, method: 'DELETE'}).then(function (response) {
 
       // success callback
-      self.cm.setValue(response.body + "DELETE");
-      this.data = {};
-      self.cm.setValue("File deleted");
+      self.cm.setValue("DELETED!");
+
+      self.file = {};
   }, function (response) {
       // error callback
   });
     }
-   }
+    ,
+    focus: function(event){
+      console.log("focus");
+      event.preventDefault();
+      event.stopPropagation();
+      // this.container.setAttribute("style","height="+Math.max(document.documentElement.clientHeight, window.innerHeight || 0)
+      //   +"px"+" width="+Math.max(document.documentElement.clientWidth, window.innerWidth || 0)+"px");
+      this.height = 100;
+      this.width = 50;
+      // this.cm.setSize(this.width+, this.height-100); 
+
+  }
+}
 }
 
 </script>
-
 <style src="codemirror/lib/codemirror.css">
-
+</style>
+<style src="codemirror/theme/monokai.css">
 </style>
 <style>
-  #exit-btn {
+  .container-menu{
+    /*background: rgba(255, 0, 0, 1);*/
+    position: absolute;
+    bottom: 0px;
+    right: 0;
+    width: 100%;
+    height: 8%;
+    background: grey;
+    display: inline-flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-content: stretch;
+  }
+  .container-menu-top{
+    /*background: rgba(255, 0, 0, 1);*/
+    position: absolute;
+    top: 0px;
+    right: 0;
+    width: 100%;
+    height: 5%;
+    background: #262626;
+    display: inline-flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-content: stretch;
+  }
+  
+  .btn:hover {
+    background-color: #4d4d4d!important;
+  }
+  .exit-btn {
     background-color: #991f00;
     cursor: pointer;
     color: #ffffff;
     font-family: Helvetica, Arial;
     font-size: 2vmin;
     padding: 1.5vmin 1.5vmin;
+    text-align: center;
     text-decoration: none;
-    position: absolute;
-    top: 0px;
-    left: 0px;
+    width: 10%;
+  }
+  .exit-btn:hover{
+    background-color: #e62e00!important;
   }
   
-  #save-btn {
-    background: rgba(255, 130, 0, 0.7);
-    display: inline-block;`
+  .btn {
+    background-color: #262626;
+    /*display: inline-block;*/
+    flex-grow: 1;
     cursor: pointer;
-    color: #ffffff;
-    font-family: Helvetica, Arial;
-    font-size: auto;
-    text-align: center;
-    padding: 1% 1%;
-    height: 3vmin;
-    width: 6vmin;
+    color: white;
+    font-family: 'Helvetica Neue Thin',Helvetica, Arial;
+    font-size: 140%;
+    padding: 2%;
+    width: auto;
     text-decoration: none;
-    position: absolute;
-    bottom: 0px;
-    right: 10%;
-  }
-  #save-btn:hover{
-    background: rgba(255, 60, 0, 0.9);
-  }
-  #back-btn:hover{
-    background: rgba(255, 60, 0, 0.9);
-  }
-  #exit-btn:hover{
-    background: rgba(255, 0, 0, 1);
-  }
-  #focus-btn:hover{
-    background: rgba(255, 0, 0, 1);
-  }
-  #back-btn{
-  /*  background-color: #cc8800;*/
-  background: rgba(255, 130, 0, 0.7);
-    display: inline-block;
-    cursor: pointer;
-    color: #ffffff;
-    font-family: Helvetica, Arial;
-     font-size: auto;
     text-align: center;
-    padding: 1% 1%;
-    height: 3vmin;
-    width: 6vmin;
-    text-decoration: none;
-    position: absolute;
-    bottom: 0px;
-    right: 20%;
-    opacity: 90%;
+
   }
+  .ctr {
+    background-color: inherit;
+    /*display: inline-block;*/
+    flex-grow: 1;
+    cursor: default;
+    color: white;
+    font-family: 'Helvetica Neue Thin',Helvetica, Arial;
+    font-size: 2vmin;
+    padding: 1.5vmin 1.5vmin;
+    width: auto;
+    text-decoration: none;
+    text-align: right;
+
+  }
+
+  a:nth-child(2){
+    border-left-style: solid;
+    border-left-color: white;
+    border-left-width: 1px;
+  }
+  
   #wrapper {
     background-color: #333333;
-    width: 100vmin;
-    margin: auto;
+    width: 50vmin;
+    height: 80vmin;
+    margin: 10px;
     padding: 3vmin 3vmin 6vmin 3vmin;
-    position: absolute;
-}
-.focus-view{
-  margin: auto;
-  position: absolute;
-}
-.CodeMirror {
-  border: 1px solid #eee;
-  position: absolute;
-  width: 100vmin;
-  height: 70vmin;
-  margin: auto;
-}
+    position: relative;
+  }
+ 
+
+  .CodeMirror pre {
+    white-space: pre-wrap;
+    word-break: break-all;
+    word-wrap: break-word;
+  }
+  .CodeMirror{
+    height: 80%;
+    width: 100%;
+  }
+
+  #code{
+    word-wrap: break-word;
+    height: 100vmin;
+    width: 90%;
+  }
+
   
   h1 {
     color: white;
     font-family: 'Helvetica Neue', Helvetica, Arial;
     font-weight: normal;
     text-align: center;
-    font-size: 100%;
   }
-</style>
+
+.loader {
+    border: 16px solid #f3f3f3; /* Light grey */
+    border-top: 16px solid #3498db; /* Blue */
+    border-radius: 50%;
+    width: 120px;
+    height: 120px;
+    animation: spin 2s linear infinite;
+    margin: 0 auto;
+    
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+ </style>
+
+<style src="../../node_modules/highlight.js/styles/atom-one-dark.css">
+ </style>
