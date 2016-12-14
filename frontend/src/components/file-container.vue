@@ -1,5 +1,5 @@
 <template>
-  <div id="file-container">
+  <div id="file-container" class="fadeIn">
     <div id="wrapper">
 
     <div class="container-menu-top">
@@ -304,6 +304,37 @@ export default {
     100% { transform: rotate(360deg); }
 }
 
+.fadeIn{
+animation-name: fadeInKey; /* the name of the animation we defined above */
+animation-iteration-count: 1; /* how many times the animation will play */
+animation-timing-function: ease-in; /* how the animation will behave */
+animation-duration: 0.6s; /* the duration of the animation */
+}
+
+@keyframes fadeInKey {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 100;
+    }
+}
+
+.fadeOut{
+animation-name: fadeOutKey; /* the name of the animation we defined above */
+animation-iteration-count: 1; /* how many times the animation will play */
+animation-timing-function: ease-out; /* how the animation will behave */
+animation-duration: 0.6s; /* the duration of the animation */
+}
+
+@keyframes fadeOutKey {
+    0% {
+        opacity: 100;
+    }
+    100% {
+        opacity: 0;
+    }
+}
  </style>
 
 <style src="../../node_modules/highlight.js/styles/atom-one-dark.css">
