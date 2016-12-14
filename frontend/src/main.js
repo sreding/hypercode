@@ -3,6 +3,7 @@ import App from './app.vue';
 import VueRouter from 'vue-router';
 import ContextView from './components/context-view.vue';
 import FileContainer from './components/file-container.vue';
+import OverView from './components/over-view.vue';
 
 const Entry = {
 	template: '<p>/file for ContextView, /container for FileContainer</p>'
@@ -18,7 +19,7 @@ const routes = [
   { path: '/container', component: FileContainer },
   { path: '/file', component: ContextView },
   { path: '/file/:id', component: ContextView },
-  { path: '/', component: Entry },
+  { path: '/', component: OverView },
   { path: '*', component: NotFound }
   
 ]

@@ -28,6 +28,13 @@ app.use(cookieParser());
 // app.use(require('less-middleware')(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'public')));
 
+// CORS
+app.use(function addCors(req, res, next) {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+  next();
+});
+
 // Routes
 const fileRoutes = require('./routes/FileRoutes');
 // Hook routes
