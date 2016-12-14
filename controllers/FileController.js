@@ -79,8 +79,7 @@ module.exports = {
         });
       }
       else if(req.query.rel == "count"){
-        FileModel.find({
-        '_id': { $in: File.relations}}).lean().exec((err, relations) =>{
+        FileModel.find({relations: ObjectId(id)}).lean().exec((err, Files) => {
         if (err) {
         return res.status(500).json({
           message: 'Error when getting relations.',
@@ -89,7 +88,7 @@ module.exports = {
 
       };
         
-     return res.json(relations.length);  
+     return res.json(Files.length);  
     });
 
       }
