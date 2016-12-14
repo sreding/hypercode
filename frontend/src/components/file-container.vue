@@ -37,14 +37,17 @@ export default {
     this.cm = CodeMirror.fromTextArea(this.$el.querySelector('#editor'), {
       lineNumbers: false,
       mode: 'text/x-java',
+      readOnly:true
     });
     let that = this
        this.connections();
-    setTimeout(function(){that.cm.refresh()},100)
+    setTimeout(function(){that.cm.refresh()},100);
+
     this.file = this.filedata;
     this.container =  this.$el.querySelector('#wrapper');
     this.container.style.width=this.width+"vmin";
     this.container.style.height=this.height+"vmin";
+    console.log(this.cm);
     
 
   },
@@ -266,12 +269,17 @@ export default {
     word-break: break-all;
     word-wrap: break-word;
   }
+  .CodeMirror{
+    height: 80%;
+    width: 100%;
+  }
 
   #code{
     word-wrap: break-word;
-    height: 70vmin;
+    height: 100vmin;
     width: 90%;
   }
+
   
   h1 {
     color: white;
