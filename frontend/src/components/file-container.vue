@@ -5,7 +5,7 @@
     <div class="container-menu-top">
     <router-link :to="{path:'/'}"  class="exit-btn" id="exit-btn">Overview</router-link>
       <a href="#" v-on:click="remove" class="exit-btn" id="exit-btn">Delete</a>
-      <div class="btn">0</div>
+      <div id="ctr" class="ctr">0</div>
       </div>
       <h1>{{filedata.name}}</h1>
       
@@ -39,14 +39,13 @@ export default {
       mode: 'text/x-java',
     });
     let that = this
+       this.connections();
     setTimeout(function(){that.cm.refresh()},100)
     this.file = this.filedata;
     this.container =  this.$el.querySelector('#wrapper');
     this.container.style.width=this.width+"vmin";
     this.container.style.height=this.height+"vmin";
     console.log("mounted" + this.file._id)
-
-    this.connections();
 
   },
   props: {
@@ -108,7 +107,15 @@ export default {
          var self = this;
             this.$http({url: 'http://localhost:3000/api/files/'+ self.filedata._id +'?rel=count', method: 'GET'}).then(function (response) {
               console.log(response.body);
+              
+              if(response.body){
               self.count = response.body;
+              let ctr = this.$el.querySelector('#ctr');
+              ctr.innerHTML = response.body;
+              }
+                
+              
+
              
   }, function (response) {
       // error callback   
@@ -221,6 +228,20 @@ export default {
     width: auto;
     text-decoration: none;
     text-align: center;
+
+  }
+  .ctr {
+    background-color: inherit;
+    /*display: inline-block;*/
+    flex-grow: 1;
+    cursor: default;
+    color: white;
+    font-family: 'Helvetica Neue Thin',Helvetica, Arial;
+    font-size: 2vmin;
+    padding: 1.5vmin 1.5vmin;
+    width: auto;
+    text-decoration: none;
+    text-align: right;
 
   }
 
