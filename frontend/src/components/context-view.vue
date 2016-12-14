@@ -6,7 +6,7 @@
   <file-container :filedata="item" v-for="(item,index) in horizontal"   :key="Math.random()*40000" class="hFileContainer" >{{index}}</file-container>
   <!-- <div class="hFileContainer three-div" contenteditable="true">asdfasdfasdfasdfasdf</div> -->
 <!-- </template> -->
-<file-container :filedata="maindata" id="main-container" ></file-container>
+<file-container v-if="true" :filedata="maindata" id="main-container" ></file-container>
 <!-- <template id="verticalTemplate" v-for="(item,index) in vertical"> -->
   <file-container :filedata="item" v-for="(item,index) in vertical"   :key="Math.random()*40000" class="vFileContainer" >{{index}}</file-container>
   <!-- <div class="vFileContainer three-div" contenteditable="true">asasdfasdfasdfasdfdf</div> -->
@@ -1062,6 +1062,10 @@ export default {
     }
   },
   watch: {
+    $route:function(){
+      console.log("route changed");
+      this.mainid=this.$route.params.id
+    },
     vertical:function(){
       let that = this
       Vue.nextTick(function () {
@@ -1072,6 +1076,7 @@ export default {
     })
     },
     horizontal:function(){
+      console.log(this.horizontal)
       let that = this
       Vue.nextTick(function () {
         let hAngleBetween = (2*Math.PI)/(that.horizontal.length+1)
@@ -1094,7 +1099,6 @@ export default {
       
       this.clearEverything()
       //this.relations();
-      console.log("heheheheheh")
       this.hSprites=[]
       this.vSprites=[]
       this.rotationsRunning=0
@@ -1111,6 +1115,7 @@ export default {
   },
   methods:{
     update:function(){
+      
       let that = this
       while (that.horizontal.length!==0){
             that.horizontal.pop()
@@ -1119,6 +1124,7 @@ export default {
           that.horizontal.push(that.hFiles[i])
          }
         this.hFiles=[]
+
     },
     setup:function(){
       // makes first element go in front and the rest in 
@@ -1274,7 +1280,7 @@ export default {
 
     clearEverything:function(element){ //css3dobject
       scene.add(this.main.sprite)
-      this.main.clear()
+      // this.main.clear()
       let i = 0
       this.hSprites.forEach(function(item){
         hcontainer.remove(item)
@@ -1314,10 +1320,10 @@ export default {
             this.$http({url: 'http://localhost:3000/api/files/'+ self.mainid +'?rel=true', method: 'GET'}).then(function (response) {
            
               let hdata = [];
+              console.log(response.data)
               
               let hrelations = response.body.horizontal;
               self.maindata = response.data.mainfile;
-              console.log(self.maindata)
               for(let i = 0; i < hrelations.length; i++){
                 
                 let hrelation = hrelations[i];
@@ -1326,6 +1332,7 @@ export default {
                 self.hFiles.push(hrelation);
                 }
               }
+              console.log(self.hFiles)
 
               
 

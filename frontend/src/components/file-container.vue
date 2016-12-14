@@ -12,7 +12,7 @@
       <a href="#" class="next-btn" id="next-btn">&gt</a> -->
       <div class="container-menu">
       <a href="#" v-on:click="update" class="btn" id="save-btn">Save</a>
-      <a :href="filedata._id"  class="btn" id="focus-btn">Focus</a>
+      <router-link :to="{path:filedata._id}"  class="btn" id="focus-btn">Focus</router-link>
       </div>
     </div>
   </div>
@@ -35,7 +35,6 @@ export default {
     this.cm = CodeMirror.fromTextArea(this.$el.querySelector('#editor'), {
       lineNumbers: false,
       mode: 'text/x-java',
-      theme: "monokai"
     });
     let that = this
     setTimeout(function(){that.cm.refresh()},100)
@@ -43,12 +42,7 @@ export default {
     this.container =  this.$el.querySelector('#wrapper');
     this.container.style.width=this.width+"vmin";
     this.container.style.height=this.height+"vmin";
-    console.log(this.filedata)
-     let block = this.$el.querySelector('#code');
-     // hljs.highlightBlock(block);
-    // block.addEventListener("focusout", function(){
-    //   hljs.highlightBlock(block);
-    // });
+    console.log("mounted" + this.file._id)
   },
   props: {
     'filedata':{}
@@ -60,7 +54,7 @@ export default {
     setTimeout(function(){that.cm.refresh()},100)
      
   // DOM updated
-  console.log("Reload: ", newfiledata.source);
+ 
   this.file = this.filedata
       
        if(newfiledata){
