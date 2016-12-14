@@ -4,6 +4,7 @@
 
     <div class="container-menu-top">
       <a href="#" v-on:click="remove" class="exit-btn" id="exit-btn">x</a>
+      <div class="exit-btn">{{count}}</div>
       </div>
       <h1>{{filedata.name}}</h1>
       
@@ -38,11 +39,14 @@ export default {
     });
     let that = this
     setTimeout(function(){that.cm.refresh()},100)
-    this.file = this.filedata
+    this.file = this.filedata;
     this.container =  this.$el.querySelector('#wrapper');
     this.container.style.width=this.width+"vmin";
     this.container.style.height=this.height+"vmin";
     console.log("mounted" + this.file._id)
+
+    this.connections();
+
   },
   props: {
     'filedata':{}
@@ -61,6 +65,8 @@ export default {
      //  this.file = this.filedata; 
       // let block = this.$el.querySelector('code#code');
      //  hljs.highlightBlock(block);
+         this.connections();
+
        }
 
       
@@ -79,6 +85,7 @@ export default {
       'width':  80 ,
       'height':  80,
       title:"asfd",
+      count: 0,
       cm:{}
     };
   },
@@ -95,6 +102,16 @@ export default {
       source: body.source || ""
     }
 
+      },
+      connections:function(){
+         var self = this;
+            this.$http({url: 'http://localhost:3000/api/files/'+ self.filedata._id +'?rel=count', method: 'GET'}).then(function (response) {
+              console.log(response.body);
+              self.count = response.body;
+             
+  }, function (response) {
+      // error callback   
+  }); 
       },
       update: function(event){
       var self = this;

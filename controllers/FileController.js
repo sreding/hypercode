@@ -43,8 +43,10 @@ module.exports = {
         });
       }
 
-      if(req.query.rel){
+      if(req.query.rel && req.params.id){
     
+        if(req.query.rel == "all"){
+        
         FileModel.find({
         '_id': { $in: File.relations}}).lean().exec((err, relations) =>{
         if (err) {
@@ -73,14 +75,36 @@ module.exports = {
     
         return res.json({horizontal: relations, vertical: Files, mainfile: File});
     });
+        
         });
+      }
+      else if(req.query.rel == "count"){
+        FileModel.find({
+        '_id': { $in: File.relations}}).lean().exec((err, relations) =>{
+        if (err) {
+        return res.status(500).json({
+          message: 'Error when getting relations.',
+          error: err,
+        });
+
+      };
+        
+     return res.json(relations.length);  
+    });
+
+      }
+      else{
+        return res.status(500).json({
+          message: 'Paramter error.',
+        });
+      }
+      
       }else{
       return res.json(File);
       }
-      
-        
-  });
+    
   
+  });
   },
 
   /**
