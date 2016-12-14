@@ -5,7 +5,7 @@
     <div class="container-menu-top">
     <router-link :to="{path:'/'}"  class="exit-btn" id="exit-btn">Overview</router-link>
       <a href="#" v-on:click="remove" class="exit-btn" id="exit-btn">Delete</a>
-      <div class="btn">0</div>
+      <div class="ctr">0</div>
       </div>
       <h1>{{filedata.name}}</h1>
       
@@ -221,6 +221,20 @@ export default {
     width: auto;
     text-decoration: none;
     text-align: center;
+
+  }
+  .ctr {
+    background-color: inherit;
+    /*display: inline-block;*/
+    flex-grow: 1;
+    cursor: default;
+    color: white;
+    font-family: 'Helvetica Neue Thin',Helvetica, Arial;
+    font-size: 2vmin;
+    padding: 1.5vmin 1.5vmin;
+    width: auto;
+    text-decoration: none;
+    text-align: right;
 
   }
 
