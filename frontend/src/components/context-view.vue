@@ -1398,14 +1398,23 @@ export default {
   position: absolute;
   transition: all 2s;
 }
-#main-container .container-menu-top{
+.main-container #wrapper{
+  border-left-style: solid;
+  border-left-color: #ffffff;
+  border-left-width: 3px;
+  border-right-style: solid;
+  border-right-color: #ffffff;
+  border-right-width: 3px;
   
-  background: #00001a;
 }
-#main-container .btn{
-  background-color: #00001a;
+
+.locked{
+  opacity: 0.5;
 }
- #main-container .btn:hover {
+/*.main-container .btn{
+  background-color: #ff00ff;
+}*/
+ .main-container .btn:hover {
     background-color: #000033!important;
   }
 /*.fileContainer{
