@@ -1,5 +1,10 @@
 <template>
   <div id="over-view">
+  <div class="container-menu-top">
+    <a  v-on:click="clearStage()" class="task-btn" id="backToOverview">Overview</a>
+   <!--  <a id="zoomButton"  class="task-btn">Zoom</a>
+    <a id="rotateBack"  v-on:click="rotateBackToMainFile()" class="task-btn">RotateBack</a> -->
+      </div>
     <svg id="over-view-svg"></svg>
   </div>
 </template>
@@ -78,7 +83,7 @@ export default {
         .append('g')
         .classed('gnode', true);
         
-      const node = gnodes.append("circle")
+      const node = gnodes.append("circle").style('cursor','pointer')     
           .attr("class", "node")
           .attr("r", 10).style('fill', '#990000')
           .on("click", (e) => {
@@ -108,6 +113,7 @@ export default {
 
       labels.style('fill','black')
       labels.style('font-family','sans-serif')
+      labels.style('cursor','default')   
 
       simulation
         .nodes(this.nodes)

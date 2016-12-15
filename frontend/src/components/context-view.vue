@@ -1531,9 +1531,9 @@ export default {
 /*.main-container .btn{
   background-color: #ff00ff;
 }*/
- .main-container .btn:hover {
+/* .main-container .btn:hover {
     background-color: #000033!important;
-  }
+  }*/
 /*.fileContainer{
   background-color: red;
   position:absolute;

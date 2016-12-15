@@ -3,10 +3,11 @@
     <div id="wrapper">
 
     <div class="container-menu-top">
-
-      <div class="ctr" id="ctr1">0</div>
+  
+      <div class="ctr" id="ctr1">0 </div>
       <div id="ctr" class="ctr">0</div>
       </div>
+
       <h1>{{filedata.name}}</h1>
       
       <textarea name="editor" id="editor">{{filedata.source}}</textarea>
@@ -26,12 +27,18 @@ let Vue = require('vue');
 let VueResource = require('vue-resource');
 Vue.use(VueResource);
 
-import hljs from 'highlight.js';
+// import hljs from 'highlight.js';
 import CodeMirror from 'codemirror'
 import 'codemirror/mode/clike/clike';
+import Icon from 'vue-awesome/components/Icon.vue';
+import 'vue-awesome/icons';
 
 export default {
   name: 'file-container',
+  components: {
+    "icon":Icon
+  },
+  
   mounted: function () {
     this.$el.querySelector('#editor')
     this.cm = CodeMirror.fromTextArea(this.$el.querySelector('#editor'), {
@@ -336,5 +343,8 @@ animation-duration: 0.6s; /* the duration of the animation */
 }
  </style>
 
+
 <style src="../../node_modules/highlight.js/styles/atom-one-dark.css">
  </style>
+
+<!--  <style src="../../static/css/font-awesome.css"></style> -->
