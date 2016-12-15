@@ -1476,11 +1476,11 @@ export default {
 }
 .main-container #wrapper{
   border-left-style: solid;
-  border-left-color: #ffffff;
-  border-left-width: 3px;
+  border-left-color: #6699ff;
+  border-left-width: 20px;
   border-right-style: solid;
-  border-right-color: #ffffff;
-  border-right-width: 3px;
+  border-right-color: #6699ff;
+  border-right-width: 20px;
   
 }
 
@@ -1502,7 +1502,8 @@ export default {
 display: none;
 }
 .task-btn {
-    background-color: #666699;
+    /*background-color: #666699;*/
+    background-color: #990000;
     cursor: pointer;
     color: #ffffff;
     font-family: Helvetica, Arial;
@@ -1515,11 +1516,19 @@ display: none;
     z-index: 10;
   }
   .task-btn:hover{
-    background-color: #000033!important;
+    background-color: #660000!important;
   }
 
 body{
-  background-image: url("http://bennettfeely.com/gradients/img/gradient.jpg");
+  /*background-image: url("http://bennettfeely.com/gradients/img/gradient.jpg");*/
+  background: #f0b7a1;
+background: #efefef;
+background: -moz-radial-gradient(center, ellipse cover,  #efefef 0%, #afafaf 100%);
+background: -webkit-radial-gradient(center, ellipse cover,  #efefef 0%,#afafaf 100%);
+background: radial-gradient(ellipse at center,  #efefef 0%,#afafaf 100%);
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#efefef', endColorstr='#afafaf',GradientType=1 );
+
+
   background-color: #0086b3;
  overflow: hidden;
 
