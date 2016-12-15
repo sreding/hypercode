@@ -1006,6 +1006,8 @@ camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight
 camera.position.set(0, 0,2*window.innerHeight);
 scene.add(camera)
 
+renderer.render( scene, camera );
+    requestAnimationFrame(animate)
 export default {
   name: 'context-view',
   components: {
@@ -1052,8 +1054,7 @@ export default {
     // document.$el.addEventListener("keydown", this.handleKeyEvent.bind(this));
     document.onkeydown = this.handleKeyEvent.bind(this)
   
-    renderer.render( scene, camera );
-    requestAnimationFrame(animate)
+    
 
     this.setUpZoom()
     // this.setup()
@@ -1128,7 +1129,9 @@ export default {
         let hAngleBetween = (2*Math.PI)/(that.horizontal.length+1)
          that.setUpHorizontalCircle(that.rH,hAngleBetween,-Math.PI/2 +hAngleBetween)
          
-         
+         if(that.vFiles.length ===0){
+          that.reloadVertical()
+         }
          while (that.vertical.length!==0){
             that.vertical.pop()
           }
@@ -1242,6 +1245,19 @@ export default {
 
     })
     },
+    reloadVertical:function(){
+      let that = this
+      Vue.nextTick(function () {
+        let vAngleBetween = (2*Math.PI)/(that.vertical.length+1)
+        that.setUpVerticalCircle(that.rV,vAngleBetween,-Math.PI/2+vAngleBetween)
+        while(that.maindata.length !== 0){
+                that.maindata.pop()
+              }
+              
+        that.maindata.push(that.tempMainData);
+        
+    })
+    },
     handleKeyEvent:function(e){
       let d = 300
       let that = this
@@ -1272,6 +1288,7 @@ export default {
           vcontainer.remove(this.main.sprite)
           hcontainer.add(this.main.sprite)
           this.main.sprite.position.z= this.rH//rH
+          this.main.sprite.element.classList.remove("fadeIn")
         }
         this.animateRotation(this.hSprites, new THREE.Vector3(0,1,0), targetAngle, d )
 
@@ -1300,6 +1317,7 @@ export default {
           hcontainer.remove(this.main.sprite)
           vcontainer.add(this.main.sprite)
           this.main.sprite.position.z= this.rV//rH
+          this.main.sprite.element.classList.remove("fadeIn")
         }
         
         this.animateRotation(this.vSprites, new THREE.Vector3(1,0,0), targetAngle, d )
@@ -1349,6 +1367,7 @@ export default {
       let near = window.innerHeight/1.5
       let far = 2*window.innerHeight;
       let tweenAmount
+      camera.position.z=far
       this.$el.querySelector("#zoomButton").onclick=function(){
         if(toggle){
           tweenAmount=near
@@ -1436,6 +1455,7 @@ export default {
             this.$http({url: 'http://localhost:3000/api/files/'+ self.mainid +'?rel=all', method: 'GET'}).then(function (response) {
            
               let hdata = [];
+              console.log(response.body)
               
               let hrelations = response.body.horizontal;
 
@@ -1549,7 +1569,7 @@ body{
     background: #BADA55;
     color: #E50000;
     font-family: Arial, Helvetica, Sans-serif;
-    font-size: 2em;
+    font-size: 2em; 
     padding: 2em;
 }
 .btn {
