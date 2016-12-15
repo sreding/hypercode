@@ -1475,7 +1475,7 @@ display: none;
   }
 
 body{
-  background-image: url("http://www.thewallpapers.org/photo/44424/Background-Blue.jpg");
+  background-image: url("http://bennettfeely.com/gradients/img/gradient.jpg");
   background-color: #0086b3;
  overflow: hidden;
 

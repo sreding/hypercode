@@ -149,7 +149,7 @@ html, body, #app {
 }
 
 .links line {
-  stroke: #999;
+  stroke: #000;
   stroke-opacity: 0.6;
 }
 
