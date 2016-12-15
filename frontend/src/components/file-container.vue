@@ -4,7 +4,7 @@
 
     <div class="container-menu-top">
 
-      <a href="#" v-on:click="remove" class="exit-btn" id="exit-btn">Delete</a>
+      <div class="ctr" id="ctr1">0</div>
       <div id="ctr" class="ctr">0</div>
       </div>
       <h1>{{filedata.name}}</h1>
@@ -115,6 +115,9 @@ export default {
               self.count = response.body;
               let ctr = this.$el.querySelector('#ctr');
               ctr.innerHTML = response.body;
+
+              let ctr1 = this.$el.querySelector('#ctr1');
+              ctr1.innerHTML = self.filedata.relations.length.toString();
               }
                 
               
