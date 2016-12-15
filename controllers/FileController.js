@@ -184,14 +184,31 @@ module.exports = {
   remove(req, res) {
     const id = req.params.id;
 
-    FileModel.findByIdAndRemove(id, (err, File) => {
+      FileModel.update( {relations:ObjectId(id)}, { $pull: {relations: ObjectId(id)} },  { multi: true },(err, Files) =>{
+      
+       if (err) {
+        return res.status(500).json({
+          message: 'Error when deleting the relations.',
+          error: err,
+        });
+       }
+
+      
+       FileModel.findByIdAndRemove(id, (err, File) => {
       if (err) {
         return res.status(500).json({
           message: 'Error when deleting the File.',
           error: err,
         });
+
+         res.json(Files);
       }
       return res.status(204).json();
     });
+    
+  });
+
+    
+   
   },
 };

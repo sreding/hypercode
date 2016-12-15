@@ -4,17 +4,15 @@
 
     <div class="container-menu-top">
 
-      <a href="#" v-on:click="remove" class="exit-btn" id="exit-btn">Delete</a>
+      <a href="#" class="ctr" id="ctr1">0</a>
       <div id="ctr" class="ctr">0</div>
       </div>
-      <h1>{{filedata.name}}</h1>
+      <h1>{{file.name}}</h1>
       
-      <textarea name="editor" id="editor">{{filedata.source}}</textarea>
-     <!--  <a href="#" class="prev-btn" id="prev-btn">&lt</a>
-      <a href="#" class="next-btn" id="next-btn">&gt</a> -->
+      <textarea name="editor" id="editor">{{file.source}}</textarea>
       <div class="container-menu">
       <a href="#" v-on:click="update" class="btn" id="save-btn">Save</a>
-      <router-link :to="{path:filedata._id}"  class="btn" id="focus-btn">Focus</router-link>
+      <a href="#" v-on:click="remove" class="btn" id="delete-btn">Delete</a>
       </div>
     </div>
   </div>
@@ -26,7 +24,6 @@ let Vue = require('vue');
 let VueResource = require('vue-resource');
 Vue.use(VueResource);
 
-import hljs from 'highlight.js';
 import CodeMirror from 'codemirror'
 import 'codemirror/mode/clike/clike';
 
@@ -38,84 +35,52 @@ export default {
       lineNumbers: false,
       mode: 'text/x-java'
     });
-    let that = this
-       this.connections();
-    setTimeout(function(){that.cm.refresh()},100);
 
-    this.file = this.filedata;
     this.container =  this.$el.querySelector('#wrapper');
     this.container.style.width=this.width+"vmin";
     this.container.style.height=this.height+"vmin";
-    console.log(this.cm);
-    
-
+    this.fileid = this.$route.params.id;
+    this.show();
   },
-  props: {
-    'filedata':{id:'585159824b70181e6cf5f881',
-    name:"this",
-    source:"there"}
-  },
-  watch: {
-    filedata: function (newfiledata) {
-      let that = this
-    this.cm.setValue(newfiledata.source)
-    setTimeout(function(){that.cm.refresh()},100)
-     
-  // DOM updated
- 
-  this.file = this.filedata
-      
-       if(newfiledata){
-     //  this.file = this.filedata; 
-      // let block = this.$el.querySelector('code#code');
-     //  hljs.highlightBlock(block);
-         this.connections();
 
-       }
-
-      
-    }
-    // height: function(newH, oldH){
-    //   // this.container.style.width=newH+"vmin";
-    //   console.log("this changes height");
-    //   console.log(this.container,newH);
-    //   this.container.setAttribute("style","height="+newH+"vmin"+" width="+this.width+"vmin");
-    //   console.log(this.container);
-    // }
-    },
   data: function () {
     return {
       file: {name:"Getting filname", source:"Loading source..."},
       'width':  80 ,
       'height':  80,
-      title:"asfd",
-      count: 0,
-      cm:{}
+      cm:{},
+      fileid:{} 
     };
   },
 
   methods: {
-    saveFileData(body){
-
-    this.file = {
-      name: body.name,
-      extension: body.extension || "",
-      type:  body.type || "",
-      parent: body.parent || "",
-      relations: body.relations || [],
-      source: body.source || ""
-    }
-
-      },
-      connections:function(){
+            show:function(){
          var self = this;
-            this.$http({url: 'http://localhost:3000/api/files/'+ self.filedata._id +'?rel=count', method: 'GET'}).then(function (response) {
+            this.$http({url: 'http://localhost:3000/api/files/'+ self.fileid, method: 'GET'}).then(function (response) {
+              console.log(response.body);
+             
+              self.file = response.body;
+              self.cm.setValue(self.file.source);
+              self.count();
+
+  }, function (response) {
+      // error callback   
+      self.cm.setValue("File not found");
+
+ }); 
+      },
+      count:function(){
+         var self = this;
+            this.$http({url: 'http://localhost:3000/api/files/'+ self.fileid +'?rel=count', method: 'GET'}).then(function (response) {
               console.log(response.body);
               
               if(response.body){
               self.count = response.body;
               let ctr = this.$el.querySelector('#ctr');
               ctr.innerHTML = response.body;
+
+              let ctr1 = this.$el.querySelector('#ctr1');
+              ctr1.innerHTML = self.file.relations.length.toString();
               }
 
              
@@ -126,15 +91,11 @@ export default {
       update: function(event){
       var self = this;
       this.file.source = this.cm.getValue();
-      this.$http({url: 'http://localhost:3000/api/files/'+ this.file._id, body:this.file, method: 'PUT'}).then(function (response) {
+      this.$http({url: 'http://localhost:3000/api/files/'+ this.fileid, body:this.file, method: 'PUT'}).then(function (response) {
 
       // success callback
-      
+      self.file = response.body;
       this.cm.setValue(response.body.source);
-      console.log(response.body);
-      let that = this
-      setTimeout(function(){that.cm.refresh()},100)
- 
 
       }, function (response) {
       // error callback
@@ -142,28 +103,18 @@ export default {
     },
         remove: function(event){
         var self = this;
-        this.$http({url: 'http://localhost:3000/api/files/'+ this.file._id, method: 'DELETE'}).then(function (response) {
+        this.$http({url: 'http://localhost:3000/api/files/'+ this.fileid, method: 'DELETE'}).then(function (response) {
 
       // success callback
-      self.cm.setValue("DELETED!");
+      if(response.body){
+      self.cm.setValue("Deleted!");
+      }
 
       self.file = {};
   }, function (response) {
       // error callback
   });
     }
-    ,
-    focus: function(event){
-      console.log("focus");
-      event.preventDefault();
-      event.stopPropagation();
-      // this.container.setAttribute("style","height="+Math.max(document.documentElement.clientHeight, window.innerHeight || 0)
-      //   +"px"+" width="+Math.max(document.documentElement.clientWidth, window.innerWidth || 0)+"px");
-      this.height = 100;
-      this.width = 50;
-      // this.cm.setSize(this.width+, this.height-100); 
-
-  }
 }
 }
 
