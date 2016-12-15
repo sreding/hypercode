@@ -13,7 +13,7 @@
      <!--  <a href="#" class="prev-btn" id="prev-btn">&lt</a>
       <a href="#" class="next-btn" id="next-btn">&gt</a> -->
       <div class="container-menu">
-      <a href="#" v-on:click="update" class="btn" id="save-btn">Save</a>
+     <router-link :to="{path:'/single/'+filedata._id}" replace class="btn" id="save-btn">Edit</router-link>
       <router-link :to="{path:filedata._id}"  class="btn" id="focus-btn">Focus</router-link>
       </div>
     </div>

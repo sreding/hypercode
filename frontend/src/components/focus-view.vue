@@ -1,5 +1,5 @@
 <template>
-  <div id="focus-view">
+  <div id="focus-view" class="fadeIn">
     <div id="wrapper">
 
     <div class="container-menu-top">
@@ -252,6 +252,23 @@ export default {
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
+}
+
+
+.fadeIn{
+animation-name: fadeInKey; /* the name of the animation we defined above */
+animation-iteration-count: 1; /* how many times the animation will play */
+animation-timing-function: ease-in; /* how the animation will behave */
+animation-duration: 0.6s; /* the duration of the animation */
+}
+
+@keyframes fadeInKey {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 100;
+    }
 }
 
  </style>
