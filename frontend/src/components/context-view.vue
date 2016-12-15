@@ -21,7 +21,7 @@
 <div class="container-menu-top">
     <a  v-on:click="clearStage()" class="task-btn" id="backToOverview">Overview</a>
     <a id="zoomButton"  class="task-btn">Zoom</a>
-    <a id="clearButton"  class="task-btn">Clear</a>
+    <a id="rotateBack"  v-on:click="rotateBackToMainFile()" class="task-btn">RotateBack</a>
       </div>
 
 </div>
@@ -948,7 +948,6 @@ function rotateAboutWorldAxis(object, axis, angle) {
       object.position.z = newPos.z;
 }
 
-//TODO: make it its own thing
 function MainFile(sprite,vLength,hLength,vRadius,hRadius){
   this.sprite = sprite
   this.vPos=0 //pos
@@ -965,6 +964,10 @@ function MainFile(sprite,vLength,hLength,vRadius,hRadius){
   }
   this.inFront = function(){
     return ((this.hPos%this.hLength) === 0) && ((this.vPos%this.vLength) === 0)
+  }
+  this.updatePos=function(){
+    this.vPos%=this.vLength
+    this.hPos%=this.hLength
   }
   this.clear=function(newVLength,newHLength){
     this.sprite.position.z=0
@@ -1054,17 +1057,7 @@ export default {
 
     this.setUpZoom()
     // this.setup()
-    that.mainid = that.$route.params.id
-
-    this.$el.querySelector("#clearButton").onclick=function(){
-      scene.remove(that.main.sprite)
-      that.main.sprite=null
-      console.log(that.main.sprite)
-
-
-  }
-
-    
+    that.mainid = that.$route.params.id    
   },
   created: function (){
       this.mainFile = "none";
@@ -1074,7 +1067,7 @@ export default {
   data () {
     return {
       rH:2000,
-      rV:800,
+      rV:900,
       hSprites:[], // horizontal sprites
       vSprites:[],  // vertical sprites
       mainid: null, // id of main file
@@ -1136,6 +1129,7 @@ export default {
       Vue.nextTick(function () {
         let hAngleBetween = (2*Math.PI)/(that.horizontal.length+1)
          that.setUpHorizontalCircle(that.rH,hAngleBetween,-Math.PI/2 +hAngleBetween)
+         
          
          while (that.vertical.length!==0){
             that.vertical.pop()
@@ -1257,6 +1251,7 @@ export default {
         }else{
           this.main.hPos+=1
         }
+        this.main.updatePos()
         if(this.main.inFront()){
           this.toggleLock("v")
         }//vcontainer.children[0].element)
@@ -1272,7 +1267,7 @@ export default {
           hcontainer.remove(this.main.sprite)
           vcontainer.add(this.main.sprite)
           this.main.sprite.position.z= this.rV//rH
-        }
+        }//move after lock
         if(this.main.inFront()){
           this.toggleLock("h")
         }
@@ -1282,6 +1277,7 @@ export default {
         }else{
           this.main.vPos+=1
         }
+        this.main.updatePos()
         if(this.main.inFront()){
           this.toggleLock("h")
         }
@@ -1375,23 +1371,44 @@ export default {
     clearStage:function(){
       console.log(document.querySelectorAll(".main-container"))
       this.clearEverything()
-      hcontainer.remove(this.main.sprite)
-      vcontainer.remove(this.main.sprite)
+      if(this.main !== null){
+        hcontainer.remove(this.main.sprite)
+        vcontainer.remove(this.main.sprite)
+        scene.remove(this.main.sprite)
+        this.main.sprite=null
+      }
       
-      scene.remove(this.main.sprite)
-      this.main.sprite=null
+      
+      
+      
       this.$router.push("/")
-      // this.clearEverything()
-      // console.log(document.querySelectorAll(".main-container"))
-      // let trash = document.querySelectorAll(".main-container")
-      // for(let i = 0; i< trash.length; i++){
-      //   console.log(trash[i].parentNode)
-      //   trash[i].parentNode.removeChild(trash[i])
-      // }
+      
       renderer.domElement.style.display="none"
       document.onkeydown = undefined
 
-      // renderer.domElement.parentNode.removeChild(renderer.domElement)
+    },
+    rotateBackToMainFile:function(){
+      let d = 500
+      if(this.main == null){
+        return
+      }
+      if(Math.abs(this.main.hPos)>0){
+        let targetAngle = (2*Math.PI)/(this.hSprites.length+1)
+        let x = this.main.hPos
+        this.animateRotation(this.hSprites, new THREE.Vector3(0,1,0), -x*targetAngle, d )
+        this.main.clear(this.vSprites.length,this.hSprites.length)
+        this.toggleLock("v")
+        
+      }else if(Math.abs(this.main.vPos)>0){
+        let targetAngle = (2*Math.PI)/(this.vSprites.length+1)
+        let x = this.main.vPos
+        this.animateRotation(this.vSprites, new THREE.Vector3(1,0,0), -x*targetAngle, d )
+        this.main.clear(this.vSprites.length,this.hSprites.length)
+        this.toggleLock("h")
+      }
+      
+      console.log(this.main.hPos) //pos
+      console.log(this.main.vPos)
     },
   
 

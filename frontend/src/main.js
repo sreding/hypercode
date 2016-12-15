@@ -18,7 +18,6 @@ const NotFound = {
 const routes = [
   //will eventually be replaced by overview
   { path: '/container', component: FileContainer },
-  { path: '/file', component: ContextView },
   { path: '/file/:id', component: ContextView },
   { path: '/single', component: FocusView },
   { path: '/single/:id', component: FocusView },
