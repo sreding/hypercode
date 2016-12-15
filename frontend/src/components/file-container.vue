@@ -110,12 +110,22 @@ export default {
             this.$http({url: 'http://localhost:3000/api/files/'+ self.filedata._id +'?rel=count', method: 'GET'}).then(function (response) {
               
               if(response.body){
-              self.count = response.body;
               let ctr = this.$el.querySelector('#ctr');
-              ctr.innerHTML = response.body;
+              if(response.body != 0){
+              ctr.innerHTML = response.body-1;
+              }
+              else{
+                 ctr.innerHTML = 0;
+              }
+
 
               let ctr1 = this.$el.querySelector('#ctr1');
-              ctr1.innerHTML = self.filedata.relations.length.toString();
+              if(self.filedata.relations.length != 0){
+              ctr1.innerHTML = (self.filedata.relations.length-1).toString();
+              }
+              else{
+                 ctr1.innerHTML = 0;
+              }
               }
                 
               
