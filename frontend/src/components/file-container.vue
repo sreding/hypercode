@@ -1,3 +1,4 @@
+
 <template>
   <div id="file-container" class="fadeIn">
     <div id="wrapper">
@@ -357,3 +358,4 @@ animation-duration: 0.6s; /* the duration of the animation */
  </style>
 
 <!--  <style src="../../static/css/font-awesome.css"></style> -->
+<!--   --> 
