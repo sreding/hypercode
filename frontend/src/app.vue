@@ -1,4 +1,5 @@
 <template id="main-template">
+
 <div id="app">
 
 <!-- <focus-view></focus-view>  -->

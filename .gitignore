@@ -40,3 +40,9 @@ npm-debug.log
 
 # Bower dependency directory
 public/bower_components
+
+#LaTeX:
+docs/feasability_study_hyperc0de.aux
+docs/feasability_study_hyperc0de.synctex.gz
+docs/feasability_study_hyperc0de.log
+docs/feasability_study_hyperc0de.pdf
