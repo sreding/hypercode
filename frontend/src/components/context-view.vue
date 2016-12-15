@@ -22,8 +22,6 @@
     <a  v-on:click="clearStage()" class="task-btn" id="backToOverview">Overview</a>
     <a id="zoomButton"  class="task-btn">Zoom</a>
     <a id="rotateBack"  v-on:click="rotateBackToMainFile()" class="task-btn">RotateBack</a>
-    <div id="boxanchor"><div id="information-box">Browsing: {{status}}</div></div>
-
       </div>
 
 </div>
@@ -303,10 +301,6 @@ const UP = 38
 const RIGHT = 39
 const DOWN = 40
 
-//zoom
-let near = window.innerHeight/1.5
-let far = 1*window.innerHeight;
-
 
 function render(){
   renderer.render(scene,camera)
@@ -419,7 +413,6 @@ export default {
   mounted: function () {
     renderer.domElement.style.display=""
 
-
     
     
     
@@ -489,8 +482,7 @@ export default {
       vertical:[],
       hFiles:[],
       vFiles:[],
-      tempMainData:{},
-      status:""
+      tempMainData:{}
     }
   },
   beforeRouteLeave:function (to, from, next) {
@@ -529,7 +521,6 @@ export default {
         scene.add(sprite)
 
         that.main=new MainFile(sprite,that.vertical.length,that.horizontal.length,0,0)
-        console.log("xDxD")
    
       })
     },
@@ -696,7 +687,6 @@ export default {
         }
         if(this.main.inFront()){
           this.toggleLock("v")
-          this.status=" dependencies"
         }
          if(e.keyCode == LEFT){
           targetAngle*=-1
@@ -707,7 +697,6 @@ export default {
         this.main.updatePos()
         if(this.main.inFront()){
           this.toggleLock("v")
-          this.status=""
         }//vcontainer.children[0].element)
         if(hcontainer.children.indexOf(this.main.sprite)===-1){
           vcontainer.remove(this.main.sprite)
@@ -727,7 +716,6 @@ export default {
         //move after lock
         if(this.main.inFront()){
           this.toggleLock("h")
-          this.status=" dependent files"
         }
         if(e.keyCode===UP){
           targetAngle*=-1
@@ -738,7 +726,6 @@ export default {
         this.main.updatePos()
         if(this.main.inFront()){
           this.toggleLock("h")
-          this.status=""
         }
         if(vcontainer.children.indexOf(this.main.sprite)===-1){
           hcontainer.remove(this.main.sprite)
@@ -791,7 +778,8 @@ export default {
 
     setUpZoom(){
       let toggle = true
-      
+      let near = window.innerHeight/1.5
+      let far = 2*window.innerHeight;
       let tweenAmount
       camera.position.z=far
       this.$el.querySelector("#zoomButton").onclick=function(){
@@ -1021,19 +1009,6 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#efefef', end
     text-decoration: none;
     text-align: center;
 
-  }
-
-  #boxanchor{
-    margin-left:auto;
-    margin-right:5%;
-    font-family: 'Helvetica Neue Thin',Helvetica, Arial;
-    font-size: 100%;
-    color: white;
-    padding:.3%;
-    
-  }
-  #information-box{
-    text-align: left;
   }
 
 
