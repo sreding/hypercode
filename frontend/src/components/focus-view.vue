@@ -107,10 +107,11 @@ export default {
 
       // success callback
       if(response.body){
-      self.cm.setValue("Deleted!");
+    
+      self.file = {};
+      self.$router.replace('/');
       }
 
-      self.file = {};
   }, function (response) {
       // error callback
   });
@@ -206,8 +207,8 @@ export default {
   
   #wrapper {
     background-color: #333333;
-    width: 50vmin;
-    height: 80vmin;
+    width: 100vmin;
+    height: 100vmin;
     margin: 10px;
     padding: 3vmin 3vmin 6vmin 3vmin;
     position: relative;
