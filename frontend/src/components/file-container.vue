@@ -11,11 +11,9 @@
       <h1>{{filedata.name}}</h1>
       
       <textarea name="editor" id="editor">{{filedata.source}}</textarea>
-     <!--  <a href="#" class="prev-btn" id="prev-btn">&lt</a>
-      <a href="#" class="next-btn" id="next-btn">&gt</a> -->
       <div class="container-menu">
-     <router-link :to="{path:'/single/'+filedata._id}" replace class="btn" id="save-btn">Edit</router-link>
-      <router-link :to="{path:filedata._id}"  class="btn" id="focus-btn">Focus</router-link>
+     <router-link :to="{path:'/single/'+filedata._id}" replace class="btn" id="save-btn"><icon name="pencil" scale="2"></icon></router-link>
+      <router-link :to="{path:filedata._id}"  class="btn" id="focus-btn"><icon name="bullseye" scale="2"></icon></router-link>
       </div>
     </div>
   </div>
@@ -314,6 +312,7 @@ export default {
     margin: 0 auto;
     
 }
+
 
 @keyframes spin {
     0% { transform: rotate(0deg); }

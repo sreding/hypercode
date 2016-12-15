@@ -1,8 +1,8 @@
 <template>
   <div id="over-view">
   <div class="container-menu-top">
-    <a  v-on:click="clearStage()" class="task-btn" id="backToOverview">Overview</a>
-   <!--  <a id="zoomButton"  class="task-btn">Zoom</a>
+   <router-link class="task-btn" to="/"><icon name="home" scale="1"></icon></router-link>
+   <!--  <a id="zoomButton"  class="task-btn">Zoom</a> <a   id="backToOverview">
     <a id="rotateBack"  v-on:click="rotateBackToMainFile()" class="task-btn">RotateBack</a> -->
       </div>
     <svg id="over-view-svg"></svg>
@@ -11,8 +11,13 @@
 
 <script>
 import * as d3 from "d3";
+import Icon from 'vue-awesome/components/Icon.vue';
+import 'vue-awesome/icons';
 
 export default {
+  components: {
+    "icon":Icon
+  },
   data() {
     return {
       nodes: [],

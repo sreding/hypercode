@@ -19,9 +19,9 @@
 </div>
 
 <div class="container-menu-top">
-    <a  v-on:click="clearStage()" class="task-btn" id="backToOverview">Overview</a>
-    <a id="zoomButton"  class="task-btn">Zoom</a>
-    <a id="rotateBack"  v-on:click="rotateBackToMainFile()" class="task-btn">RotateBack</a>
+    <a  v-on:click="clearStage()" class="task-btn" id="backToOverview"><icon name="home" scale="1"></icon></a>
+    <a id="zoomButton"  class="task-btn"><icon name="expand" scale="1"></icon></a>
+    <a id="rotateBack"  v-on:click="rotateBackToMainFile()" class="task-btn"><icon name="arrow-circle-o-down" scale="1"></icon></a>
       </div>
 
 </div>
@@ -35,6 +35,8 @@
 import FileContainer from './file-container.vue';
 import * as THREE from 'three';
 import * as TWEEN from 'tween.js';
+import Icon from 'vue-awesome/components/Icon.vue';
+import 'vue-awesome/icons';
 
 /**
  * Based on http://www.emagix.net/academic/mscs-project/item/camera-sync-with-css3-and-webgl-threejs
@@ -408,7 +410,8 @@ renderer.render( scene, camera );
 export default {
   name: 'context-view',
   components: {
-    'file-container': FileContainer
+    'file-container': FileContainer,
+    "icon":Icon
   },
   mounted: function () {
     renderer.domElement.style.display=""
@@ -967,6 +970,8 @@ display: none;
     padding: 1.5vmin 1.5vmin;
     text-decoration: none;
     /*position: absolute;*/
+    min-width: 5%;
+    text-align: center;
     top: 0px;
     left: 0px;
     z-index: 10;
@@ -1005,7 +1010,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#efefef', end
     font-family: 'Helvetica Neue Thin',Helvetica, Arial;
     font-size: 140%;
     padding: 2%;
-    width: auto;
+    width: 10%;
     text-decoration: none;
     text-align: center;
 
