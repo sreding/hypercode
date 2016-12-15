@@ -1,0 +1,107 @@
+\documentclass[a4paper]{article}
+
+\usepackage{mathtools}
+\usepackage[explicit]{titlesec}
+\usepackage{titling}
+\usepackage{vaucanson-g}
+\usepackage{fontspec}
+\usepackage{fancyhdr}
+\usepackage{multicol}
+\usepackage{amssymb}
+\usepackage{xcolor}
+\usepackage{listings}
+\lstset{basicstyle=\ttfamily,
+  showstringspaces=false,
+  commentstyle=\color{gray},
+  keywordstyle=\color{blue}
+}
+
+\setmainfont{Helvetica Neue Light}
+
+\newcommand{\coursename}{WebAtelier}
+\newcommand{\assingmentnr}{\underline{HYPER}\texttt{C0DE} }
+\newcommand{\realauthor}{Client: Tommaso dal Sasso}
+\author{\realauthor \\
+Universit\`a della Svizzera italiana - \coursename}
+
+
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{\realauthor}
+\lhead{\today}
+\chead{\assingmentnr  - \coursename}
+\cfoot{\thepage}
+\titleformat{\section}{\normalfont\Large}{}{0em}{#1\ }
+\titleformat{\subsection}{\normalfont\large}{}{0em}{#1\ }
+\title{\assingmentnr}
+
+\pretitle{\begin{flushright}\LARGE}
+\posttitle{\par\end{flushright}\vskip 0.5em}
+\preauthor{\begin{flushright}\large \lineskip 0.5em}
+\postauthor{\par\end{flushright}}
+\predate{\begin{flushright}\large}
+\postdate{\par\end{flushright}}
+\begin{document}
+
+\maketitle{\raggedleft}
+\emph{A Project by:}\\
+Alexander Camenzind, Robert Talling, Valerio Battaglia and Simon Reding
+
+
+\section{Introduction}
+Hypercode is a 3D browser based Integrated Development Unit designed specifically to display relationships between individual files of code. It is composed of three "states", the overview, the context view and the zoomed context view.
+\subsection{Overview}
+The Overview displays all files of a project in relationship to each other in a graph form. Graph nodes are clickable and link to the corresponding context view.
+\subsection{Context View}
+The context view allows a user to toggle between all related files of one selected main file. On the vertical axis there are all the files that are dependent on the main file. On the other hand, the horizontal axis contains all the files the the main file controls. A user can bring files from either axis into the foreground by using the arrow button. To set a file as the main file, a user simply clicks the focus button on a file. 
+
+\subsection{Zoomed Context view}
+This allows the user to inspect a file close by "zooming" into the file while keeping all the functionalities of the Context View.
+
+\section{Running the server}
+As we are using a webpacker running the server takes some effort, and to run the server in development mode one requires a CORS plugin for the browser. To install the dependencies, npm has to be installed and
+\begin{lstlisting}[language=bash]
+npm install
+\end{lstlisting}
+has to be run in both \texttt{/frontend} and the project root.
+
+\subsection{Deployable mode}
+\begin{enumerate}
+\item Compile the code in \texttt{/frontend}
+\begin{lstlisting}[language=bash]
+npm run build
+\end{lstlisting}
+\item Copy the files: (assuming you are in the project root)
+\begin{lstlisting}[language=bash]
+cp frontend/index.html public/index.html
+#make public/dist/ if inexistent:
+mkdir public/dist
+cp frontend/dist/* public/dist/
+\end{lstlisting} 
+\item Run the front end server in the project root:
+\begin{lstlisting}[language=bash]
+npm start
+\end{lstlisting}
+\end{enumerate}
+You should now be able to see the site at \texttt{http://localhost:3000/}
+\subsection{Development mode}
+\begin{enumerate}
+\item Run the server as in the deployable mode (without compiling/copying the files)
+\item Run the front end server in \texttt{/frontend}:
+\begin{lstlisting}[language=bash]
+npm run dev
+\end{lstlisting}
+\end{enumerate}
+You should now be able to see the site at \texttt{http://localhost:8080/} with hot reload whenever the code is changed and saved.
+\begin{multicols}{2}
+\section{Libraries}
+\subsection{Vue.js vs Polymer}
+\subsection{Sprite3D.js}
+\subsection{CodeMirror}
+\subsection{Highlight.js}
+\subsection{three.js}
+\subsection{D3.js}
+\section{Known Issues}
+
+\end{multicols}
+\end{document}
