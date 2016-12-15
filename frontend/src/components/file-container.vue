@@ -4,7 +4,7 @@
 
     <div class="container-menu-top">
 
-      <a href="#" v-on:click="remove" class="exit-btn" id="exit-btn">Delete</a>
+      <div class="ctr" id="ctr1">0</div>
       <div id="ctr" class="ctr">0</div>
       </div>
       <h1>{{filedata.name}}</h1>
@@ -47,7 +47,6 @@ export default {
     this.container =  this.$el.querySelector('#wrapper');
     this.container.style.width=this.width+"vmin";
     this.container.style.height=this.height+"vmin";
-    console.log(this.cm);
     
 
   },
@@ -109,12 +108,14 @@ export default {
       connections:function(){
          var self = this;
             this.$http({url: 'http://localhost:3000/api/files/'+ self.filedata._id +'?rel=count', method: 'GET'}).then(function (response) {
-              console.log(response.body);
               
               if(response.body){
               self.count = response.body;
               let ctr = this.$el.querySelector('#ctr');
               ctr.innerHTML = response.body;
+
+              let ctr1 = this.$el.querySelector('#ctr1');
+              ctr1.innerHTML = self.filedata.relations.length.toString();
               }
                 
               
@@ -132,7 +133,6 @@ export default {
       // success callback
       
       this.cm.setValue(response.body.source);
-      console.log(response.body);
       let that = this
       setTimeout(function(){that.cm.refresh()},100)
  
@@ -155,7 +155,6 @@ export default {
     }
     ,
     focus: function(event){
-      console.log("focus");
       event.preventDefault();
       event.stopPropagation();
       // this.container.setAttribute("style","height="+Math.max(document.documentElement.clientHeight, window.innerHeight || 0)

@@ -6,14 +6,14 @@
 <div class="hidden">
 
 <!-- <template id="horizontalTemplate" v-for="(item,index) in horizontal"> -->
-  <file-container :filedata="item" v-for="(item,index) in horizontal"   :key="Math.random()*40000" class="hFileContainer" >{{index}}</file-container>
+  <file-container :filedata="item" v-for="(item,index) in horizontal"   :key="Math.random()*1000000" class="hFileContainer" >{{index}}</file-container>
   <!-- <div class="hFileContainer three-div" contenteditable="true">asdfasdfasdfasdfasdf</div> -->
 <!-- </template> -->
   
 
 <!-- <template id="verticalTemplate" v-for="(item,index) in vertical"> -->
-  <file-container :filedata="item" v-for="(item,index) in vertical"   :key="Math.random()*40000" class="vFileContainer" >{{index}}</file-container>
-  <file-container v-for="(item,index) in maindata" :filedata="item" :key="Math.random()*40000"  class="main-container" ></file-container>
+  <file-container :filedata="item" v-for="(item,index) in vertical"   :key="Math.random()*1000000" class="vFileContainer" >{{index}}</file-container>
+  <file-container v-for="(item,index) in maindata" :filedata="item" :key="Math.random()*1000000"  class="main-container" ></file-container>
   <!-- <div class="vFileContainer three-div" contenteditable="true">asasdfasdfasdfasdfdf</div> -->
 <!-- </template> -->
 </div>
@@ -49,7 +49,6 @@ THREE.CSS3DObject = function ( element ) {
   this.element.style.position = 'absolute';
 
   this.addEventListener( 'removed', function ( event ) {
-    console.log("rmoved called")
     if ( this.element.parentNode !== null ) {
       this.element.parentNode.removeChild( this.element );
 
@@ -907,7 +906,6 @@ const LEFT = 37
 const UP = 38
 const RIGHT = 39
 const DOWN = 40
-console.log("123")
 
 
 function render(){
@@ -990,35 +988,39 @@ renderer = new THREE.CSS3DRenderer();
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.domElement.style.position = 'absolute';
     renderer.domElement.style.top = 0;
-    console.log(camera)
     document.body.appendChild(renderer.domElement);
-    console.log(renderer.domElement)
-  renderer.domElement.style.display="none"
+  renderer.domElement.style.display="none"//blocks other elements from being clicked otherwise
 
+function onWindowResize() {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize( window.innerWidth, window.innerHeight );
+        render();
+      }
+window.addEventListener("resize",onWindowResize)
+
+scene = new THREE.Scene();
+    // let rH = 2000
+    // let rV = 800
+camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
+camera.position.set(0, 0,2*window.innerHeight);
+scene.add(camera)
+
+renderer.render( scene, camera );
+    requestAnimationFrame(animate)
 export default {
   name: 'context-view',
   components: {
     'file-container': FileContainer
   },
   mounted: function () {
-    console.log("mounted context")
     renderer.domElement.style.display=""
 
-    function onWindowResize() {
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
-        renderer.setSize( window.innerWidth, window.innerHeight );
-        render();
-      }
-    window.addEventListener("resize",onWindowResize)
     
-    scene = new THREE.Scene();
-    // let rH = 2000
-    // let rV = 800
-    camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
+    
+    
 
-    camera.position.set(0, 0,2*window.innerHeight);
-    scene.add(camera)
+    
     
     hcontainer = new THREE.CSS3DObject(document.createElement("div"));
     vcontainer = new THREE.CSS3DObject(document.createElement("div"));
@@ -1052,8 +1054,7 @@ export default {
     // document.$el.addEventListener("keydown", this.handleKeyEvent.bind(this));
     document.onkeydown = this.handleKeyEvent.bind(this)
   
-    renderer.render( scene, camera );
-    requestAnimationFrame(animate)
+    
 
     this.setUpZoom()
     // this.setup()
@@ -1061,7 +1062,6 @@ export default {
   },
   created: function (){
       this.mainFile = "none";
-      console.log("created")
 
   },
   data () {
@@ -1088,7 +1088,6 @@ export default {
   },
   watch: {
     $route:function(){
-      console.log("route changed");
       this.mainid=this.$route.params.id
       scene.remove(this.main.sprite)
       // this.main.sprite=null
@@ -1130,7 +1129,9 @@ export default {
         let hAngleBetween = (2*Math.PI)/(that.horizontal.length+1)
          that.setUpHorizontalCircle(that.rH,hAngleBetween,-Math.PI/2 +hAngleBetween)
          
-         
+         if(that.vFiles.length ===0){
+          that.reloadVertical()
+         }
          while (that.vertical.length!==0){
             that.vertical.pop()
           }
@@ -1145,7 +1146,7 @@ export default {
     })
     },
     mainid:function(){  
-      
+      console.log(this.mainid)
       this.clearEverything()
       //this.relations();
       this.hSprites=[]
@@ -1224,6 +1225,39 @@ export default {
 
       this.main=new MainFile(sprite,this.vertical.length,this.horizontal.length,0,0)
     },
+    reloadHorizontal:function(){
+      let that = this
+      Vue.nextTick(function () {
+        let hAngleBetween = (2*Math.PI)/(that.horizontal.length+1)
+         that.setUpHorizontalCircle(that.rH,hAngleBetween,-Math.PI/2 +hAngleBetween)
+         
+         
+         while (that.vertical.length!==0){
+            that.vertical.pop()
+          }
+
+          // load vertical
+         
+         for(let i = 0; i<that.vFiles.length;i++){
+          that.vertical.push(that.vFiles[i])
+         }
+         that.vFiles=[]
+
+    })
+    },
+    reloadVertical:function(){
+      let that = this
+      Vue.nextTick(function () {
+        let vAngleBetween = (2*Math.PI)/(that.vertical.length+1)
+        that.setUpVerticalCircle(that.rV,vAngleBetween,-Math.PI/2+vAngleBetween)
+        while(that.maindata.length !== 0){
+                that.maindata.pop()
+              }
+              
+        that.maindata.push(that.tempMainData);
+        
+    })
+    },
     handleKeyEvent:function(e){
       let d = 300
       let that = this
@@ -1236,11 +1270,6 @@ export default {
        
         if(!this.main.horizontalRotateable() ){
           return
-        }
-        if(hcontainer.children.indexOf(this.main.sprite)===-1){
-          vcontainer.remove(this.main.sprite)
-          hcontainer.add(this.main.sprite)
-          this.main.sprite.position.z= this.rH//rH
         }
         if(this.main.inFront()){
           this.toggleLock("v")
@@ -1255,7 +1284,14 @@ export default {
         if(this.main.inFront()){
           this.toggleLock("v")
         }//vcontainer.children[0].element)
+        if(hcontainer.children.indexOf(this.main.sprite)===-1){
+          vcontainer.remove(this.main.sprite)
+          hcontainer.add(this.main.sprite)
+          this.main.sprite.position.z= this.rH//rH
+          this.main.sprite.element.classList.remove("fadeIn")
+        }
         this.animateRotation(this.hSprites, new THREE.Vector3(0,1,0), targetAngle, d )
+
       }
       else if(e.keyCode === UP || e.keyCode === DOWN){
         let targetAngle = (2*Math.PI)/(that.vertical.length+1)
@@ -1263,11 +1299,7 @@ export default {
         if(!this.main.verticalRotateable() ){
           return
         }
-        if(vcontainer.children.indexOf(this.main.sprite)===-1){
-          hcontainer.remove(this.main.sprite)
-          vcontainer.add(this.main.sprite)
-          this.main.sprite.position.z= this.rV//rH
-        }//move after lock
+        //move after lock
         if(this.main.inFront()){
           this.toggleLock("h")
         }
@@ -1281,6 +1313,12 @@ export default {
         if(this.main.inFront()){
           this.toggleLock("h")
         }
+        if(vcontainer.children.indexOf(this.main.sprite)===-1){
+          hcontainer.remove(this.main.sprite)
+          vcontainer.add(this.main.sprite)
+          this.main.sprite.position.z= this.rV//rH
+          this.main.sprite.element.classList.remove("fadeIn")
+        }
         
         this.animateRotation(this.vSprites, new THREE.Vector3(1,0,0), targetAngle, d )
       }
@@ -1293,7 +1331,7 @@ export default {
         elements = this.hSprites
       }
       elements.forEach(function(item){
-        console.log(item.element.classList.toggle("locked"))
+        item.element.classList.toggle("locked")
       })
     },
     animateRotation:function(elements, axis, targetAngle,duration){
@@ -1329,6 +1367,7 @@ export default {
       let near = window.innerHeight/1.5
       let far = 2*window.innerHeight;
       let tweenAmount
+      camera.position.z=far
       this.$el.querySelector("#zoomButton").onclick=function(){
         if(toggle){
           tweenAmount=near
@@ -1360,7 +1399,6 @@ export default {
         vcontainer.remove(item)
         i++
       })
-      console.log(vcontainer.children)
   },
     clearChildren:function(element){
       for( var i = element.children.length - 1; i >= 0; i--) { 
@@ -1369,7 +1407,6 @@ export default {
       }
     },
     clearStage:function(){
-      console.log(document.querySelectorAll(".main-container"))
       this.clearEverything()
       if(this.main !== null){
         hcontainer.remove(this.main.sprite)
@@ -1406,9 +1443,7 @@ export default {
         this.main.clear(this.vSprites.length,this.hSprites.length)
         this.toggleLock("h")
       }
-      
-      console.log(this.main.hPos) //pos
-      console.log(this.main.vPos)
+
     },
   
 
@@ -1420,8 +1455,10 @@ export default {
             this.$http({url: 'http://localhost:3000/api/files/'+ self.mainid +'?rel=all', method: 'GET'}).then(function (response) {
            
               let hdata = [];
+              console.log(response.body)
               
               let hrelations = response.body.horizontal;
+
               
               self.tempMainData = response.data.mainfile
               for(let i = 0; i < hrelations.length; i++){
@@ -1431,6 +1468,10 @@ export default {
                 if(hrelation._id != self.mainid){
                 self.hFiles.push(hrelation);
                 }
+              }
+
+              if(self.hFiles.length==0){ //force update
+                self.reloadHorizontal()
               }
 
               
@@ -1537,7 +1578,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#efefef', end
     background: #BADA55;
     color: #E50000;
     font-family: Arial, Helvetica, Sans-serif;
-    font-size: 2em;
+    font-size: 2em; 
     padding: 2em;
 }
 .btn {
