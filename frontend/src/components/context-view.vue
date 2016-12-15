@@ -49,13 +49,15 @@ THREE.CSS3DObject = function ( element ) {
   this.element.style.position = 'absolute';
 
   this.addEventListener( 'removed', function ( event ) {
-
+    console.log("rmoved called")
     if ( this.element.parentNode !== null ) {
       this.element.parentNode.removeChild( this.element );
 
     }
 
   } );
+
+  
 
 };
 
@@ -905,6 +907,7 @@ const LEFT = 37
 const UP = 38
 const RIGHT = 39
 const DOWN = 40
+console.log("123")
 
 
 function render(){
@@ -980,6 +983,14 @@ function MainFile(sprite,vLength,hLength,vRadius,hRadius){
 
 
 }
+renderer = new THREE.CSS3DRenderer();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.domElement.style.position = 'absolute';
+    renderer.domElement.style.top = 0;
+    console.log(camera)
+    document.body.appendChild(renderer.domElement);
+    console.log(renderer.domElement)
+  renderer.domElement.style.display="none"
 
 export default {
   name: 'context-view',
@@ -988,6 +999,7 @@ export default {
   },
   mounted: function () {
     console.log("mounted context")
+    renderer.domElement.style.display=""
 
     function onWindowResize() {
         camera.aspect = window.innerWidth / window.innerHeight;
@@ -998,8 +1010,8 @@ export default {
     window.addEventListener("resize",onWindowResize)
     
     scene = new THREE.Scene();
-    let rH = 2000
-    let rV = 800
+    // let rH = 2000
+    // let rV = 800
     camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
 
     camera.position.set(0, 0,2*window.innerHeight);
@@ -1015,13 +1027,7 @@ export default {
     scene.add(vcontainer)
 
 
-    renderer = new THREE.CSS3DRenderer();
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.domElement.style.position = 'absolute';
-    renderer.domElement.style.top = 0;
-    console.log(camera)
-    document.body.appendChild(renderer.domElement);
-    console.log(renderer.domElement)
+    
 
     controls = new THREE.TrackballControls( camera, renderer.domElement );
     controls.rotateSpeed = 0.5;
@@ -1040,7 +1046,8 @@ export default {
     // this.setUpMain();
 
     let that = this;
-    document.addEventListener("keydown", this.handleKeyEvent.bind(this));
+    // document.$el.addEventListener("keydown", this.handleKeyEvent.bind(this));
+    document.onkeydown = this.handleKeyEvent.bind(this)
   
     renderer.render( scene, camera );
     requestAnimationFrame(animate)
@@ -1050,7 +1057,9 @@ export default {
     that.mainid = that.$route.params.id
 
     this.$el.querySelector("#clearButton").onclick=function(){
-      
+      scene.remove(that.main.sprite)
+      that.main.sprite=null
+      console.log(that.main.sprite)
 
 
   }
@@ -1059,6 +1068,7 @@ export default {
   },
   created: function (){
       this.mainFile = "none";
+      console.log("created")
 
   },
   data () {
@@ -1087,15 +1097,18 @@ export default {
     $route:function(){
       console.log("route changed");
       this.mainid=this.$route.params.id
+      scene.remove(this.main.sprite)
+      // this.main.sprite=null
     },
     maindata:function(){
       let that = this
       Vue.nextTick(function(){
         let element = that.$el.querySelector(".main-container");
-        // scene.add(that.main.sprite)
+        
         if(that.main !== null){
           scene.add(that.main.sprite)
           that.main.remove()
+          that.main.sprite=null
         }
         // that.main.remove()
         let sprite = new THREE.CSS3DObject( element );
@@ -1233,7 +1246,7 @@ export default {
         if(hcontainer.children.indexOf(this.main.sprite)===-1){
           vcontainer.remove(this.main.sprite)
           hcontainer.add(this.main.sprite)
-          this.main.sprite.position.z= 2000//rH
+          this.main.sprite.position.z= this.rH//rH
         }
         if(this.main.inFront()){
           this.toggleLock("v")
@@ -1258,7 +1271,7 @@ export default {
         if(vcontainer.children.indexOf(this.main.sprite)===-1){
           hcontainer.remove(this.main.sprite)
           vcontainer.add(this.main.sprite)
-          this.main.sprite.position.z= 800//rH
+          this.main.sprite.position.z= this.rV//rH
         }
         if(this.main.inFront()){
           this.toggleLock("h")
@@ -1339,7 +1352,7 @@ export default {
     },
 
     clearEverything:function(element){ //css3dobject
-      // scene.add(this.main.sprite)
+      
       // this.main.clear()
       let i = 0
       this.hSprites.forEach(function(item){
@@ -1351,6 +1364,7 @@ export default {
         vcontainer.remove(item)
         i++
       })
+      console.log(vcontainer.children)
   },
     clearChildren:function(element){
       for( var i = element.children.length - 1; i >= 0; i--) { 
@@ -1359,12 +1373,25 @@ export default {
       }
     },
     clearStage:function(){
-
+      console.log(document.querySelectorAll(".main-container"))
       this.clearEverything()
-      scene.add(this.main.sprite)
-      this.main.remove()
+      hcontainer.remove(this.main.sprite)
+      vcontainer.remove(this.main.sprite)
+      
+      scene.remove(this.main.sprite)
+      this.main.sprite=null
       this.$router.push("/")
-      renderer.domElement.parentNode.removeChild(renderer.domElement)
+      // this.clearEverything()
+      // console.log(document.querySelectorAll(".main-container"))
+      // let trash = document.querySelectorAll(".main-container")
+      // for(let i = 0; i< trash.length; i++){
+      //   console.log(trash[i].parentNode)
+      //   trash[i].parentNode.removeChild(trash[i])
+      // }
+      renderer.domElement.style.display="none"
+      document.onkeydown = undefined
+
+      // renderer.domElement.parentNode.removeChild(renderer.domElement)
     },
   
 
