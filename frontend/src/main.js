@@ -5,6 +5,7 @@ import ContextView from './components/context-view.vue';
 import FileContainer from './components/file-container.vue';
 import FocusView from './components/focus-view.vue';
 import OverView from './components/over-view.vue';
+import Icon from 'vue-awesome/components/Icon.vue';
 
 
 const Entry = {

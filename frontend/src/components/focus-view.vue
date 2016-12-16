@@ -1,20 +1,23 @@
 <template>
   <div id="focus-view" class="fadeIn">
-    <div id="wrapper">
+    
 
-    <div class="container-menu-top">
+    <div class="fcs-container-menu-top">
+    <router-link class="fcs-task-btn" :to="{path:'/file/'+file._id}" replace><icon name="arrow-left" scale="1"></icon></router-link>
 
       <a href="#" class="ctr" id="ctr1">0</a>
       <div id="ctr" class="ctr">0</div>
       </div>
+      <div id="fcs-title">
       <h1>{{file.name}}</h1>
-      
-      <textarea name="editor" id="editor">{{file.source}}</textarea>
-      <div class="container-menu">
-      <a href="#" v-on:click="update" class="btn" id="save-btn">Save</a>
-      <a href="#" v-on:click="remove" class="btn" id="delete-btn">Delete</a>
       </div>
-    </div>
+      <div id="fcs-code">
+      <textarea name="editor" id="editor">{{file.source}}</textarea>
+      </div>
+      <div id="fcs-container-menu">
+      <a href="#" v-on:click="update" class="btn" id="save-btn"><icon name="floppy-o" scale="2"></icon></a>
+      <a href="#" v-on:click="remove" class="btn" id="delete-btn"><icon name="trash" scale="2"></icon></a>
+      </div>
   </div>
 </template>
 
@@ -26,19 +29,25 @@ Vue.use(VueResource);
 
 import CodeMirror from 'codemirror'
 import 'codemirror/mode/clike/clike';
+import Icon from 'vue-awesome/components/Icon.vue';
+import 'vue-awesome/icons';
 
 export default {
   name: 'focus-view',
+  components: {
+    "icon":Icon
+  },
   mounted: function () {
     this.$el.querySelector('#editor')
     this.cm = CodeMirror.fromTextArea(this.$el.querySelector('#editor'), {
-      lineNumbers: false,
+      lineNumbers: true,
       mode: 'text/x-java'
     });
+    this.cm.setSize("80vw","70vh")
 
-    this.container =  this.$el.querySelector('#wrapper');
-    this.container.style.width=this.width+"vmin";
-    this.container.style.height=this.height+"vmin";
+    this.container =  this.$el.querySelector('#single-wrapper');
+    // this.container.style.width=this.width+"vmin";
+    // this.container.style.height=this.height+"vmin";
     this.fileid = this.$route.params.id;
     this.show();
   },
@@ -125,31 +134,52 @@ export default {
 <style src="codemirror/theme/monokai.css">
 </style>
 <style>
-  .container-menu{
+  #fcs-container-menu{
     /*background: rgba(255, 0, 0, 1);*/
     position: absolute;
     bottom: 0px;
-    right: 0;
-    width: 100%;
-    height: 8%;
+    right: 10%;
+    width: 80%;
+    height: 10%;
     background: grey;
     display: inline-flex;
     flex-direction: row;
     flex-wrap: wrap;
     align-content: stretch;
   }
-  .container-menu-top{
+  .fcs-container-menu-top{
     /*background: rgba(255, 0, 0, 1);*/
     position: absolute;
     top: 0px;
-    right: 0;
-    width: 100%;
+    right: 10%;
+    left: 10%;
+    width: 80%;
     height: 5%;
     background: #262626;
     display: inline-flex;
     flex-direction: row;
     flex-wrap: wrap;
     align-content: stretch;
+  }
+  .fcs-task-btn {
+    /*background-color: #666699;*/
+    background-color: #990000;
+    cursor: pointer;
+    color: #ffffff;
+    font-family: Helvetica, Arial;
+    font-size: 2vmin;
+    padding: 1.5vmin 1.5vmin;
+    text-decoration: none;
+    /*position: absolute;*/
+    width: 10%;
+    max-width: 10%;
+    text-align: center;
+    top: 0px;
+    left: 0px;
+    z-index: 1000000;
+  }
+  .fcs-task-btn:hover{
+    background-color: #660000!important;
   }
   
   .btn:hover {
@@ -198,22 +228,25 @@ export default {
     text-align: right;
 
   }
-
-  a:nth-child(2){
-    border-left-style: solid;
-    border-left-color: white;
-    border-left-width: 1px;
+  #fcs-title{
+    position: absolute;
+    top: 5%;
+    width: 100%;
   }
-  
-  #wrapper {
+  #focus-view {
     background-color: #333333;
-    width: 100vmin;
-    height: 100vmin;
-    margin: 10px;
-    padding: 3vmin 3vmin 6vmin 3vmin;
-    position: relative;
+    width: 100vw;
+    height: 100vh;
+    position: absolute;
+    left: 0;
+    top:0;
   }
- 
+  #delete-btn{
+  background: #990000;
+  }
+  #delete-btn:hover{
+  background: red !important;
+  }
 
   .CodeMirror pre {
     white-space: pre-wrap;
@@ -221,16 +254,16 @@ export default {
     word-wrap: break-word;
   }
   .CodeMirror{
-    height: 80%;
-    width: 100%;
+    height: 70%;
+    width: 100%; 
   }
-
-  #code{
-    word-wrap: break-word;
-    height: 100vmin;
-    width: 90%;
+  #fcs-code{
+    padding-left: 10%;
+    padding-right: 10%;
+    position: absolute;
+    top: 15%;
+    left: 0;
   }
-
   
   h1 {
     color: white;

@@ -1,20 +1,20 @@
+
 <template>
   <div id="file-container" class="fadeIn">
     <div id="wrapper">
 
     <div class="container-menu-top">
-
-      <div class="ctr" id="ctr1">0</div>
+  
+      <div class="ctr" id="ctr1">0 </div>
       <div id="ctr" class="ctr">0</div>
       </div>
+
       <h1>{{filedata.name}}</h1>
       
       <textarea name="editor" id="editor">{{filedata.source}}</textarea>
-     <!--  <a href="#" class="prev-btn" id="prev-btn">&lt</a>
-      <a href="#" class="next-btn" id="next-btn">&gt</a> -->
       <div class="container-menu">
-     <router-link :to="{path:'/single/'+filedata._id}" replace class="btn" id="save-btn">Edit</router-link>
-      <router-link :to="{path:filedata._id}"  class="btn" id="focus-btn">Focus</router-link>
+     <router-link :to="{path:'/single/'+filedata._id}" replace class="btn" id="edit-btn"><icon name="pencil" scale="2"></icon></router-link>
+      <router-link :to="{path:filedata._id}"  class="btn" id="focus-btn"><icon name="bullseye" scale="2"></icon></router-link>
       </div>
     </div>
   </div>
@@ -26,11 +26,18 @@ let Vue = require('vue');
 let VueResource = require('vue-resource');
 Vue.use(VueResource);
 
+// import hljs from 'highlight.js';
 import CodeMirror from 'codemirror'
 import 'codemirror/mode/clike/clike';
+import Icon from 'vue-awesome/components/Icon.vue';
+import 'vue-awesome/icons';
 
 export default {
   name: 'file-container',
+  components: {
+    "icon":Icon
+  },
+  
   mounted: function () {
     this.$el.querySelector('#editor')
     this.cm = CodeMirror.fromTextArea(this.$el.querySelector('#editor'), {
@@ -46,6 +53,7 @@ export default {
     this.container =  this.$el.querySelector('#wrapper');
     this.container.style.width=this.width+"vmin";
     this.container.style.height=this.height+"vmin";
+    
 
   },
   props: {
@@ -53,7 +61,7 @@ export default {
   },
   watch: {
     filedata: function (newfiledata) {
-    let that = this
+      let that = this
     this.cm.setValue(newfiledata.source)
     setTimeout(function(){that.cm.refresh()},100)
      
@@ -62,8 +70,13 @@ export default {
   this.file = this.filedata
       
        if(newfiledata){
+     //  this.file = this.filedata; 
+      // let block = this.$el.querySelector('code#code');
+     //  hljs.highlightBlock(block);
          this.connections();
+
        }
+
       
     }
     // height: function(newH, oldH){
@@ -79,12 +92,25 @@ export default {
       file: {name:"Getting filname", source:"Loading source..."},
       'width':  80 ,
       'height':  80,
+      title:"asfd",
+      count: 0,
       cm:{}
     };
   },
 
   methods: {
+    saveFileData(body){
+    
+    this.file = {
+      name: body.name,
+      extension: body.extension || "",
+      type:  body.type || "",
+      parent: body.parent || "",
+      relations: body.relations || [],
+      source: body.source || ""
+    }
 
+      },
       connections:function(){
          var self = this;
             this.$http({url: 'http://localhost:3000/api/files/'+ self.filedata._id +'?rel=count', method: 'GET'}).then(function (response) {
@@ -98,6 +124,7 @@ export default {
                  ctr.innerHTML = 0;
               }
 
+
               let ctr1 = this.$el.querySelector('#ctr1');
               if(self.filedata.relations.length != 0){
               ctr1.innerHTML = (self.filedata.relations.length-1).toString();
@@ -106,11 +133,43 @@ export default {
                  ctr1.innerHTML = 0;
               }
               }
-           
+                
+              
+
+             
   }, function (response) {
       // error callback   
   }); 
       },
+      update: function(event){
+      var self = this;
+      this.file.source = this.cm.getValue();
+      this.$http({url: 'http://localhost:3000/api/files/'+ this.file._id, body:this.file, method: 'PUT'}).then(function (response) {
+
+      // success callback
+      
+      this.cm.setValue(response.body.source);
+      let that = this
+      setTimeout(function(){that.cm.refresh()},100)
+ 
+
+      }, function (response) {
+      // error callback
+  });
+    },
+        remove: function(event){
+        var self = this;
+        this.$http({url: 'http://localhost:3000/api/files/'+ this.file._id, method: 'DELETE'}).then(function (response) {
+
+      // success callback
+      self.cm.setValue("DELETED!");
+
+      self.file = {};
+  }, function (response) {
+      // error callback
+  });
+    }
+    ,
     focus: function(event){
       event.preventDefault();
       event.stopPropagation();
@@ -137,6 +196,7 @@ export default {
     right: 0;
     width: 100%;
     height: 8%;
+    max-height: 8%;
     background: grey;
     display: inline-flex;
     flex-direction: row;
@@ -255,6 +315,7 @@ export default {
     
 }
 
+
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
@@ -292,6 +353,7 @@ animation-duration: 0.6s; /* the duration of the animation */
     }
 }
  </style>
+
 
 <style src="../../node_modules/highlight.js/styles/atom-one-dark.css">
  </style>
