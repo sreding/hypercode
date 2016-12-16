@@ -375,6 +375,23 @@ function MainFile(sprite,vLength,hLength,vRadius,hRadius){
   }
   this.remove = function(){
     scene.remove(this.sprite)
+  },
+  this.getHfileNameInFront=function(elements,direction){
+    let c 
+    if(direction=="v"){
+      c = -this.vPos
+    }else if(direction =="h"){
+      c = this.hPos
+    }
+    
+    if(c==0){
+      return ""
+    }
+    if(c<0){
+      return elements[Math.abs(c)-1].name
+    }else{
+      return elements[elements.length-c].name
+    }
   }
 
 
@@ -717,7 +734,7 @@ export default {
           this.main.sprite.element.classList.remove("fadeIn")
         }
         this.animateRotation(this.hSprites, new THREE.Vector3(0,1,0), targetAngle, d )
-
+        this.main.getHfileNameInFront(this.horizontal,"h")
       }
       else if(e.keyCode === UP || e.keyCode === DOWN){
         let targetAngle = (2*Math.PI)/(that.vertical.length+1)
@@ -747,6 +764,8 @@ export default {
         }
         
         this.animateRotation(this.vSprites, new THREE.Vector3(1,0,0), targetAngle, d )
+        this.main.getHfileNameInFront(this.vertical,"v")
+
       }
     },
     toggleLock:function(direction){
@@ -841,9 +860,6 @@ export default {
         this.main.sprite=null
       }
       
-      
-      
-      
       this.$router.push("/")
       
       renderer.domElement.style.display="none"
@@ -931,6 +947,8 @@ export default {
                
 
   , function (response) {
+    console.log("asdfasfasdf")
+    self.$router.push("/404")
       // error callback   
   }); 
           
