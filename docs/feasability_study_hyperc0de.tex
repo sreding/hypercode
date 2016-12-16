@@ -2,12 +2,14 @@
 
 %NOTE: if XeLaTeX or LuLaTeX is installed you may uncomment the first two comments
 %related to fonts in order to typeset this document in a more modern font
+%\usepackage{fontspec}
+%\setmainfont{Helvetica Neue Light}
 
 \usepackage{mathtools}
 \usepackage[explicit]{titlesec}
 \usepackage{titling}
 \usepackage{vaucanson-g}
-%\usepackage{fontspec}
+
 \usepackage{fancyhdr}
 \usepackage{multicol}
 \usepackage{amssymb}
@@ -20,7 +22,7 @@
   keywordstyle=\color{blue}
 }
 
-%\setmainfont{Helvetica Neue Light}
+
 
 \newcommand{\coursename}{WebAtelier}
 \newcommand{\assingmentnr}{\underline{HYPER}\texttt{C0DE} }
@@ -37,6 +39,7 @@ Universit\`a della Svizzera italiana - \coursename}
 \cfoot{\thepage}
 \titleformat{\section}{\normalfont\Large}{}{0em}{#1\ }
 \titleformat{\subsection}{\normalfont\large}{}{0em}{#1\ }
+\titleformat{\subsubsection}{\normalfont}{}{0em}{#1\ }
 \title{\assingmentnr}
 
 \pretitle{\begin{flushright}\LARGE}
@@ -51,16 +54,16 @@ Universit\`a della Svizzera italiana - \coursename}
 \emph{A Project by:}\\
 Alexander Camenzind, Robert Talling, Valerio Battaglia and Simon Reding\\
 
-Repository: \href{https://github.com/sreding/hypercode/}{github.com/sreding/hypercode/}
+\emph{Repository:} \href{https://github.com/sreding/hypercode/}{github.com/sreding/hypercode/}
 
 \section{Introduction}
-Hypercode is a 3D browser based Integrated Development Unit designed specifically to display relationships between individual files of code. It is composed of three "states", the overview, the context view and the zoomed context view.
+Hypercode is a 3D browser based Integrated Development Unit designed specifically to display relationships between individual files of code. It is composed of three "states", the overview, the context view and the editor.
 \subsection{Overview}
 The Overview displays all files of a project in relationship to each other in a graph form. Graph nodes are clickable and link to the corresponding context view.
 \subsection{Context View}
 The context view allows a user to toggle between all related files of one selected main file. On the vertical axis there are all the files that are dependent on the main file. On the other hand, the horizontal axis contains all the files the the main file controls. A user can bring files from either axis into the foreground by using the arrow button. To set a file as the main file, a user simply clicks the focus button on a file. 
 
-\subsection{Zoomed Context view}
+\subsubsection{Zoomed Context view}
 This allows the user to inspect a file close by "zooming" into the file while keeping all the functionalities of the Context View.
 
 \subsection{Editor}
