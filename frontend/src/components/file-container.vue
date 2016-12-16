@@ -13,7 +13,7 @@
       
       <textarea name="editor" id="editor">{{filedata.source}}</textarea>
       <div class="container-menu">
-     <router-link :to="{path:'/single/'+filedata._id}" replace class="btn" id="edit-btn"><icon name="pencil" scale="2"></icon></router-link>
+     <router-link :to="{path:'/single/'+filedata._id}" class="btn" id="edit-btn"><icon name="pencil" scale="2"></icon></router-link>
       <router-link :to="{path:filedata._id}"  class="btn" id="focus-btn"><icon name="bullseye" scale="2"></icon></router-link>
       </div>
     </div>

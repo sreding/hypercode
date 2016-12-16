@@ -3,7 +3,7 @@
     
 
     <div class="fcs-container-menu-top">
-    <router-link class="fcs-task-btn" :to="{path:'/file/'+file._id}" replace><icon name="arrow-left" scale="1"></icon></router-link>
+    <router-link class="fcs-task-btn" :to="{path:'/file/'+file._id}"><icon name="arrow-left" scale="1"></icon></router-link>
 
       <a href="#" class="ctr" id="ctr1">0</a>
       <div id="ctr" class="ctr">0</div>
