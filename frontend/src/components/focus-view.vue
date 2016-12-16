@@ -4,9 +4,24 @@
 
     <div class="fcs-container-menu-top">
     <router-link class="fcs-task-btn" :to="{path:'/file/'+file._id}"><icon name="arrow-left" scale="1"></icon></router-link>
-
-      <a href="#" class="ctr" id="ctr1">0</a>
-      <div id="ctr" class="ctr">0</div>
+   <!--  <div id="ctr"> -->
+      <!-- <div class="fcs-ctr"> -->
+      <!-- <icon name="arrows-v" class="ico-fa" scale="1"></icon> -->
+      <div class="fcs-ctr">
+      <icon name="arrows-v"  class="ico-fa" scale="1"></icon>
+      <div href="#"  id="ctr" style="color:white; align-self: right"> 0</div>
+      </div>
+      <!-- </div>
+      <div class="fcs-ctr">
+      <icon name="arrows-h" class="ico-fa" scale="1"></icon> -->'
+      <div class="fcs-ctr">
+      <icon name="arrows-h"  class="ico-fa" scale="1"></icon>
+      <div href="#"  id="ctr1" style="color:white; align-self: right"> 0</div>
+      </div>'
+      
+     <!--  </div> -->
+   <!--  </dir> -->
+     
       </div>
       <div id="fcs-title">
       <h1>{{file.name}}</h1>
@@ -191,6 +206,10 @@ export default {
   .fcs-task-btn:hover{
     background-color: #660000!important;
   }
+  .ico-fa{
+    color:#990000;
+    text-align: left;
+  }
   
   .btn:hover {
     background-color: #4d4d4d!important;
@@ -224,10 +243,12 @@ export default {
     text-align: center;
 
   }
-  .ctr {
+  .fcs-ctr {
     background-color: inherit;
+
     /*display: inline-block;*/
-    flex-grow: 1;
+    display: flex;
+    align-items: center;
     cursor: default;
     color: white;
     font-family: 'Helvetica Neue Thin',Helvetica, Arial;
@@ -235,8 +256,15 @@ export default {
     padding: 1.5vmin 1.5vmin;
     width: auto;
     text-decoration: none;
-    text-align: right;
+    text-align: left;
+    border-left: 1px;
+    border-left-color: #ffffff;
+    border-left-style: solid;
+    max-width: 5% !important;
 
+  }
+  .fcs-ctr:nth-child(2){
+    margin-left: auto; 
   }
   #fcs-title{
     position: absolute;

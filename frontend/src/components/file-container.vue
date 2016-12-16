@@ -5,8 +5,17 @@
 
     <div class="container-menu-top">
   
-      <div class="ctr" id="ctr1">0 </div>
-      <div id="ctr" class="ctr">0</div>
+      <div class="ctr">
+      <icon name="arrows-v"  class="ico-fa" scale="1"></icon>
+      <div href="#"  id="ctr" style="color:white; align-self: right"> 0</div>
+      </div>
+      <!-- </div>
+      <div class="fcs-ctr">
+      <icon name="arrows-h" class="ico-fa" scale="1"></icon> -->'
+      <div class="ctr">
+      <icon name="arrows-h"  class="ico-fa" scale="1"></icon>
+      <div href="#"  id="ctr1" style="color:white; align-self: right"> 0</div>
+      </div>'
       </div>
 
       <h1>{{filedata.name}}</h1>
@@ -252,7 +261,6 @@ export default {
   .ctr {
     background-color: inherit;
     /*display: inline-block;*/
-    flex-grow: 1;
     cursor: default;
     color: white;
     font-family: 'Helvetica Neue Thin',Helvetica, Arial;
@@ -261,6 +269,8 @@ export default {
     width: auto;
     text-decoration: none;
     text-align: right;
+    display: flex;
+    align-items: stretch;
 
   }
 
