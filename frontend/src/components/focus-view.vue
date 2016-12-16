@@ -3,7 +3,7 @@
     
 
     <div class="fcs-container-menu-top">
-    <router-link class="fcs-task-btn" :to="{path:'/file/'+file._id}" replace><icon name="arrow-left" scale="1"></icon></router-link>
+    <router-link class="fcs-task-btn" :to="{path:'/file/'+file._id}"><icon name="arrow-left" scale="1"></icon></router-link>
 
       <a href="#" class="ctr" id="ctr1">0</a>
       <div id="ctr" class="ctr">0</div>
@@ -84,12 +84,22 @@ export default {
               console.log(response.body);
               
               if(response.body){
-              self.count = response.body;
+             
               let ctr = this.$el.querySelector('#ctr');
-              ctr.innerHTML = response.body;
-
+              if(response.body != 0){
+              
+              ctr.innerHTML = response.body-1;
+              }
+              else{
+                 ctr.innerHTML = 0;
+              }
               let ctr1 = this.$el.querySelector('#ctr1');
-              ctr1.innerHTML = self.file.relations.length.toString();
+               if(self.file.relations.length != 0){
+              ctr1.innerHTML = (self.file.relations.length-1).toString();
+              }
+              else{
+                 ctr1.innerHTML = 0;
+              }
               }
 
              
