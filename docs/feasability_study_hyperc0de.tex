@@ -97,9 +97,14 @@ You should now be able to see the site at \texttt{http://localhost:8080/} with h
 \section{Libraries}
 \subsection{Vue.js vs Polymer}
 \subsection{Sprite3D.js}
+We started off using Sprite3D.js for our CSS3D transforms. But as we wanted to have more complex rotations, Sprite3D didn't really provide any support for that (since it is basically just a wrapper for CSS transforms.
+Due to this reason we   switched to three.js.
 \subsection{CodeMirror}
 \subsection{Highlight.js}
 \subsection{three.js}
+Three.js and its CSS3DRenderer provided all the 3D functionalities needed and we used Tween.js to animate the transormations. 
+\\One problem we encountered between Vue and Three.js, was that we needed to create elements using a Vue v-for but then to use the elements with Three.js we had to remove them from the Vue template, which caused some problems. \\
+Even though  we managed to solve this problem, It propably would have been a better idea to not make the context view a Vue component.
 \subsection{D3.js}
 \section{Known Issues}
 
