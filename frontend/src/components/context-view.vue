@@ -22,7 +22,12 @@
     <a  v-on:click="clearStage()" class="task-btn" id="backToOverview"><icon name="home" scale="1"></icon></a>
     <a id="zoomButton"  class="task-btn"><icon name="expand" scale="1"></icon></a>
     <a id="rotateBack"  v-on:click="rotateBackToMainFile()" class="task-btn"><icon name="arrow-circle-o-down" scale="1"></icon></a>
+    <div class="infoContainer">
+      <div class="sameClass" id="infoBox"></div>
+      <div class="sameClass"></div>
       </div>
+
+  </div>
 
 </div>
 
@@ -378,19 +383,25 @@ function MainFile(sprite,vLength,hLength,vRadius,hRadius){
   },
   this.getHfileNameInFront=function(elements,direction){
     let c 
+    let pref=""
+    let post=""
     if(direction=="v"){
       c = -this.vPos
+      pref = ""
+      post=" depends on "
     }else if(direction =="h"){
       c = this.hPos
+      pref=" depends on "
+      post=""
     }
     
     if(c==0){
       return ""
     }
     if(c<0){
-      return elements[Math.abs(c)-1].name
+      return pref+'<span class="makeRed">'+ elements[Math.abs(c)-1].name+"</span>"+post
     }else{
-      return elements[elements.length-c].name
+      return pref+'<span class="makeRed">'+ elements[elements.length-c].name+"</span>"+post
     }
   }
 
@@ -734,7 +745,9 @@ export default {
           this.main.sprite.element.classList.remove("fadeIn")
         }
         this.animateRotation(this.hSprites, new THREE.Vector3(0,1,0), targetAngle, d )
-        this.main.getHfileNameInFront(this.horizontal,"h")
+        this.$el.querySelector("#infoBox").innerHTML=
+        '<span class="makeBlue">' +this.tempMainData.name +'</span>'+
+          this.main.getHfileNameInFront(this.horizontal,"h")
       }
       else if(e.keyCode === UP || e.keyCode === DOWN){
         let targetAngle = (2*Math.PI)/(that.vertical.length+1)
@@ -764,7 +777,8 @@ export default {
         }
         
         this.animateRotation(this.vSprites, new THREE.Vector3(1,0,0), targetAngle, d )
-        this.main.getHfileNameInFront(this.vertical,"v")
+        this.$el.querySelector("#infoBox").innerHTML=
+       this.main.getHfileNameInFront(this.vertical,"v") +'<span class="makeBlue">' +this.tempMainData.name +'</span>'
 
       }
     },
@@ -947,7 +961,6 @@ export default {
                
 
   , function (response) {
-    console.log("asdfasfasdf")
     self.$router.push("/404")
       // error callback   
   }); 
@@ -1060,6 +1073,32 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#efefef', end
     text-decoration: none;
     text-align: center;
 
+  }
+   .infoContainer{
+    margin-left: auto; 
+    background-color: inherit;
+    /*display: inline-block;*/
+    cursor: default;
+    color: white;
+    font-family: 'Helvetica Neue Thin',Helvetica, Arial;
+    font-size: 2vmin;
+    padding: 1.5vmin 1.5vmin;
+    width: 20%;
+    text-decoration: none;
+    font-size: 100%;
+    text-align: left;
+    display: flex;
+    align-items: stretch;
+  }
+
+  .sameClass{
+
+  }
+  .makeRed{
+    color:#990000;
+  }
+  .makeBlue{
+    color: #6699ff;
   }
 
 
