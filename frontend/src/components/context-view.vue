@@ -1083,7 +1083,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#efefef', end
     font-family: 'Helvetica Neue Thin',Helvetica, Arial;
     font-size: 2vmin;
     padding: 1.5vmin 1.5vmin;
-    width: 20%;
+    width: 30%;
     text-decoration: none;
     font-size: 100%;
     text-align: left;

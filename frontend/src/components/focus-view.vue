@@ -294,6 +294,7 @@ export default {
   .CodeMirror{
     height: 70%;
     width: 100%; 
+    font-size: 16pt;
   }
   #fcs-code{
     padding-left: 10%;
