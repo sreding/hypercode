@@ -56,7 +56,7 @@ export default {
     });
     let that = this
        this.connections();
-    setTimeout(function(){that.cm.refresh()},100);
+    setTimeout(function(){that.cm.refresh()},1);
 
     this.file = this.filedata;
     this.container =  this.$el.querySelector('#wrapper');
@@ -72,7 +72,7 @@ export default {
     filedata: function (newfiledata) {
       let that = this
     this.cm.setValue(newfiledata.source)
-    setTimeout(function(){that.cm.refresh()},100)
+    setTimeout(function(){that.cm.refresh()},1)
      
   // DOM updated
  
@@ -159,7 +159,7 @@ export default {
       
       this.cm.setValue(response.body.source);
       let that = this
-      setTimeout(function(){that.cm.refresh()},100)
+      setTimeout(function(){that.cm.refresh()},1)
  
 
       }, function (response) {

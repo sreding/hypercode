@@ -83,7 +83,7 @@ THREE.CSS3DSprite.prototype.constructor = THREE.CSS3DSprite;
 
 THREE.CSS3DRenderer = function () {
 
-  console.log( 'THREE.CSS3DRenderer', THREE.REVISION );
+  // console.log( 'THREE.CSS3DRenderer', THREE.REVISION );
 
   var _width, _height;
   var _widthHalf, _heightHalf;
@@ -556,7 +556,6 @@ export default {
       })
     },
     vertical:function(){
-      console.log("vertical 1")
       let that = this
       Vue.nextTick(function () {
         let vAngleBetween = (2*Math.PI)/(that.vertical.length+1)
@@ -570,7 +569,6 @@ export default {
     })
     },
     horizontal:function(){
-      console.log("called horizontal 1")
       let that = this
       Vue.nextTick(function () {
         let hAngleBetween = (2*Math.PI)/(that.horizontal.length+1)
@@ -600,7 +598,6 @@ export default {
     })
     },
     mainid:function(){  
-      console.log(this.mainid)
       this.clearEverything()
       //this.relations();
       this.hSprites=[]
@@ -680,7 +677,6 @@ export default {
       this.main=new MainFile(sprite,this.vertical.length,this.horizontal.length,0,0)
     },
     // reloadHorizontal:function(){
-    //   console.log("called horizontal 2")
     //   let that = this
     //   //there are no horizontal files
     //   Vue.nextTick(function () {
@@ -699,7 +695,6 @@ export default {
     // })
     // },
     // reloadVertical:function(){
-    //   console.log("vertical 2")
     //   let that = this
     //   Vue.nextTick(function () {
     //     let vAngleBetween = (2*Math.PI)/(that.vertical.length+1)
@@ -899,6 +894,8 @@ export default {
         this.main.clear(this.vSprites.length,this.hSprites.length)
         this.toggleLock("h")
       }
+       this.$el.querySelector("#infoBox").innerHTML=
+       this.main.getHfileNameInFront(this.vertical,"v") +'<span class="makeBlue">' +this.tempMainData.name +'</span>'
 
     },
 
@@ -912,7 +909,6 @@ export default {
             this.$http({url: 'http://localhost:3000/api/files/'+ self.mainid +'?rel=all', method: 'GET'}).then(function (response) {
            
               let hdata = [];
-              console.log(response.body)
               self.hFiles=[]
               self.vFiles=[]
               
