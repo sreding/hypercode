@@ -528,6 +528,7 @@ export default {
       })
     },
     vertical:function(){
+      console.log("vertical 1")
       let that = this
       Vue.nextTick(function () {
         let vAngleBetween = (2*Math.PI)/(that.vertical.length+1)
@@ -541,15 +542,19 @@ export default {
     })
     },
     horizontal:function(){
+      console.log("called horizontal 1")
       let that = this
       Vue.nextTick(function () {
         let hAngleBetween = (2*Math.PI)/(that.horizontal.length+1)
          that.setUpHorizontalCircle(that.rH,hAngleBetween,-Math.PI/2 +hAngleBetween)
          
-         if(that.vFiles.length ===0){
-          that.reloadVertical()
-         }
-         while (that.vertical.length!==0){
+         if(that.vFiles.length ===0 && that.vertical.length ===0){
+          that.vertical.push("")
+          that.vertical.pop()
+
+
+         }else{
+          while (that.vertical.length!==0){
             that.vertical.pop()
           }
 
@@ -558,7 +563,11 @@ export default {
          for(let i = 0; i<that.vFiles.length;i++){
           that.vertical.push(that.vFiles[i])
          }
+
+         }
+         
          that.vFiles=[]
+
 
     })
     },
@@ -642,39 +651,39 @@ export default {
 
       this.main=new MainFile(sprite,this.vertical.length,this.horizontal.length,0,0)
     },
-    reloadHorizontal:function(){
-      let that = this
-      Vue.nextTick(function () {
-        let hAngleBetween = (2*Math.PI)/(that.horizontal.length+1)
-         that.setUpHorizontalCircle(that.rH,hAngleBetween,-Math.PI/2 +hAngleBetween)
+    // reloadHorizontal:function(){
+    //   console.log("called horizontal 2")
+    //   let that = this
+    //   //there are no horizontal files
+    //   Vue.nextTick(function () {
+    //     let hAngleBetween = (2*Math.PI)/(that.horizontal.length+1)
+    //     that.setUpHorizontalCircle(that.rH,hAngleBetween,-Math.PI/2 +hAngleBetween)
          
          
-         while (that.vertical.length!==0){
-            that.vertical.pop()
-          }
 
-          // load vertical
+    //       // load vertical
          
-         for(let i = 0; i<that.vFiles.length;i++){
-          that.vertical.push(that.vFiles[i])
-         }
-         that.vFiles=[]
+    //      for(let i = 0; i<that.vFiles.length;i++){
+    //       that.vertical.push(that.vFiles[i])
+    //      }
+    //      that.vFiles=[]
 
-    })
-    },
-    reloadVertical:function(){
-      let that = this
-      Vue.nextTick(function () {
-        let vAngleBetween = (2*Math.PI)/(that.vertical.length+1)
-        that.setUpVerticalCircle(that.rV,vAngleBetween,-Math.PI/2+vAngleBetween)
-        while(that.maindata.length !== 0){
-                that.maindata.pop()
-              }
+    // })
+    // },
+    // reloadVertical:function(){
+    //   console.log("vertical 2")
+    //   let that = this
+    //   Vue.nextTick(function () {
+    //     let vAngleBetween = (2*Math.PI)/(that.vertical.length+1)
+    //     that.setUpVerticalCircle(that.rV,vAngleBetween,-Math.PI/2+vAngleBetween)
+    //     while(that.maindata.length !== 0){
+    //             that.maindata.pop()
+    //           }
               
-        that.maindata.push(that.tempMainData);
+    //     that.maindata.push(that.tempMainData);
         
-    })
-    },
+    // })
+    // },
     handleKeyEvent:function(e){
       let d = 300
       let that = this
@@ -874,6 +883,8 @@ export default {
            
               let hdata = [];
               console.log(response.body)
+              self.hFiles=[]
+              self.vFiles=[]
               
               let hrelations = response.body.horizontal;
 
@@ -888,9 +899,7 @@ export default {
                 }
               }
 
-              if(self.hFiles.length==0){ //force update
-                self.reloadHorizontal()
-              }
+              
 
               
 
@@ -906,11 +915,22 @@ export default {
                 }
                 
                 }
+              if(self.hFiles.length==0 && self.horizontal.length==0){ //force update
+                self.horizontal.push("")
+                while(self.horizontal.length!==0){
+                  self.horizontal.pop()
+                 // self.horizontal=[]
+                }
+                // self.reloadHorizontal()
+              }else{
                 self.update()
+              }
+            }
+                
 
                
 
-  }, function (response) {
+  , function (response) {
       // error callback   
   }); 
           
