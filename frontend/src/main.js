@@ -6,14 +6,17 @@ import FileContainer from './components/file-container.vue';
 import FocusView from './components/focus-view.vue';
 import OverView from './components/over-view.vue';
 import Icon from 'vue-awesome/components/Icon.vue';
-
+import 'vue-awesome/icons';
 
 const Entry = {
 	template: '<p>/file for ContextView, /container for FileContainer</p>'
 }
 
 const NotFound = {
-	template: '<p>404 - not found</p>'
+  components: {
+    "icon":Icon
+  },
+	template: '<div id="centerContainer"><p> <icon name="meh-o" scale="1"></icon> 404 - not found <icon name="meh-o" scale="1"></icon></p></div>',
 }
 
 const routes = [
