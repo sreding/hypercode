@@ -1,5 +1,8 @@
 \documentclass[a4paper]{article}
 
+%NOTE: if XeLaTeX or LuLaTeX is installed you may uncomment the first two comments
+%related to fonts in order to typeset this document in a more modern font
+
 \usepackage{mathtools}
 \usepackage[explicit]{titlesec}
 \usepackage{titling}
@@ -9,6 +12,7 @@
 \usepackage{multicol}
 \usepackage{amssymb}
 \usepackage{xcolor}
+\usepackage{hyperref}
 \usepackage{listings}
 \lstset{basicstyle=\ttfamily,
   showstringspaces=false,
@@ -45,8 +49,9 @@ Universit\`a della Svizzera italiana - \coursename}
 
 \maketitle{\raggedleft}
 \emph{A Project by:}\\
-Alexander Camenzind, Robert Talling, Valerio Battaglia and Simon Reding
+Alexander Camenzind, Robert Talling, Valerio Battaglia and Simon Reding\\
 
+Repository: \href{https://github.com/sreding/hypercode/}{github.com/sreding/hypercode/}
 
 \section{Introduction}
 Hypercode is a 3D browser based Integrated Development Unit designed specifically to display relationships between individual files of code. It is composed of three "states", the overview, the context view and the zoomed context view.
@@ -95,25 +100,31 @@ You should now be able to see the site at \texttt{http://localhost:3000/}
 npm run dev
 \end{lstlisting}
 \end{enumerate}
-You should now be able to see the site at \texttt{http://localhost:8080/} with hot reload whenever the code is changed and saved.
+You should now be able to see the site at \texttt{http://localhost:8080/} with hot reload whenever the code is changed and saved. 
 %\begin{multicols}{2}
 \section{Libraries}
-\subsection{Vue.js vs Polymer}
+Over the past few weeks we have played around with a number of libraries to see what works and what doesn't. Here is our opinion on how these fit into our project.
+\subsection{\href{https://get.webgl.org/}{WebGL} vs \href{https://developer.mozilla.org/en-US/docs/Web/CSS}{CSS}}
+While the idea of WebGL may seem appealing, CSS is much more compatible with browsers and not as heavy. In addition, CSS allows us to use standard html components that can easily be seamlessly integrated into a website.
+\subsection{\href{https://vuejs.org/}{WebGL}  vs \href{https://www.polymer-project.org/1.0/}{Polymer}}
 We have decided to go with Vue.js as we have already learned about polymer in class and thought it would be a challenge to try something new. We believe Polymer could be used just as well if not better for our components.
-\subsection{Sprite3D.js}
+\subsection{\href{http://minimal.be/lab/Sprite3D/}{Sprite3D.js}}
 We started off using Sprite3D.js for our CSS3D transforms. But as we wanted to have more complex rotations, Sprite3D didn't really provide any support for that (since it is basically just a wrapper for CSS transforms.
 Due to this reason we   switched to three.js.
-\subsection{CodeMirror}
+\subsection{\href{https://codemirror.net/}{CodeMirror}}
 CodeMirror allows basic editing. However, since it is an extremely custom component, we could not get the editing to properly work in the zoomed view.
-\subsection{Highlight.js}
+\subsection{\href{https://highlightjs.org/}{Highlight.js}}
 In contrast to CodeMirror, Highlight.js allows syntax highlighting in a standard HTML div but it has to be refreshed every time the code is changed, hence the cursor moves to the start of the text which in unsuitable for editing.
-\subsection{three.js}
+\subsection{\href{https://threejs.org/}{three.js}}
 Three.js and its CSS3DRenderer provided all the 3D functionalities needed and we used Tween.js to animate the transormations. 
 \\One problem we encountered between Vue and Three.js, was that we needed to create elements using a Vue v-for but then to use the elements with Three.js we had to remove them from the Vue template, which caused some problems. \\
 Even though  we managed to solve this problem, It propably would have been a better idea to not make the context view a Vue component.
-\subsection{D3.js}
-D3.js is the library we have used to draw the graph of the overview.
+\subsection{\href{https://d3js.org/}{D3.js}}
+D3.js is the library we have used to draw the force graph of the overview.
 \section{Known Issues}
+\enumerate
+\item Reload fails with outside of development build due to a routing error.
+\enumerate
 
 %\end{multicols}
 \end{document}
