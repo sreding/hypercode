@@ -13,7 +13,7 @@
       
       <textarea name="editor" id="editor">{{filedata.source}}</textarea>
       <div class="container-menu">
-     <router-link :to="{path:'/single/'+filedata._id}" replace class="btn" id="save-btn"><icon name="pencil" scale="2"></icon></router-link>
+     <router-link :to="{path:'/single/'+filedata._id}" replace class="btn" id="edit-btn"><icon name="pencil" scale="2"></icon></router-link>
       <router-link :to="{path:filedata._id}"  class="btn" id="focus-btn"><icon name="bullseye" scale="2"></icon></router-link>
       </div>
     </div>
@@ -196,6 +196,7 @@ export default {
     right: 0;
     width: 100%;
     height: 8%;
+    max-height: 8%;
     background: grey;
     display: inline-flex;
     flex-direction: row;
@@ -356,6 +357,3 @@ animation-duration: 0.6s; /* the duration of the animation */
 
 <style src="../../node_modules/highlight.js/styles/atom-one-dark.css">
  </style>
-
-<!--  <style src="../../static/css/font-awesome.css"></style> -->
-<!--   --> 

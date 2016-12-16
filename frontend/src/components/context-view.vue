@@ -942,6 +942,14 @@ export default {
   border-right-width: 20px;
   
 }
+.main-container .container-menu #focus-btn{
+  visibility: hidden;
+}
+.main-container .container-menu #edit-btn{
+  width: 100%;
+  max-height: 50%;
+
+}
 
 .locked{
   opacity: 0.8;
